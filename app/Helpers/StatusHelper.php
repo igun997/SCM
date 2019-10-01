@@ -49,7 +49,7 @@
    }elseif ($id == 1) {
      return "Ditolak Oleh Direktur";
    }elseif ($id == 2) {
-     return "Pengajuan Diterima";
+     return "Pengajuan Diterima Direktur";
    }elseif ($id == 3) {
      return "Pengajuan Diproses";
    }elseif ($id == 4) {
