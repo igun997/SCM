@@ -63,6 +63,11 @@ Route::group(['middleware' => ['direktur']], function () {
   Route::post('/api/direktur/pengguna_insert',"ApiControl@pengguna_insert")->name("private.api.pengguna_insert");
   Route::post('/api/direktur/pengguna_update/{id?}',"ApiControl@pengguna_update")->name("private.api.pengguna_update");
 
+  //Monitoring Pengadaan
+  Route::get('/api/direktur/pbahanbaku_read_direktur/{id?}',"ApiControl@pbahanbaku_read_direktur")->name("private.api.pbahanbaku_read_direktur");
+  Route::get('/api/direktur/pbahanbaku_setujui_direktur/{id?}',"ApiControl@pbahanbaku_setujui_direktur")->name("private.api.pbahanbaku_setujui_direktur");
+  Route::get('/api/direktur/pbahanbaku_tolak_direktur/{id?}/{catatan?}',"ApiControl@pbahanbaku_tolak_direktur")->name("private.api.pbahanbaku_tolak_direktur");
+
 
 });
 Route::group(['middleware' => ['pengadaan']], function () {
