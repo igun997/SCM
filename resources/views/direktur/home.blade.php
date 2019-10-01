@@ -2345,6 +2345,7 @@
           "</div>",
         ];
         var mpengadaan_table = null;
+        var mpengadaanproduk_table = null;
         var mpengadaan = new jBox('Modal', {
           title: 'Data Pengadaan',
           overlay: false,
@@ -2364,145 +2365,218 @@
           repositionOnContent: false,
           onCloseComplete:function(){
             console.log("Destruct Table");
-            tabel_mpengadaan.destroy();
-            tabel_mpengadaanproduk.destroy();
+            mpengadaan_table.destroy();
+            mpengadaanproduk_table.destroy();
           },
           onCreated:function(rs){
             content = this.content;
             console.log(content);
 
             content.find("#mpengadaan_table").before('<h4 align=center>Data Pengadaan Bahan</h4>');
-            pengguna_table = content.find("#mpengadaan_table").DataTable({
-
+            mpengadaan_table = content.find("#mpengadaan_table").DataTable({
+              ajax:"{{route("private.api.pbahanbaku_read_direktur")}}"
             });
             content.find("#mpengadaanproduk_table").before('<h4 align=center>Data Pengadaan Produk</h4>');
-            pengguna_table = content.find("#mpengadaanproduk_table").DataTable({
+            mpengadaanproduk_table = content.find("#mpengadaanproduk_table").DataTable({
 
             });
-            content.find("#mpengadaan_table").on('click','.edit',function(event) {
+            content.find("#mpengadaan_table").on('click','.rincian',function(event) {
               event.preventDefault();
               id = $(this).data("id");
-              $.get("{{route("private.api.pengguna_read")}}/"+id,function(rs){
-              frm = [
-                [
-                  {
-                    label:"Nama Pengguna SCM",
-                    type:"text",
-                    name:"nama_pengguna",
-                    value:rs.nama_pengguna
-                  },{
-                    label:"Alamat",
-                    type:"textarea",
-                    name:"alamat",
-                    value:rs.alamat
-                  },{
-                    label:"No Kontak",
-                    type:"text",
-                    name:"no_kontak",
-                    value:rs.no_kontak
-                  },{
-                    label:"Email",
-                    type:"email",
-                    name:"email",
-                    value:rs.email
-                  },{
-                    label:"Password",
-                    type:"password",
-                    name:"password",
-                    value:rs.password
-                  },{
-                    label:"Level",
-                    type:"select2",
-                    name:"level",
-                    id:"level",
-                  }
-                ]
-              ];
-                btn = {name:"Ubah",class:"warning",type:"submit"};
-                formSatuan = builder(frm,btn,"update",true,12);
-                set = new jBox('Modal', {
-                  title: 'Ubah Pengguna SCM',
-                  overlay: false,
-                  width: '500px',
-                  responsiveWidth:true,
-                  height: 'auto',
-                  createOnInit: true,
-                  content: formSatuan,
-                  draggable: false,
-                  adjustPosition: true,
-                  adjustTracker: true,
-                  repositionOnOpen: false,
-                  offset: {
-                    x: 0,
-                    y: 0
-                  },
-                  repositionOnContent: false,
-                  onCloseComplete:function(){
-                    console.log("Reloading Tabel");
-                    pengguna_table.ajax.reload();
-                  },
-                  onCreated:function(){
-                    console.log("Initialize");
-                    html = this.content;
-                    level = [
-                      {
-                        value:"direktur",
-                        text:"Direktur"
-                      },{
-                        value:"produksi",
-                        text:"Produksi"
-                      },{
-                        value:"gudang",
-                        text:"Gudang"
-                      },{
-                        value:"pengadaan",
-                        text:"Pengadaan"
-                      },
-                    ];
-                    selectbuilder(level,html.find("#level"),[{value:rs.level,text:rs.level}]);
-                    html.find("#update").on('submit',function(event) {
-                      event.preventDefault();
-                      dform = $(this).serializeArray();
-                      console.log(dform);
-                      on();
-                      $.ajax({
-                        url: '{{route("private.api.pengguna_update")}}/'+id,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: dform
-                      })
-                      .done(function(rs) {
-                        if (rs.status == 1) {
-                          new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
-                        }else {
-                          new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
-                        }
-                      })
-                      .fail(function(rs) {
-                        var msg = "";
-                        $.each(rs.responseJSON.errors,function(index,item){
-                          msg += item[0]+"<br>";
-                        });
-                        if (rs.responseJSON.errors == undefined) {
-                          var msg = "Kehilangan Komunikasi Dengan Server"
-                        }
-                        Swal.fire({
-                          type: 'error',
-                          title: 'Oops...',
-                          html: msg,
-                          footer: '<a href>Laporkan Error</a>'
-                        })
-                      })
-                      .always(function() {
-                        off();
-                        set.close();
-                      });
+              console.log("Rincian ID "+id);
+              on();
+              $.ajax({
+                url: '{{route("private.api.pbahanbaku_read_direktur")}}/'+id,
+                type: 'GET',
+                dataType: 'JSON'
+              })
+              .done(function(rs) {
+                if (rs.status == 1) {
+                  modal = new jBox('Modal', {
+                    title: 'Rincian Pengadaan ['+rs.data.id_pengadaan_bb+']',
+                    overlay: false,
+                    width: '100%',
+                    responsiveWidth:true,
+                    height: 'auto',
+                    createOnInit: true,
+                    content: null,
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
 
-                    });
-                  }
+                    },
+                    onCreated:function(x){
+                      var subtotal = 0;
+                      for (var i = 0; i < rs.data.pengadaan__bb_details.length; i++) {
+                        subtotal = subtotal + (rs.data.pengadaan__bb_details[i].harga*rs.data.pengadaan__bb_details[i].jumlah);
+                      }
+                      frm = [
+                        [
+                          {
+                            label:"Kode Pengadaaan",
+                            type:"readonly",
+                            value:rs.data.id_pengadaan_bb
+                          },{
+                            label:"Suplier",
+                            type:"readonly",
+                            value:"["+rs.data.id_suplier+"] "+rs.data.master_suplier.nama_suplier
+                          },{
+                            label:"Keterangan Suplier",
+                            type:"textarea",
+                            value:rs.data.master_suplier.ket
+                          },{
+                            label:"Status Pengadaan",
+                            type:"readonly",
+                            value:status_pengadaan(rs.data.status_pengadaan)
+                          },{
+                            label:"Tanggal Dibuat",
+                            type:"readonly",
+                            value:rs.data.tgl_register
+                          },{
+                            label:"Perkiraan Tiba",
+                            type:"readonly",
+                            value:rs.data.perkiraan_tiba
+                          },{
+                            label:"Tanggal Penerimaan Barang",
+                            type:"readonly",
+                            value:rs.data.tgl_diterima
+                          }
+                        ],[
+                          {
+                            label:"Konfirmasi Direktur",
+                            type:"readonly",
+                            value:konfirmasi(rs.data.konfirmasi_direktur)
+                          },{
+                            label:"Konfirmasi Gudang",
+                            type:"readonly",
+                            value:konfirmasi(rs.data.konfirmasi_gudang)
+                          },{
+                              label:"Catatan Gudang",
+                              type:"textarea",
+                              value:rs.data.catatan_gudang
+                            },{
+                              label:"Catatan Pengadaan",
+                              type:"textarea",
+                              value:rs.data.catatan_pengadaan
+                            },{
+                              label:"Catatan Direktur",
+                              type:"textarea",
+                              value:rs.data.catatan_direktur
+                            },{
+                              label:"Perkiraan Tiba",
+                              type:"readonly",
+                              value:rs.data.perkiraan_tiba
+                            },{
+                              label:"Subtotal Pemesanan",
+                              type:"readonly",
+                              value:"Rp. "+subtotal
+                            },
+                        ]
+                      ];
+                      build_frm = builder(frm,null,"rincian_display",true,6);
+                      dtas = [];
+                      for (var i = 0; i < rs.data.pengadaan__bb_details.length; i++) {
+                        dtas[i] = [rs.data.pengadaan__bb_details[i].id_bb,rs.data.pengadaan__bb_details[i].master_bb.nama,rs.data.pengadaan__bb_details[i].master_bb.stok+" "+rs.data.pengadaan__bb_details[i].master_bb.master_satuan.nama_satuan,rs.data.pengadaan__bb_details[i].harga,rs.data.pengadaan__bb_details[i].jumlah];
+                      }
+                      console.log(dtas);
+                      tabel_bahanbaku_isi = table(["Kode Bahan","Nama Bahan","Stok","Harga","Jumlah"],dtas,"tbl_s");
+                      build_frm = "<div class='row'><div class='col-md-12'>"+build_frm+"</div><div class='col-md-12'><hr><h4>Data Bahan</h4></div><div class='col-md-12'>"+tabel_bahanbaku_isi+"</div></div>"
+                      this.setContent(build_frm);
+                      konten = this.content;
+                      konten.find("textarea").attr("disabled",true);
+                      konten.find("#tbl_s").DataTable({
+
+                      });
+                    }
+                  });
+                  modal.open();
+                }else {
+                  new jBox('Notice', {content: 'Data Tidak Ditemukan',showCountdown:true, color: 'red'});
+                }
+              })
+              .fail(function(rs) {
+                var msg = "";
+                $.each(rs.responseJSON.errors,function(index,item){
+                  msg += item[0]+"<br>";
                 });
-                set.open();
+                if (rs.responseJSON.errors == undefined) {
+                  var msg = "Kehilangan Komunikasi Dengan Server"
+                }
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  html: msg,
+                  footer: '<a href>Laporkan Error</a>'
+                })
+              })
+              .always(function() {
+                off();
+                mpengadaan_table.ajax.reload();
               });
+
+            });
+            content.find("#mpengadaan_table").on('click', '.setujui', function(event) {
+              event.preventDefault();
+              console.log($(this).data("id"));
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.get("{{route("private.api.pbahanbaku_setujui_direktur")}}/"+$(this).data("id"),function(rs){
+                    if (rs.status == 1) {
+                      new jBox('Notice', {content: 'Pengadaan Sukses Disetujui',showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: 'Gagal Menyetujui Pengadaan',showCountdown:true, color: 'red'});
+                    }
+                    mpengadaan_table.ajax.reload();
+                  }).fail(function(){
+                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            content.find("#mpengadaan_table").on('click', '.tolak', function(event) {
+              event.preventDefault();
+              console.log($(this).data("id"));
+
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Tolong Isi Alasan Anda, Menolak Pengadaan Bahan Baku",
+                type: 'warning',
+                input:"textarea",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  // console.log(result.value);
+                  $.get("{{route("private.api.pbahanbaku_tolak_direktur")}}/"+$(this).data("id")+"/"+result.value,function(rs){
+                    if (rs.status == 1) {
+                      new jBox('Notice', {content: 'Pengadaan Sukses Tolak',showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: 'Gagal Tolak Pengadaan',showCountdown:true, color: 'red'});
+                    }
+                    mpengadaan_table.ajax.reload();
+                  }).fail(function(){
+                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                  });
+                }
+              })
             });
           }
         });
