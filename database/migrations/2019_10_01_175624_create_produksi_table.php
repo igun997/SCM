@@ -23,6 +23,7 @@ class CreateProduksiTable extends Migration {
 			$table->integer('konfirmasi_gudang')->default(0);
 			$table->text('catatan_gudang', 65535)->nullable();
 			$table->text('catatan_direktur', 65535)->nullable();
+			$table->text('catatan_produksi', 65535)->nullable();
 			$table->integer('status_produksi')->default(0);
 			$table->date('tgl_kon_direktur')->nullable();
 			$table->date('tgl_kon_gudang')->nullable();

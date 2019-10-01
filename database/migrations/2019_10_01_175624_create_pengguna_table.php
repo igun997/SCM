@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateMasterSuplierTable extends Migration {
+class CreatePenggunaTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,14 +12,16 @@ class CreateMasterSuplierTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('master__suplier', function(Blueprint $table)
+		Schema::create('pengguna', function(Blueprint $table)
 		{
-			$table->string('id_suplier', 25)->primary();
-			$table->string('nama_suplier', 100);
+			$table->string('id_pengguna', 60)->primary();
+			$table->string('nama_pengguna', 60);
 			$table->string('no_kontak', 20);
-			$table->string('email', 25);
 			$table->text('alamat', 65535);
-			$table->text('ket', 65535)->nullable();
+			$table->enum('level', array('direktur','produksi','gudang','pengadaan'));
+			$table->integer('status')->default(1);
+			$table->string('email', 60);
+			$table->string('password', 100);
 			$table->timestamp('tgl_register')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}
@@ -32,7 +34,7 @@ class CreateMasterSuplierTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('master__suplier');
+		Schema::drop('pengguna');
 	}
 
 }

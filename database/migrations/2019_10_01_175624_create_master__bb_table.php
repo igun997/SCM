@@ -16,7 +16,7 @@ class CreateMasterBbTable extends Migration {
 		{
 			$table->string('id_bb', 25)->primary();
 			$table->string('nama', 50);
-			$table->float('stok', 10, 0);
+			$table->float('stok', 10, 0)->default(0);
 			$table->float('stok_minimum', 10, 0);
 			$table->float('harga', 10, 0);
 			$table->date('kadaluarsa')->nullable();

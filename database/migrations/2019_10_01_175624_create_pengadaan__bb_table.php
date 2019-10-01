@@ -22,8 +22,13 @@ class CreatePengadaanBbTable extends Migration {
 			$table->integer('konfirmasi_direktur')->default(0);
 			$table->integer('konfirmasi_gudang')->default(0);
 			$table->text('catatan_gudang', 65535)->nullable();
+			$table->text('catatan_pengadaan', 65535)->nullable();
 			$table->text('catatan_direktur', 65535)->nullable();
+			$table->date('perkiraan_tiba')->nullable();
 			$table->date('tgl_perubahan')->nullable();
+			$table->integer('dibaca_pengadaan')->nullable();
+			$table->integer('dibaca_direktur')->nullable();
+			$table->integer('dibaca_gudang')->nullable();
 		});
 	}
 

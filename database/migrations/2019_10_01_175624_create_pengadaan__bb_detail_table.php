@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateMasterKomposisiTable extends Migration {
+class CreatePengadaanBbDetailTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,12 +12,13 @@ class CreateMasterKomposisiTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('master__komposisi', function(Blueprint $table)
+		Schema::create('pengadaan__bb_detail', function(Blueprint $table)
 		{
-			$table->integer('id_komposisi', true);
+			$table->integer('id_pbb_detail', true);
 			$table->string('id_bb', 25)->index('id_bb');
 			$table->float('jumlah', 10, 0);
-			$table->timestamp('tgl_register')->default(DB::raw('CURRENT_TIMESTAMP'));
+			$table->float('harga', 10, 0);
+			$table->string('id_pengadaan_bb', 25)->index('id_p_bb');
 		});
 	}
 
@@ -29,7 +30,7 @@ class CreateMasterKomposisiTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('master__komposisi');
+		Schema::drop('pengadaan__bb_detail');
 	}
 
 }

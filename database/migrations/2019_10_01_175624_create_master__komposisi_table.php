@@ -18,6 +18,8 @@ class CreateMasterKomposisiTable extends Migration {
 			$table->string('id_produk', 60)->index('id_produk');
 			$table->string('id_bb', 25)->index('id_bb');
 			$table->float('jumlah', 10, 0);
+			$table->string('rasio', 10);
+			$table->float('harga_bahan', 10, 0);
 			$table->timestamp('tgl_register')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}
