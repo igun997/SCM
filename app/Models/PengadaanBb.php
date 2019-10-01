@@ -58,6 +58,7 @@ class PengadaanBb extends Eloquent
 		'catatan_gudang',
 		'perkiraan_tiba',
 		'catatan_direktur',
+		'catatan_pengadaan',
 		'dibaca_pengadaan',
 		'dibaca_gudang',
 		'dibaca_direktur',
