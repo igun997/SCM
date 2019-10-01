@@ -121,7 +121,10 @@ class ApiControl extends Controller
             Rincian
             </button>
             <button class="dropdown-item setujui" data-id="'.$id.'"  type="button">
-            Setujui Produksi
+            Setujui Pengadaan
+            </button>
+            <button class="dropdown-item tolak" data-id="'.$id.'"  type="button">
+            Tolak Pengadaan
             </button>
             </div>';
           }else {
@@ -139,7 +142,24 @@ class ApiControl extends Controller
         return response()->json($data);
       }
     }
-
+    public function pbahanbaku_setujui_direktur($id)
+    {
+      $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>2,"konfirmasi_direktur"=>1,"tgl_perubahan"=>date("Y-m-d")]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pbahanbaku_tolak_direktur($id,$catatan=null)
+    {
+      $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>1,"catatan_direktur"=>$catatan,"tgl_perubahan"=>date("Y-m-d")]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function master_satuan_read($id = null)
     {
       if ($id != null) {
@@ -629,7 +649,7 @@ class ApiControl extends Controller
         $data = [];
         $data["data"] = [];
         $btnCreate = function($id,$status){
-          if ($status < 2) {
+          if ($status < 1) {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
             <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
@@ -716,7 +736,7 @@ class ApiControl extends Controller
         "id_pengadaan_bb"=>"required|unique:pengadaan__bb,id_pengadaan_bb",
         "id_suplier"=>"required|exists:master__suplier,id_suplier",
       ]);
-      $cek = PengadaanBb::whereIn("status_pengadaan",[0,1,2,3,4,5,6])->count();
+      $cek = PengadaanBb::whereIn("status_pengadaan",[0,2,3,4,5,6])->count();
       if ($cek > 0) {
         return response()->json(["status"=>0,"msg"=>"Pengadaan Bahan Baku Gagal Di Ajukan Karena Pengadaan Sebelumnya Belum Diselesaikan"]);
       }
