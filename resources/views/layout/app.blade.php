@@ -22,6 +22,11 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{url("assets/plugins/jbox/jBox.all.css")}}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <style media="screen">
+      .table thead th, .text-wrap table thead th {
+        white-space: nowrap !important;
+      }
+    </style>
     @stack("css")
     <script src="{{url("assets/js/require.min.js")}}"></script>
     <script>
