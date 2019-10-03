@@ -1305,9 +1305,21 @@
                               type:"text",
                               name:"nama_produk",
                             },{
+                              label:"Stok Awal",
+                              type:"text",
+                              name:"stok",
+                            },{
                               label:"Stok Minimum",
                               type:"text",
                               name:"stok_minimum",
+                            },{
+                              label:"Harga Produksi / Modal",
+                              type:"text",
+                              name:"harga_produksi",
+                            },{
+                              label:"Harga Distribusi / Jual",
+                              type:"text",
+                              name:"harga_distribusi",
                             },{
                               label:"Deskripsi",
                               type:"textarea",
@@ -1320,6 +1332,7 @@
                             }
                           ]
                         ];
+
                         btn = {name:"Simpan",class:"success",type:"submit"};
                         formSatuan = builder(frm,btn,"create",true,12);
                         set = new jBox('Modal', {
@@ -1421,6 +1434,16 @@
                       type:"textarea",
                       name:"deskripsi",
                       value:rs.deskripsi
+                    },{
+                      label:"Harga Produksi / Modal",
+                      type:"text",
+                      name:"harga_produksi",
+                      value:rs.harga_produksi
+                    },{
+                      label:"Harga Distribusi / Jual",
+                      type:"text",
+                      name:"harga_distribusi",
+                      value:rs.harga_distribusi
                     },{
                       label:"Satuan",
                       type:"select2",
@@ -2360,7 +2383,7 @@
           repositionOnOpen: false,
           offset: {
             x: 0,
-            y: 0
+            y: -150
           },
           repositionOnContent: false,
           onCloseComplete:function(){
