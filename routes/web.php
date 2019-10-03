@@ -102,3 +102,35 @@ Route::group(['middleware' => ['pengadaan']], function () {
   Route::get('/api/pengadaan/kode_pbb',"ApiControl@kode_pbb")->name("pengadaan.api.kode_pbb");
 
 });
+Route::group(['middleware' => ['gudang']], function () {
+  Route::get('/gudang',"GudangControl@index")->name('private.gudang.home');
+  //Satuan
+  Route::get('/api/gudang/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("gudang.api.master_satuan_read");
+  Route::post('/api/gudang/master_satuan_insert',"ApiControl@master_satuan_insert")->name("gudang.api.master_satuan_insert");
+  Route::post('/api/gudang/master_satuan_update/{id?}',"ApiControl@master_satuan_update")->name("gudang.api.master_satuan_update");
+  //Bahan Baku
+  Route::get('/api/gudang/master_bb_read/{id?}',"ApiControl@master_bb_read")->name("gudang.api.master_bb_read");
+  Route::post('/api/gudang/master_bb_insert',"ApiControl@master_bb_insert")->name("gudang.api.master_bb_insert");
+  Route::post('/api/gudang/master_bb_update/{id?}',"ApiControl@master_bb_update")->name("gudang.api.master_bb_update");
+  //Suplier
+  Route::get('/api/gudang/master_suplier_read/{id?}',"ApiControl@master_suplier_read")->name("gudang.api.master_suplier_read");
+  Route::post('/api/gudang/master_suplier_insert',"ApiControl@master_suplier_insert")->name("gudang.api.master_suplier_insert");
+  Route::post('/api/gudang/master_suplier_update/{id?}',"ApiControl@master_suplier_update")->name("gudang.api.master_suplier_update");
+  //Produk dan Komposisi
+  Route::get('/api/gudang/master_produk_read/{id?}',"ApiControl@master_produk_read")->name("gudang.api.master_produk_read");
+  Route::post('/api/gudang/master_produk_insert',"ApiControl@master_produk_insert")->name("gudang.api.master_produk_insert");
+  Route::post('/api/gudang/master_produk_update/{id?}',"ApiControl@master_produk_update")->name("gudang.api.master_produk_update");
+
+  Route::get('/api/gudang/master_komposisi_read/{id?}',"ApiControl@master_komposisi_read")->name("gudang.api.master_komposisi_read");
+  Route::post('/api/gudang/master_komposisi_insert',"ApiControl@master_komposisi_insert")->name("gudang.api.master_komposisi_insert");
+  Route::get('/api/gudang/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("gudang.api.master_komposisi_hapus");
+
+  //gudang Bahan Baku
+  Route::get('/api/gudang/pbahanabaku_read/{id?}',"ApiControl@pbahanabaku_read")->name("gudang.api.pbahanabaku_read");
+  Route::get('/api/gudang/pengandaan_bahanabaku_read/{id?}',"ApiControl@pengandaan_bahanabaku_read")->name("gudang.api.pengandaan_bahanabaku_read");
+  Route::post('/api/gudang/pengandaan_bahanabaku_insert',"ApiControl@pengandaan_bahanabaku_insert")->name("gudang.api.pengandaan_bahanabaku_insert");
+  Route::get('/api/gudang/pengandaan_bahanabaku_batal/{id?}',"ApiControl@pengandaan_bahanabaku_batal")->name("gudang.api.pengandaan_bahanabaku_batal");
+  //Hasilkan Kode gudang Bahan Baku
+  Route::get('/api/gudang/kode_pbb',"ApiControl@kode_pbb")->name("gudang.api.kode_pbb");
+
+});

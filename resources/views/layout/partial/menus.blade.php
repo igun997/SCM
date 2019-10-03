@@ -51,6 +51,26 @@
               <a href="" id="pproduk" class="dropdown-item ">Produk</a>
             </div>
           </li>
+          @elseif(session()->get("level") == "gudang")
+          <li class="nav-item">
+            <a href="{{route("private.gudang.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Data Master</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="mastersatuan" class="dropdown-item ">Satuan</a>
+              <a href="" id="mastersuplier" class="dropdown-item ">Suplier</a>
+              <a href="" id="masterbb" class="dropdown-item ">Bahan Baku</a>
+              <a href="" id="masterproduk" class="dropdown-item ">Produk</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-download"></i>Penerimaan Pengadaan</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="pbahanbaku" class="dropdown-item ">Bahan Baku</a>
+              <a href="" id="pproduk" class="dropdown-item ">Produk</a>
+            </div>
+          </li>
           @endif
         </ul>
       </div>
