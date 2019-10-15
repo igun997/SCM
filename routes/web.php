@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//Test Deply
 //Normal Route
 Route::get('/', function(){
   $data["title"] = "SCM Wenow";
