@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,400i,500,500i,600,600i,700,700i&amp;subset=latin-ext">
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/sweetalert2@8.17.1/dist/sweetalert2.min.css" integrity="sha256-zfoprrAG5QCLwEZhI7DWYoqRWYaVYxdjd0mEF3Hl9k0=" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{url("assets/plugins/jbox/jBox.all.css")}}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -180,7 +181,7 @@
       }else if ($id == 2) {
         return "Pengajuan Diterima";
       }else if ($id == 3) {
-        return "Pengajuan Diproses";
+        return "Pengajuan Sedang Diproses";
       }else if ($id == 4) {
         return "Menunggu Penerimaan oleh Gudang";
       }else if ($id == 5) {

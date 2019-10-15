@@ -120,7 +120,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker) {
     $(document).ready(function(){
       //Chart
       // Init NewPlugin
@@ -1607,6 +1607,55 @@
                 }
               })
             });
+            content.find("#pbahanbaku_table").on('click','.proses',function(event) {
+              event.preventDefault();
+              id = $(this).data("id");
+              console.log(id);
+              Swal.fire({
+                title: 'Isilah waktu perkiraan tiba',
+                type: 'warning',
+                html: '<input id="datepicker" class="form-control"/>',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Proses Pengadaan',
+                onOpen: function() {
+                    var date_start = "{{date("Y-m-d")}}";
+                    $('#datepicker').datepicker({
+                      startDate: date_start,
+                      format:"yyyy-m-d"
+                    });
+                },
+              }).then((result) => {
+                if (result.value) {
+                  date = $("#datepicker").val();
+                  console.log("Date Assigned : "+date);
+                  on();
+                  $.post("{{route("pengadaan.api.pengandaan_bahanabaku_proses")}}/"+id,{perkiraan_tiba:date},function(r){
+                    if (r.status == 1) {
+                      new jBox('Notice', {content: r.msg,showCountdown:true, color: 'green'});
+                      mastersatuan_table.ajax.reload();
+                      off();
+                    }else {
+                      new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
+                      master_satuan.close();
+                      off();
+                    }
+                  }).fail(function(r){
+                      new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                      master_satuan.close();
+                      off();
+                  });
+                  // Swal.fire(
+                  //   'Deleted!',
+                  //   'Your file has been deleted.',
+                  //   'success'
+                  // )
+
+                }
+              })
+            });
+
           }
         });
         instance = master_satuan.open();

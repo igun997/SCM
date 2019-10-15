@@ -51,7 +51,7 @@
    }elseif ($id == 2) {
      return "Pengajuan Diterima Direktur";
    }elseif ($id == 3) {
-     return "Pengajuan Diproses";
+     return "Pengajuan Sedang Diproses";
    }elseif ($id == 4) {
      return "Menunggu Penerimaan oleh Gudang";
    }elseif ($id == 5) {
