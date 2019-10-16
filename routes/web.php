@@ -100,6 +100,7 @@ Route::group(['middleware' => ['pengadaan']], function () {
   Route::get('/api/pengadaan/pengandaan_bahanabaku_read/{id?}',"ApiControl@pengandaan_bahanabaku_read")->name("pengadaan.api.pengandaan_bahanabaku_read");
   Route::post('/api/pengadaan/pengandaan_bahanabaku_insert',"ApiControl@pengandaan_bahanabaku_insert")->name("pengadaan.api.pengandaan_bahanabaku_insert");
   Route::get('/api/pengadaan/pengandaan_bahanabaku_batal/{id?}',"ApiControl@pengandaan_bahanabaku_batal")->name("pengadaan.api.pengandaan_bahanabaku_batal");
+  Route::get('/api/pengadaan/pengandaan_bahanabaku_selesai/{id?}',"ApiControl@pengandaan_bahanabaku_selesai")->name("pengadaan.api.pengandaan_bahanabaku_selesai");
   Route::post('/api/pengadaan/pengandaan_bahanabaku_proses/{id?}',"ApiControl@pengandaan_bahanabaku_proses")->name("pengadaan.api.pengandaan_bahanabaku_proses");
   //Hasilkan Kode Pengadaan Bahan Baku
   Route::get('/api/pengadaan/kode_pbb',"ApiControl@kode_pbb")->name("pengadaan.api.kode_pbb");

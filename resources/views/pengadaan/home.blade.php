@@ -1655,7 +1655,32 @@
                 }
               })
             });
-
+            content.find("#pbahanbaku_table").on('click','.selesaikan',function(e){
+              id = $(this).data("id");
+              console.log("ID = "+id);
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Transaksi selesai dan seluruh kegiatan yang berkaitan dengan transaksi ini akan ditutup",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.get("{{route("pengadaan.api.pengandaan_bahanabaku_selesai")}}/"+$(this).data("id"),function(rs){
+                    if (rs.status == 1) {
+                      new jBox('Notice', {content: 'Pengadaan Sukses Diselesaikan',showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: 'Gagal Menyelesaikan Pengadaan',showCountdown:true, color: 'red'});
+                    }
+                    mastersatuan_table.ajax.reload();
+                  }).fail(function(){
+                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
           }
         });
         instance = master_satuan.open();

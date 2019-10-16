@@ -629,6 +629,15 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pengandaan_bahanabaku_selesai($id='')
+    {
+      $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function pengandaan_bahanabaku_proses(Request $req,$id)
     {
       $a = $req->input("perkiraan_tiba");
