@@ -137,7 +137,7 @@ class ApiControl extends Controller
           }
         };
         foreach ($getAll as $key => $value) {
-          $data["data"][] = [($key+1),$value->id_pengadaan_bb,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),($value->tgl_perubahan == null)?null:date("d-m-Y",strtotime($value->tgl_perubahan)),$btnCreate($value->id_pengadaan_bb,$value->status_pengadaan)];
+          $data["data"][] = [($key+1),$value->id_pengadaan_bb,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),date("d-m-Y",strtotime($value->tgl_register)),$btnCreate($value->id_pengadaan_bb,$value->status_pengadaan)];
         }
         return response()->json($data);
       }
