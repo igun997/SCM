@@ -693,6 +693,9 @@ class ApiControl extends Controller
             <button class="dropdown-item retur" data-id="'.$id.'"  type="button">
             Retur Barang
             </button>
+            <button class="dropdown-item selesaikan" data-id="'.$id.'"  type="button">
+            Selesaikan Transaksi
+            </button>
             </div>';
           }else {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
@@ -774,6 +777,93 @@ class ApiControl extends Controller
         }
       }else {
         return response()->json(["status"=>0,"msg"=>"Pengadaan Bahan Baku Gagal Di Ajukan"]);
+      }
+    }
+    //Gudang
+    public function pbahanabakugudang_read($id = null)
+    {
+      if ($id != null) {
+        $whereGet = PengadaanBb::where(["id_pengadaan_bb"=>$id]);
+        if ($whereGet->count() > 0) {
+          $row = $whereGet->first();
+          $row->master_suplier;
+          foreach ($row->pengadaan__bb_details as $key => $value) {
+            $value->master_bb;
+            $value->master_bb->master_satuan;
+          }
+          return response()->json(["status"=>1,"data"=>$row]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Not Found"]);
+        }
+      }else {
+        $getAll = PengadaanBb::orderBy("tgl_perubahan","desc")->orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $data = [];
+        $data["data"] = [];
+        $btnCreate = function($id,$status,$perkiraan,$ptiba=null){
+          if ($status == 4) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item terima_barang" data-id="'.$id.'" data-tiba="'.$ptiba.'"  type="button">
+            Konfirmasi Penerimaan
+            </button>
+            </div>';
+          }elseif ($status == 3 && ($perkiraan)) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item terima_barang" data-id="'.$id.'" data-tiba="'.$ptiba.'"  type="button">
+            Konfirmasi Penerimaan
+            </button>
+            </div>';
+          }else {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            </div>';
+          }
+        };
+        foreach ($getAll as $key => $value) {
+          $data["data"][] = [($key+1),$value->id_pengadaan_bb,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),konfirmasi($value->konfirmasi_gudang),$value->catatan_gudang,$value->catatan_direktur,date("d-m-Y",strtotime($value->tgl_register)),($value->tgl_perubahan == null)?null:date("d-m-Y",strtotime($value->tgl_perubahan)),$btnCreate($value->id_pengadaan_bb,$value->status_pengadaan,(time() >= strtotime($value->perkiraan_tiba)),$value->perkiraan_tiba)];
+        }
+        return response()->json($data);
+      }
+    }
+    public function pbahanbakugudang_konfirmasi(Request $req, $id)
+    {
+      $find = PengadaanBb::where(["id_pengadaan_bb"=>$id]);
+      $dpost = $req->all();
+      if ($find->count() > 0) {
+        $up = $find->update($dpost);
+        if ($up) {
+          $cariBarang = PengadaanBb::where(["id_pengadaan_bb"=>$id])->first();
+          $list = $cariBarang->pengadaan__bb_details;
+          $fail = [];
+          foreach ($list as $key => $value) {
+            $find = MasterBb::where(["id_bb"=>$value->id_bb]);
+            $r = $find->first();
+            if ($find->count() > 0) {
+              $now = ($r->stok + $value->jumlah);
+              $up = $find->update(["stok"=>$now]);
+              if (!$up) {
+                $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Stok Barang Tidak Terupdate"];
+              }
+            }else {
+              $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
+            }
+          }
+          return response()->json(["status"=>1,"msg"=>"Konfirmasi Barang Berhasil","fail"=>$fail]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Data Tidak Tersimpan"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Pengadaan Barang Tidak Ditemukan"]);
       }
     }
 }

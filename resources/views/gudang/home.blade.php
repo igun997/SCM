@@ -120,7 +120,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker) {
     $(document).ready(function(){
       //Chart
       // Init NewPlugin
@@ -1171,306 +1171,6 @@
             content = this.content;
             mastersatuan_table = content.find("#pbahanbaku_table").DataTable({
               ajax:"{{route("gudang.api.pbahanabaku_read")}}",
-              dom: 'Bfrtip',
-              buttons: [
-                  {
-                      className: "btn btn-success",
-                      text: 'Ajukan Pengadaan Bahan Baku',
-                      action: function ( e, dt, node, config ) {
-                        tabel_pengajuan = table(["Kode","Nama","Stok","Stok Minimum","Harga"],[],"pbahanbakuajukan_table");
-                        buildform = [
-                          "<div class='row'>",
-                          "<div class='col-md-12'>",
-                          "<h4>Data Bahan</h4>",
-                          "<div class='form-group'>",
-                          "<button class='btn btn-primary m-2' id='cek_prioritas'>Pilih Pengajuan Diprioritaskan</button>",
-                          "<button class='btn btn-primary m-2' id='reset_pilihan'>Reset Semua Pilihan</button>",
-                          "</div>",
-                          tabel_pengajuan,
-                          "</div>",
-                          "<div class='col-md-12'>",
-                          "<div class='form-group'>",
-                          "<button class='btn btn-primary' id='ajukan'>Ajukan Pengadaan</button>",
-                          "</div>",
-                          "</div>",
-                          "</div>",
-                        ];
-                        var set = new jBox('Modal', {
-                          title: 'Pengajuan Pengadaan Bahan Baku',
-                          overlay: false,
-                          width: '100%',
-                          responsiveWidth:true,
-                          height: 'auto',
-                          createOnInit: true,
-                          content: buildform.join(""),
-                          draggable: false,
-                          adjustPosition: true,
-                          adjustTracker: true,
-                          repositionOnOpen: false,
-                          offset: {
-                            x: 0,
-                            y: 0
-                          },
-                          repositionOnContent: false,
-                          onCloseComplete:function(){
-                            console.log("Destruct Table");
-                            set.destroy();
-                          },
-                          onCreated:function(rs){
-                            content = this.content;
-                            dform_bahan = [];
-                            dform_gudang = [];
-                            content.find("#pbahanbakuajukan_table").DataTable({
-                              ajax:"{{route("gudang.api.pengandaan_bahanabaku_read")}}",
-                                "columns": [
-                                  {"orderDataType": "dom-checkbox"},
-                                  null,
-                                  null,
-                                  null,
-                                  null,
-                                ],
-                                order:[[0,"desc"]]
-                            });
-                            content.find("#cek_prioritas").on('click', function(event) {
-                              event.preventDefault();
-                              $.each(content.find("#pbahanbakuajukan_table .listcheck"),function(index, el) {
-                                if ($(el).data("priority") == 1) {
-                                  $(el).attr('checked', true);
-                                }
-                              });
-                              new jBox('Notice', {content: 'Pengajuan Bahan Prioritas Telah Dipilih',showCountdown:true, color: 'blue'});
-                            });
-                            content.find("#reset_pilihan").on('click', function(event) {
-                              event.preventDefault();
-                              $.each(content.find("#pbahanbakuajukan_table .listcheck"),function(index, el) {
-                                $(el).removeAttr('checked');
-                              });
-                              new jBox('Notice', {content: 'Pilihan Telah Di Reset',showCountdown:true, color: 'blue'});
-                            });
-                            content.find("#ajukan").on('click',function(event) {
-                              event.preventDefault();
-                              dform_bahan = [];
-                              var index_col = 0;
-                              $.each(content.find("#pbahanbakuajukan_table .listcheck"),function(index, el) {
-                                obj = $(el);
-                                cek = obj.is(':checked');
-                                if (cek) {
-                                  dform_bahan.push({id:obj.data("id"),nama:obj.data("nama"),stok:obj.data("stok"),harga:obj.data("harga")});
-                                }
-                              });
-                              var tabel_ajukanlah = null;
-                              frm_a = [
-                                [
-                                  {
-                                    label:"Kode Pengajuan",
-                                    type:"readonly",
-                                    name:"id_gudang_bb",
-                                    id:"id_gudang_bb",
-                                  },{
-                                    label:"Suplier",
-                                    type:"text",
-                                    name:"",
-                                    id:"cari",
-                                    value:"Cari Suplier"
-                                  },{
-                                    label:"",
-                                    type:"select2",
-                                    name:"id_suplier",
-                                    id:"id_suplier",
-                                  },{
-                                    label:"Keterangan Suplier",
-                                    type:"textarea",
-                                    name:"",
-                                    id:"keterangan_suplier",
-                                  },{
-                                    label:"Catatan Pengadaan",
-                                    type:"textarea",
-                                    name:"catatan_gudang",
-                                    id:"catatan_gudang",
-                                  }
-                                ]
-                              ];
-                              btn_a = {name:"Ajukan Pengadaan",class:"success",type:"submit"};
-                              dta = [];
-                              for (var i = 0; i < dform_bahan.length; i++) {
-                                input = "<input class='form-control jml' data-id='"+dform_bahan[i].id+"' data-harga='"+dform_bahan[i].harga+"' placeholder='Jumlah Pemesanan'>";
-                                dta[i] = [dform_bahan[i].id,dform_bahan[i].nama,dform_bahan[i].stok,dform_bahan[i].harga,input];
-                              }
-                              console.log(dta);
-                              tabel_pengajua_a = table(["Kode Bahan","Nama Bahan","Stok","Harga","Jumlah"],dta,"ajukanwe");
-                              form_ajukanlah = builder(frm_a,btn_a,"ajukanatuh",true,12);
-                              var html_ajukanlah = [
-                                "<div class='row'>",
-                                "<div class='col-md-12'>",
-                                "<h4>Data Pengadaan</h4>",
-                                tabel_pengajua_a,
-                                "<h4>Total : <span id='total'>0</span></h4>",
-                                "<hr>",
-                                "</div>",
-                                "<div class='col-md-12'>",
-                                form_ajukanlah,
-                                "</div>",
-                                "</div>",
-                              ];
-                              var ajukanlah = new jBox('Modal', {
-                                title: 'Formulir Pengajuan Bahan Baku',
-                                overlay: false,
-                                width: '50%',
-                                responsiveWidth:true,
-                                height: 'auto',
-                                createOnInit: true,
-                                content: html_ajukanlah.join(""),
-                                draggable: false,
-                                adjustPosition: true,
-                                adjustTracker: true,
-                                repositionOnOpen: false,
-                                offset: {
-                                  x: 0,
-                                  y: 0
-                                },
-                                repositionOnContent: false,
-                                onCloseComplete:function(){
-                                  console.log("Destruct Table");
-                                  tabel_ajukanlah.destroy();
-                                },
-                                onCreated:function(rs){
-                                  ajukankontent = this.content;
-                                  ajukankontent.find("#keterangan_suplier").attr("readonly",true);
-                                  $.get("{{route("gudang.api.kode_pbb")}}",function(r){
-                                    ajukankontent.find("#id_gudang_bb").val(r.kode);
-                                  });
-                                  $.get("{{route("gudang.api.master_suplier_read")}}/all",function(rs){
-                                    st12 = []
-                                    for (var i = 0; i < rs.length; i++) {
-                                      st12[i] = {value:rs[i].id_suplier,text:rs[i].id_suplier+" - "+rs[i].nama_suplier};
-                                    }
-                                    selectbuilder(st12,ajukankontent.find("#id_suplier"));
-                                    ajukankontent.find("#id_suplier").trigger('change');
-                                  });
-                                  ajukankontent.find("#cari").on('change', function(event) {
-                                    event.preventDefault();
-                                    console.log("Keypresed");
-                                    ajukankontent.find("#id_suplier").html("");
-                                    console.log($("#cari").val());
-                                    $.get("{{route("gudang.api.master_suplier_read")}}/all",function(rs){
-                                      st12 = []
-                                      for (var i = 0; i < rs.length; i++) {
-                                        st12[i] = {value:rs[i].id_suplier,text:rs[i].id_suplier+" - "+rs[i].nama_suplier};
-                                      }
-                                      selectbuilder(st12,ajukankontent.find("#id_suplier"));
-                                      ajukankontent.find("#id_suplier").trigger('change');
-                                    }).fail(function(){
-                                      new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
-                                    });
-                                  });
-                                  ajukankontent.find("#id_suplier").on('change',function(event) {
-                                    event.preventDefault();
-                                    id = $(this).val();
-                                    $.get("{{route("gudang.api.master_suplier_read")}}/"+id,function(rs){
-                                      ajukankontent.find("#keterangan_suplier").val(rs.ket);
-                                    });
-                                  });
-                                  tabel_ajukanlah = ajukankontent.find("#ajukanwe").DataTable({
-
-                                  });
-                                  ajukankontent.find("#ajukanwe .jml").on('change', function(event) {
-                                    event.preventDefault();
-                                    uTotal = ajukankontent.find("#total").html();
-                                    uHarga = $(this).data("harga");
-                                    uJumlah = $(this).val();
-                                    jumlah = parseFloat(uJumlah);
-                                    harga = parseFloat(uHarga);
-                                    total = parseFloat(uTotal);
-                                    console.log("Total = "+total);
-                                    ajukankontent.find("#total").html(total+(harga*uJumlah));
-                                  });
-                                  ajukankontent.find("#ajukanatuh").on('submit',  function(event) {
-                                    event.preventDefault();
-                                    cekzero = true;
-                                    dform_gudang = [];
-                                    dform_bahan2 = [];
-                                    dform_harga = [];
-                                    $.each(ajukankontent.find("#ajukanwe .jml"),function(index, el) {
-                                      obj = $(el);
-                                      if (obj.val() == 0 || obj.val() == "" || obj.val() == undefined) {
-                                        cekzero = false;
-                                        return false;
-                                      }else {
-                                        dform_bahan2[index] = {value:obj.val(),name:"jumlah["+obj.data("id")+"]"};
-                                        dform_harga[index] = {value:obj.data('harga'),name:"harga["+obj.data("id")+"]"};
-                                      }
-
-                                    });
-                                    if (cekzero == false) {
-                                      new jBox('Notice', {content: 'Tolong isi jumlah gudang bahan lebih dari 0',showCountdown:true, color: 'red'});
-                                    }else {
-                                      dform_gudang = $(this).serializeArray();
-                                      console.log("Data Terkumpul");
-                                      console.log(dform_bahan2);
-                                      console.log(dform_gudang);
-                                      console.log(dform_harga);
-                                      join = [];
-                                      $.each(dform_bahan2,function(index, el) {
-                                        join[join.length] = el;
-                                      });
-                                      $.each(dform_gudang,function(index, el) {
-                                        join[join.length] = el;
-                                      });
-                                      $.each(dform_harga,function(index, el) {
-                                        join[join.length] = el;
-                                      });
-                                      on();
-                                      $.ajax({
-                                        url: '{{route("gudang.api.pengandaan_bahanabaku_insert")}}',
-                                        type: 'post',
-                                        dataType: 'json',
-                                        data: join
-                                      })
-                                      .done(function(rs) {
-                                        console.log(rs);
-                                        if (rs.status == 1) {
-                                          new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'green'});
-                                          ajukanlah.close();
-                                          set.close();
-                                          mastersatuan_table.ajax.reload();
-                                        }else {
-                                          new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'red'});
-                                          ajukanlah.close();
-                                          set.close();
-                                          mastersatuan_table.ajax.reload();
-                                        }
-                                      })
-                                      .fail(function(rs) {
-                                        var msg = "";
-                                        $.each(rs.responseJSON.errors,function(index,item){
-                                          msg += item[0]+"<br>";
-                                        });
-                                        if (rs.responseJSON.errors == undefined) {
-                                          var msg = "Kehilangan Komunikasi Dengan Server"
-                                        }
-                                        Swal.fire({
-                                          type: 'error',
-                                          title: 'Oops...',
-                                          html: msg,
-                                          footer: '<a href>Laporkan Error</a>'
-                                        })
-                                      })
-                                      .always(function() {
-                                        off();
-                                      });
-
-                                    }
-                                  });
-                                }
-                              });
-                              ajukanlah.open();
-                            });
-                          }
-                        });
-                        instance1 = set.open();
-                      }
-                    }
-                  ]
             });
             content.find("#pbahanbaku_table").on('click','.rincian',function(event) {
               event.preventDefault();
@@ -1615,29 +1315,97 @@
               });
 
             });
-            content.find("#pbahanbaku_table").on('click', '.batalkan', function(event) {
+            content.find("#pbahanbaku_table").on('click', '.terima_barang', function(event) {
               event.preventDefault();
               console.log($(this).data("id"));
+              var id = $(this).data("id");
+              var tibalah = $(this).data("tiba");
+              html = [
+                "<form class=form-horizontal method=post onsubmit=return false >",
+                "<div class=form-group>",
+                "<label>Tanggal Penerimaan *</label>",
+                "<input class=form-control name=tgl_penerimaan id=datepicker value={{date("Y-m-d")}} required />",
+                "</div>",
+                "</form>"
+              ]
               Swal.fire({
-                title: 'Apakah Anda Yakin ? ',
-                text: "Data Sebelumnya tidak bisa di kembalikan",
+                title: 'Isilah Bidang Yang Diperlukan',
                 type: 'warning',
+                html: html.join(""),
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya'
+                confirmButtonText: 'Konfirmasi',
+                onOpen: function() {
+                    var date_start = tibalah;
+                    console.log("Waktu Restrict = "+date_start);
+                    $('#datepicker').datepicker({
+                      startDate: date_start,
+                      format:"yyyy-m-d"
+                    });
+                },
               }).then((result) => {
                 if (result.value) {
-                  $.get("{{route("gudang.api.pengandaan_bahanabaku_batal")}}/"+$(this).data("id"),function(rs){
-                    if (rs.status == 1) {
-                      new jBox('Notice', {content: 'Pengadaan Sukses Dibatalkan',showCountdown:true, color: 'green'});
-                    }else {
-                      new jBox('Notice', {content: 'Gagal Membatalkan Pengadaan',showCountdown:true, color: 'red'});
+                  date = $("#datepicker").val();
+                  console.log("Date Assigned : "+date);
+                  Swal.fire({
+                    title:"Harap Diperhatikan",
+                    type:"warning",
+                    html:"<p align=center style=color:red>Penerimaan Barang Harus Memiliki Kuantitas Yang Sama Dengan Rincian Pengadaan ! Tidak ada penerimaan sebagian terkecuali ada kondisi khusus, silahkan isi catatan kondisi khusus di bawah ini</p><div class=form-group><textarea class=form-control id=alasan/></textarea>",
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya Saya Mengerti',
+                  }).then((res)=>{
+                    if (res.value) {
+                      var postdata = {tgl_diterima:date,status_pengadaan:6,dibaca_direktur:0,dibaca_pengadaan:0,konfirmasi_gudang:1,catatan_gudang:$("#alasan").val(),tgl_perubahan:"{{date("Y-m-d")}}"};
+                      on();
+                      $.post("{{route("gudang.api.pbahanabaku_konfirmasi")}}/"+id,postdata,function(r){
+                        if (r.status == 1) {
+                          new jBox('Notice', {content: r.msg,showCountdown:true, color: 'green'});
+                          var msg = "";
+                          $.each(r.fail,function(index,item){
+                            msg += item.nama+" Dengan ID "+item.id+" "+item.msg+"<br>";
+                          });
+                          if (r.fail.length > 0 || r.fail != null) {
+                            Swal.fire({
+                              type: 'error',
+                              title: 'Beberapa Barang Bermasalah . . ',
+                              html: msg,
+                              footer: '<a href>Laporkan Error</a>'
+                            })
+                          }
+                          off();
+                          mastersatuan_table.ajax.reload();
+                        }else {
+                          new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
+                          off();
+                          mastersatuan_table.ajax.reload();
+                        }
+                      }).fail(function(rs){
+                        off();
+                        var msg = "";
+                        $.each(rs.responseJSON.errors,function(index,item){
+                          msg += item[0]+"<br>";
+                        });
+                        if (rs.responseJSON.errors == undefined) {
+                          var msg = "Kehilangan Komunikasi Dengan Server"
+                        }
+                        Swal.fire({
+                          type: 'error',
+                          title: 'Oops...',
+                          html: msg,
+                          footer: '<a href>Laporkan Error</a>'
+                        })
+                      });
                     }
-                    mastersatuan_table.ajax.reload();
-                  }).fail(function(){
-                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
                   });
+                  // Swal.fire(
+                  //   'Deleted!',
+                  //   'Your file has been deleted.',
+                  //   'success'
+                  // )
+
                 }
               })
             });

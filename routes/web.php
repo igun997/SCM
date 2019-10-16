@@ -129,7 +129,8 @@ Route::group(['middleware' => ['gudang']], function () {
   Route::get('/api/gudang/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("gudang.api.master_komposisi_hapus");
 
   //gudang Bahan Baku
-  Route::get('/api/gudang/pbahanabaku_read/{id?}',"ApiControl@pbahanabaku_read")->name("gudang.api.pbahanabaku_read");
+  Route::get('/api/gudang/pbahanabaku_read/{id?}',"ApiControl@pbahanabakugudang_read")->name("gudang.api.pbahanabaku_read");
+  Route::post('/api/gudang/pbahanbakugudang_konfirmasi/{id?}',"ApiControl@pbahanbakugudang_konfirmasi")->name("gudang.api.pbahanabaku_konfirmasi");
   Route::get('/api/gudang/pengandaan_bahanabaku_read/{id?}',"ApiControl@pengandaan_bahanabaku_read")->name("gudang.api.pengandaan_bahanabaku_read");
   Route::post('/api/gudang/pengandaan_bahanabaku_insert',"ApiControl@pengandaan_bahanabaku_insert")->name("gudang.api.pengandaan_bahanabaku_insert");
   Route::get('/api/gudang/pengandaan_bahanabaku_batal/{id?}',"ApiControl@pengandaan_bahanabaku_batal")->name("gudang.api.pengandaan_bahanabaku_batal");
