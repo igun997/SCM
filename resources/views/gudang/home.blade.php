@@ -1351,14 +1351,17 @@
                   Swal.fire({
                     title:"Harap Diperhatikan",
                     type:"warning",
-                    html:"<p align=center style=color:red>Penerimaan Barang Harus Memiliki Kuantitas Yang Sama Dengan Rincian Pengadaan ! Tidak ada penerimaan sebagian terkecuali ada kondisi khusus, silahkan isi catatan kondisi khusus di bawah ini</p><div class=form-group><textarea class=form-control id=alasan/></textarea>",
+                    html:"<p align=center style=color:red>Penerimaan Barang Harus Memiliki Kuantitas Yang Sama Dengan Rincian Pengadaan ! Tidak ada penerimaan sebagian terkecuali ada kondisi khusus, silahkan isi catatan kondisi khusus di bawah ini</p><div class=form-group><textarea class=form-control id=alasan ></textarea>",
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: 'Ya Saya Mengerti',
                   }).then((res)=>{
                     if (res.value) {
-                      var postdata = {tgl_diterima:date,status_pengadaan:6,dibaca_direktur:0,dibaca_pengadaan:0,konfirmasi_gudang:1,catatan_gudang:$("#alasan").val(),tgl_perubahan:"{{date("Y-m-d")}}"};
+                      catatan = $("#alasan").val();
+                      console.log("Catatan "+catatan);
+                      var postdata = {tgl_diterima:date,status_pengadaan:6,dibaca_direktur:0,dibaca_pengadaan:0,konfirmasi_gudang:1,catatan_gudang:catatan,tgl_perubahan:"{{date("Y-m-d")}}"};
+                      console.log(postdata);
                       on();
                       $.post("{{route("gudang.api.pbahanabaku_konfirmasi")}}/"+id,postdata,function(r){
                         if (r.status == 1) {
@@ -1367,7 +1370,7 @@
                           $.each(r.fail,function(index,item){
                             msg += item.nama+" Dengan ID "+item.id+" "+item.msg+"<br>";
                           });
-                          if (r.fail.length > 0 || r.fail != null) {
+                          if (r.fail.length > 0) {
                             Swal.fire({
                               type: 'error',
                               title: 'Beberapa Barang Bermasalah . . ',
