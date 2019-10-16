@@ -1257,7 +1257,7 @@
                             },{
                               label:"Catatan Pengadaan",
                               type:"textarea",
-                              value:rs.data.catatan_gudang
+                              value:rs.data.catatan_pengadaan
                             },{
                               label:"Catatan Direktur",
                               type:"textarea",
