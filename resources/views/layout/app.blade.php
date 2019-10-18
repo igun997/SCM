@@ -27,6 +27,10 @@
       .table thead th, .text-wrap table thead th {
         white-space: nowrap !important;
       }
+      .jBox-content{
+        max-height: 500px !important;
+        overflow-y: auto;
+      }
     </style>
     @stack("css")
     <script src="{{url("assets/js/require.min.js")}}"></script>
