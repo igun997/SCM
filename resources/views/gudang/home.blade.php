@@ -1185,7 +1185,7 @@
               .done(function(rs) {
                 if (rs.status == 1) {
                   modal = new jBox('Modal', {
-                    title: 'Rincian Pengadaan ['+rs.data.id_gudang_bb+']',
+                    title: 'Rincian Pengadaan ['+rs.data.id_pengadaan_bb+']',
                     overlay: false,
                     width: '100%',
                     responsiveWidth:true,
@@ -1215,7 +1215,7 @@
                           {
                             label:"Kode Pengadaaan",
                             type:"readonly",
-                            value:rs.data.id_gudang_bb
+                            value:rs.data.id_pengadaan_bb
                           },{
                             label:"Suplier",
                             type:"readonly",
