@@ -66,6 +66,22 @@
      return "Tidak Diketahui";
    }
  }
+ public function status_retur($id)
+ {
+   if ($id == 0) {
+     return "Menunggu Konfirmasi Pengadaan";
+   }elseif ($id == 1) {
+     return "Ditolak Oleh Bag. Pengadaan";
+   }elseif ($id == 2) {
+     return "Menunggu Konfirmasi Direktur";
+   }elseif ($id == 3) {
+     return "Ditolak Oleh Bag. Direktur";
+   }elseif ($id == 4) {
+     return "Selesai";
+   }else {
+     return "Tidak Diketahui";
+   }
+ }
 function konfirmasi($id)
  {
    if ($id == 0) {

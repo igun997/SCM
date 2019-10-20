@@ -176,6 +176,22 @@
           text:"Terpakai"
         }
     ];
+    public function status_retur($id)
+    {
+      if ($id == 0) {
+        return "Menunggu Konfirmasi Pengadaan";
+      }else if ($id == 1) {
+        return "Ditolak Oleh Bag. Pengadaan";
+      }else if ($id == 2) {
+        return "Menunggu Konfirmasi Direktur";
+      }else if ($id == 3) {
+        return "Ditolak Oleh Bag. Direktur";
+      }else if ($id == 4) {
+        return "Selesai";
+      }else {
+        return "Tidak Diketahui";
+      }
+    }
     function status_pengadaan($id)
     {
       if ($id == 0) {
