@@ -176,7 +176,7 @@
           text:"Terpakai"
         }
     ];
-    public function status_retur($id)
+    function status_retur($id)
     {
       if ($id == 0) {
         return "Menunggu Konfirmasi Pengadaan";
