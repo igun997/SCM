@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,PengdaanProduk,PengdaanProdukDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,PengdaanProduk,PengdaanProdukDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail};
 class ApiControl extends Controller
 {
     //Public API
@@ -110,7 +110,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0,"msg"=>"Not Found"]);
         }
       }else {
-        $getAll = PengadaanBb::orderBy("tgl_perubahan","desc")->orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $getAll = PengadaanBb::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
         $data = [];
         $data["data"] = [];
         $btnCreate = function($id,$status){
@@ -529,8 +529,6 @@ class ApiControl extends Controller
         return response()->json(["status"=>0],500);
       }
     }
-
-
     public function pengguna_read($id = null)
     {
       if ($id != null) {
@@ -619,7 +617,7 @@ class ApiControl extends Controller
         return response()->json(["status"=>0],500);
       }
     }
-//Pengadaan
+    //Pengadaan
     public function pengandaan_bahanabaku_batal($id='')
     {
       $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>8]);
@@ -669,7 +667,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0,"msg"=>"Not Found"]);
         }
       }else {
-        $getAll = PengadaanBb::orderBy("tgl_perubahan","desc")->orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $getAll = PengadaanBb::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
         $data = [];
         $data["data"] = [];
         $btnCreate = function($id,$status){
@@ -805,7 +803,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0,"msg"=>"Not Found"]);
         }
       }else {
-        $getAll = PengadaanBb::orderBy("tgl_perubahan","desc")->orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $getAll = PengadaanBb::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
         $data = [];
         $data["data"] = [];
         $btnCreate = function($id,$status,$perkiraan,$ptiba=null){
@@ -827,6 +825,16 @@ class ApiControl extends Controller
             </button>
             <button class="dropdown-item terima_barang" data-id="'.$id.'" data-tiba="'.$ptiba.'"  type="button">
             Konfirmasi Penerimaan
+            </button>
+            </div>';
+          }elseif ($status == 6) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item retur" data-id="'.$id.'"   type="button">
+            Retur Barang
             </button>
             </div>';
           }else {
@@ -874,5 +882,133 @@ class ApiControl extends Controller
       }else {
         return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Pengadaan Barang Tidak Ditemukan"]);
       }
+    }
+    public function pbahanbakugudangretur_check($id)
+    {
+      $find = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id]);
+      if ($find->count() > 0) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pbahanbakugudangretur_read($id)
+    {
+      $btn = function($id){
+        return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+        <div class="dropdown-menu dropdown-menu-right">
+        <button class="dropdown-item edit_item" data-id="'.$id.'"  type="button">
+        Edit
+        </button>
+        <button class="dropdown-item hapus_item" data-id="'.$id.'"  type="button">
+          Hapus
+        </button>
+        </div>';
+      };
+      $g = PengadaanBbReturDetail::where(["id_pengadaan_bb_retur"=>$id]);
+      $data = [];
+      $data["data"] = [];
+      foreach ($g->get() as $key => $value) {
+        $keDetail = $value->pengadaan_bb_detail;
+        $keBarang = $keDetail->master_bb;
+        $data["data"][] = [($key+1),"[".$keBarang->id_bb."]".$keBarang->nama,$keDetail->jumlah,$value->total_retur,$btn($value->id_pengadaan_bb_retur_detail)];
+      }
+      return response()->json($data);
+    }
+    public function pbahanbakugudangretur_show($id)
+    {
+      $x = PengadaanBbReturDetail::where(["id_pengadaan_bb_retur_detail"=>$id]);
+      if ($x->count() > 0) {
+        $row = $x->first();
+        $row->pengadaan_bb_retur;
+        $row->pengadaan_bb_detail;
+        $row->pengadaan_bb_detail->master_bb;
+        return  response()->json(["status"=>1,"data"=>$row]);
+      }else {
+        return  response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
+      }
+    }
+    public function pbahanbakugudangretur_detailretur($id)
+    {
+      $find = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id]);
+      if ($find->count() > 0) {
+        $data = $find->first();
+        $data->pengadaan_bb;
+        $data->pengadaan__bb_retur_details;
+        foreach ($data->pengadaan__bb_retur_details as $key => &$value) {
+          $value->pengadaan_bb_detail;
+          $value->pengadaan_bb_detail->master_bb;
+        }
+        return response()->json(["status"=>1,"data"=>$data]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pbahanbakugudangretur_edit(Request $req,$id)
+    {
+      $find = PengadaanBbReturDetail::where(["id_pengadaan_bb_retur_detail"=>$id]);
+      if ($find->count() > 0) {
+        $up = $find->update($req->all());
+        if ($up) {
+          return response()->json(["status"=>1,"msg"=>"Data Gagal Di Ubah"]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Data Gagal Di Ubah"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
+      }
+    }
+    public function pbahanbakugudangretur_poread($id)
+    {
+      $find = PengadaanBb::where(["id_pengadaan_bb"=>$id]);
+      $cek = function($any){
+        $check = '<div class="custom-controls-stacked">
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input listcheck" data-nama="'.$any["nama"].'" data-id="'.$any["id"].'" data-jumlah="'.$any["jumlah"].'" data-kode_barang="'.$any["id_barang"].'">
+                          <span class="custom-control-label">'.$any["id_barang"].'</span>
+                        </label>
+                  </div>';
+        return $check;
+      };
+      if ($find->count() > 0) {
+        $t = $find->first();
+        $rs = $t->pengadaan__bb_details;
+        $data = [];
+        $data["data"] = [];
+        foreach ($rs as $key => $value) {
+          $data["data"][] = [$cek(["id"=>$value->id_pbb_detail,"id_barang"=>$value->master_bb->id_bb,"nama"=>$value->master_bb->nama,"jumlah"=>$value->jumlah]),$value->master_bb->nama,$value->jumlah];
+        }
+        return response()->json($data);
+      }else {
+        return response()->json(["data"=>[]]);
+      }
+    }
+    public function kode_pbahanbakugudangretur()
+    {
+      $kode = (PengadaanBbRetur::count()+1);
+      $kodekan = "PBBR".date("dmy")."-".$kode;
+      return $kodekan;
+    }
+    public function pbahanbakugudangretur_ajukan(Request $req,$id)
+    {
+      $data = $req->all();
+      // return $detail;
+      $dataSet = ["id_pengadaan_bb_retur"=>$data["id_pengadaan_bb_retur"],"tanggal_retur"=>$data["tanggal_retur"],"id_pengadaan_bb"=>$id];
+      $createRetur = PengadaanBbRetur::create($dataSet);
+      if ($createRetur) {
+        $detail = [];
+        foreach ($data["id_pbb"] as $key => $value) {
+          $detail[] = ["id_pengadaan_bb_detail"=>$value,"id_pengadaan_bb_retur"=>$data["id_pengadaan_bb_retur"],"total_retur"=>$data["total_retur"][$key],"catatan_retur"=>$data["rincian_retur"][$key]];
+        }
+        $createDetail = PengadaanBbReturDetail::insert($detail);
+        if ($createDetail) {
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+      // return response()->json(["status"=>1]);
     }
 }
