@@ -1604,7 +1604,7 @@
                           "</div>",
                           "<div class=form-group>",
                           "<label>Status Retur</label>",
-                          "<input class=form-control value="+((rs.data.status_retur)?"Selesai":"Belum Selesai")+" disabled/>",
+                          "<input class=form-control value='"+(status_retur(rs.data.status_retur))+"' disabled/>",
                           "</div>",
                           "</div>",
                           "<div class=col-md-6>",

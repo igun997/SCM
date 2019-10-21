@@ -179,7 +179,7 @@
     function status_retur($id)
     {
       if ($id == 0) {
-        return "Menunggu Konfirmasi Pengadaan";
+        return "Menunggu Konfirmasi Bag. Pengadaan";
       }else if ($id == 1) {
         return "Ditolak Oleh Bag. Pengadaan";
       }else if ($id == 2) {

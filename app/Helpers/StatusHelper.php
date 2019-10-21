@@ -69,7 +69,7 @@
  function status_retur($id)
  {
    if ($id == 0) {
-     return "Menunggu Konfirmasi Pengadaan";
+     return "Menunggu Konfirmasi Bag. Pengadaan";
    }elseif ($id == 1) {
      return "Ditolak Oleh Bag. Pengadaan";
    }elseif ($id == 2) {
