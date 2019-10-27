@@ -127,6 +127,16 @@ class ApiControl extends Controller
             Tolak Pengadaan
             </button>
             </div>';
+          }elseif ($status == 6) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item retur" data-id="'.$id.'"  type="button">
+            Retur Barang
+            </button>
+            </div>';
           }else {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
             <div class="dropdown-menu dropdown-menu-right">
@@ -1039,13 +1049,30 @@ class ApiControl extends Controller
       $cek = PengadaanBbRetur::where(["id_pengadaan_bb_retur"=>$id]);
       if ($cek->count() > 0) {
         // return response()->json(["status"=>0]);
-        if ($id == 1) {
+        if ($status == 1) {
           $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>4,"catatan_direktur"=>$catatan]);
+
         }else {
           $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>3,"catatan_direktur"=>$catatan]);
         }
         if ($up) {
-
+          $obj = $cek->first();
+          $list = $obj->pengadaan__bb_retur_details;
+          $fail = [];
+          foreach ($list as $key => $value) {
+            $value = $value->pengadaan_bb_detail;
+            $find = MasterBb::where(["id_bb"=>$value->id_bb]);
+            $r = $find->first();
+            if ($find->count() > 0) {
+              $now = ($r->stok - $value->jumlah);
+              $up = $find->update(["stok"=>$now]);
+              if (!$up) {
+                $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Stok Barang Tidak Terupdate"];
+              }
+            }else {
+              $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
+            }
+          }
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);

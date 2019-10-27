@@ -2601,6 +2601,184 @@
                 }
               })
             });
+            content.find("#mpengadaan_table").on('click', '.retur', function(event) {
+              event.preventDefault();
+              idpo = $(this).data("id");
+              console.log(idpo);
+              on();
+              function view(id) {
+                console.log(id);
+                $.get("{{route("private.api.pbahanbakugudangretur_detailretur")}}/"+id,function(rs){
+                  if (rs.status == 1) {
+                    compact = [];
+                    $.each(rs.data.pengadaan__bb_retur_details,function(index, el) {
+                      compact[index] = [el.pengadaan_bb_detail.master_bb.id_bb,el.pengadaan_bb_detail.master_bb.nama,el.pengadaan_bb_detail.jumlah,el.total_retur,el.catatan_retur];
+                    });
+                    tbls_init = table(["Kode Barang","Nama Barang","Total Pesan","Total Retur","Catatan Retur"],compact,"tbls_init");
+                    function confirmBtn(id) {
+                      if (id == null) {
+                        s = [
+                          "<div class=form-group>",
+                          "<button class='btn btn-success m-2' id='konfirmasi'>Konfirmasi Retur</button>",
+                          "<button class='btn btn-danger m-2' id='tolak'>Tolak Retur</button>",
+                          "</div>",
+                        ];
+                        return s.join("");
+                      }else {
+                        return null;
+                      }
+                    }
+                    html = [
+                      "<div class=row>",
+                      "<div class=col-md-6>",
+                      "<div class=form-group>",
+                      "<label>Kode Pengadaan</label>",
+                      "<input class=form-control value="+id+" disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Kode Retur Barang</label>",
+                      "<input class=form-control value="+rs.data.id_pengadaan_bb_retur+" disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Tanggal Retur</label>",
+                      "<input class=form-control value="+rs.data.tanggal_retur+" disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Tanggal Selesai</label>",
+                      "<input class=form-control value='"+((rs.data.tanggal_selesai == null)?"":rs.data.tanggal_selesai)+"' disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Status Retur</label>",
+                      "<input class=form-control value='"+(status_retur(rs.data.status_retur))+"' disabled/>",
+                      "</div>",
+                      "</div>",
+                      "<div class=col-md-6>",
+                      "<div class=form-group>",
+                      "<label>Konfirmasi Pengadaan</label>",
+                      "<input class=form-control value="+((rs.data.konfirmasi_pengadaan)?"Sudah":"Belum")+" disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Konfirmasi Direktur</label>",
+                      "<input class=form-control value="+((rs.data.konfirmasi_direktur)?"Sudah":"Belum")+" disabled/>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Catatan Direktur</label>",
+                      "<textarea id=catatan_direktur class=form-control  "+((rs.data.catatan_direktur == null)?"":"disabled placeholder='Isi Catatan Direktur'")+">"+((rs.data.catatan_direktur == null)?"":rs.data.catatan_direktur)+"</textarea>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Catatan Pengadaan</label>",
+                      "<textarea disabled id=catatan_pengadaan class=form-control >"+(rs.data.catatan_pengadaan)+"</textarea>",
+                      "</div>",
+                      confirmBtn(rs.data.catatan_direktur),
+                      "</div>",
+                      "<div class=col-md-12>",
+                      tbls_init,
+                      "</div>",
+                      "</div>",
+                    ];
+                    modal = new jBox('Modal', {
+                      title: 'Rincian Retur Barang ',
+                      overlay: false,
+                      width: '700px',
+                      responsiveWidth:true,
+                      height: '500px',
+                      createOnInit: true,
+                      content: html.join(""),
+                      draggable: false,
+                      adjustPosition: true,
+                      adjustTracker: true,
+                      repositionOnOpen: false,
+                      offset: {
+                        x: 0,
+                        y: 0
+                      },
+                      repositionOnContent: false,
+                      onCloseComplete:function(){
+                        console.log("Destruct Table");
+                        nginit.destroy();
+                      },
+                      onCreated:function(x){
+                        konten = this.content;
+                        nginit = konten.find("#tbls_init").DataTable({
+
+                        });
+                        returid = rs.data.id_pengadaan_bb_retur;
+                        function sendCatatan(catatan,status,id) {
+                          if (catatan == null || catatan == "") {
+                            new jBox('Notice', {content: 'Tolong Isi Catatan Direktur',showCountdown:true, color: 'red'});
+                          }else {
+                            on();
+                            $.get("{{route("private.api.konfirmasi_retur")}}/"+status+"/"+id+"?catatan="+catatan,function(s){
+                              if (s.status == 1) {
+                                new jBox('Notice', {content: 'Retur Berhasil di Konfirmasi',showCountdown:true, color: 'green'});
+                              }else {
+                                new jBox('Notice', {content: 'Gagal Konfirmasi Retur',showCountdown:true, color: 'red'});
+                              }
+                              off();
+                              modal.close();
+                            }).fail(function(rs){
+                              new jBox('Notice', {content: 'Komunikasi Dengan Server Terputus',showCountdown:true, color: 'red'});
+                              off();
+                            });
+                          }
+                        }
+                        konten.find("#konfirmasi").on('click', function(event) {
+                          event.preventDefault();
+                          getCatatan = konten.find("#catatan_direktur").val();
+                          console.log(returid);
+                          sendCatatan(getCatatan,1,returid);
+                        });
+                        konten.find("#tolak").on('click', function(event) {
+                          event.preventDefault();
+                          getCatatan = konten.find("#catatan_direktur").val();
+                          console.log(returid);
+                          sendCatatan(getCatatan,0,returid);
+                        });
+                      }
+                    });
+                    modal.open();
+
+                  }else {
+                    new jBox('Notice', {content: 'Data Tidak Ditemukan',showCountdown:true, color: 'red'});
+                  }
+                }).fail(function(){
+                    new jBox('Notice', {content: 'Koneksi Dengan Server Terputus',showCountdown:true, color: 'red'});
+                })
+              }
+              $.ajax({
+                url: '{{route("private.api.pbahanbakugudangretur_check")}}/'+idpo,
+                type: 'GET',
+                dataType: 'json'
+              })
+              .done(function(rs) {
+                console.log(rs);
+                if (rs.status == 1) {
+                  console.log("After Created");
+                  view(idpo);
+                }else {
+                  console.log("Before Created");
+                  new jBox('Notice', {content: 'Pengajuan Retur Harus Di Buat Oleh Bag. Gudang',showCountdown:true, color: 'red'});
+                }
+              })
+              .fail(function(rs) {
+                var msg = "";
+                $.each(rs.responseJSON.errors,function(index,item){
+                  msg += item[0]+"<br>";
+                });
+                if (rs.responseJSON.errors == undefined) {
+                  var msg = "Kehilangan Komunikasi Dengan Server"
+                }
+                Swal.fire({
+                  type: 'error',
+                  title: 'Oops...',
+                  html: msg,
+                  footer: '<a href>Laporkan Error</a>'
+                })
+              })
+              .always(function() {
+                off();
+              });
+            });
           }
         });
         instance = mpengadaan.open();
