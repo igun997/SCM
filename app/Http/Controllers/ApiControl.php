@@ -629,8 +629,10 @@ class ApiControl extends Controller
     }
     public function pengandaan_bahanabaku_selesai($id='')
     {
-      $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
-      if ($find) {
+      $cek = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id])->whereNotIn("status_retur",[0,2]);
+      // return $cek->count();
+      if ($cek->count() > 0) {
+        $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
