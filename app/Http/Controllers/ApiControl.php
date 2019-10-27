@@ -1011,4 +1011,45 @@ class ApiControl extends Controller
       }
       // return response()->json(["status"=>1]);
     }
+    public function pbahanbakupengadaan_konfirmasi(Request $req,$status,$id)
+    {
+      $catatan = $req->input("catatan");
+      $cek = PengadaanBbRetur::where(["id_pengadaan_bb_retur"=>$id]);
+      if ($cek->count() > 0) {
+        // return response()->json(["status"=>0]);
+        if ($status == 1) {
+          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>2,"catatan_pengadaan"=>$catatan]);
+        }else {
+          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
+        }
+        if ($up) {
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pbahanbakudirektur_konfirmasi(Request $req,$status,$id)
+    {
+      $catatan = $req->input("catatan");
+      $cek = PengadaanBbRetur::where(["id_pengadaan_bb_retur"=>$id]);
+      if ($cek->count() > 0) {
+        // return response()->json(["status"=>0]);
+        if ($id == 1) {
+          $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>4,"catatan_direktur"=>$catatan]);
+        }else {
+          $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>3,"catatan_direktur"=>$catatan]);
+        }
+        if ($up) {
+
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
 }
