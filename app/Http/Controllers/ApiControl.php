@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,PengdaanProduk,PengdaanProdukDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
 class ApiControl extends Controller
 {
     //Public API
@@ -637,6 +637,15 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pengandaan_produk_batal($id='')
+    {
+      $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>8]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function pengandaan_bahanabaku_selesai($id='')
     {
       $cek = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id])->whereNotIn("status_retur",[0,2]);
@@ -731,6 +740,105 @@ class ApiControl extends Controller
         return response()->json($data);
       }
     }
+    public function pproduk_read($id = null)
+    {
+      if ($id != null) {
+        $whereGet = PengadaanProduk::where(["id_pengadaan_produk"=>$id]);
+        if ($whereGet->count() > 0) {
+          $row = $whereGet->first();
+          $row->master_suplier;
+          foreach ($row->pengadaan__produk_details as $key => $value) {
+            $value->master_produk;
+            $value->master_produk->master_satuan;
+          }
+          return response()->json(["status"=>1,"data"=>$row]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Not Found"]);
+        }
+      }else {
+        $getAll = PengadaanProduk::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $data = [];
+        $data["data"] = [];
+        $btnCreate = function($id,$status){
+          if ($status < 1) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item batalkan" data-id="'.$id.'"  type="button">
+            Batalkan Pengadaan
+            </button>
+            </div>';
+          }elseif ($status == 2) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item proses" data-id="'.$id.'"  type="button">
+            Proses Pengadaan
+            </button>
+            </div>';
+          }elseif ($status == 6) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item retur" data-id="'.$id.'"  type="button">
+            Retur Barang
+            </button>
+            <button class="dropdown-item selesaikan" data-id="'.$id.'"  type="button">
+            Selesaikan Transaksi
+            </button>
+            </div>';
+          }else {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            </div>';
+          }
+        };
+        foreach ($getAll as $key => $value) {
+          $data["data"][] = [($key+1),$value->id_pengadaan_produk,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),konfirmasi($value->konfirmasi_gudang),$value->catatan_gudang,$value->catatan_direktur,date("d-m-Y",strtotime($value->tgl_register)),($value->tgl_perubahan == null)?null:date("d-m-Y",strtotime($value->tgl_perubahan)),$btnCreate($value->id_pengadaan_produk,$value->status_pengadaan)];
+        }
+        return response()->json($data);
+      }
+    }
+    public function pengandaan_produk_read($id = null)
+    {
+      $kosong = MasterProduk::whereRaw("stok_minimum >= stok")->orderBy("stok","asc")->get();
+      $ada = MasterProduk::whereRaw("stok_minimum < stok")->orderBy("stok","desc")->get();
+      $data = [];
+      $data["data"] = [];
+      $cik = function($id,$nama,$stok,$harga,$prio=0){
+        if ($prio == 1) {
+          $cek = 'checked=""';
+        }else {
+          $cek = null;
+        }
+          $check = '<div class="custom-controls-stacked">
+                          <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input listcheck" data-nama="'.$nama.'" data-id="'.$id.'" data-stok="'.$stok.'" data-harga="'.$harga.'" data-priority="'.$prio.'" '.$cek.'>
+                            <span class="custom-control-label">'.$id.'</span>
+                          </label>
+                    </div>';
+          // $check = '<div class="custom-controls-stacked"><label class="custom-control custom-checkbox custom-control-inline"><input type="checkbox" class="custom-control-input listcheck" >'.$id.'</label></div>';
+          return $check;
+
+      };
+      foreach ($kosong as $key => $value) {
+        $data["data"][] = [$cik($value->id_produk,$value->nama_produk,$value->stok,$value->harga_produksi,1),$value->nama_produk,$value->stok." ".$value->master_satuan->nama_satuan,$value->stok_minimum." ".$value->master_satuan->nama_satuan,number_format($value->harga_produksi),number_format($value->harga_distribusi)];
+      }
+      foreach ($ada as $key => $value) {
+          $data["data"][] = [$cik($value->id_produk,$value->nama_produk,$value->stok,$value->harga_produksi),$value->nama_produk,$value->stok." ".$value->master_satuan->nama_satuan,$value->stok_minimum." ".$value->master_satuan->nama_satuan,number_format($value->harga_produksi),number_format($value->harga_distribusi)];
+      }
+      return response()->json($data);
+    }
+
     public function pengandaan_bahanabaku_read($id = null)
     {
       $kosong = MasterBb::whereRaw("stok_minimum >= stok")->orderBy("stok","asc")->get();
@@ -766,6 +874,44 @@ class ApiControl extends Controller
       $kodifikasi = "PBB".date("dmy")."-".str_pad((PengadaanBb::count()+1),3,0,STR_PAD_LEFT);
       return response()->json(["kode"=>$kodifikasi]);
     }
+    public function kode_pp()
+    {
+      $kodifikasi = "PP".date("dmy")."-".str_pad((PengadaanProduk::count()+1),3,0,STR_PAD_LEFT);
+      return response()->json(["kode"=>$kodifikasi]);
+    }
+    public function pengandaan_produk_insert(Request $req)
+    {
+      $req->validate([
+        "catatan_pengadaan"=>"required|min:10",
+        "id_pengadaan_produk"=>"required|unique:pengadaan__produk,id_pengadaan_produk",
+        "id_suplier"=>"required|exists:master__suplier,id_suplier",
+      ]);
+      $cek = PengadaanProduk::whereIn("status_pengadaan",[0,2,3,4,5,6])->count();
+      if ($cek > 0) {
+        return response()->json(["status"=>0,"msg"=>"Pengadaan Produk Gagal Di Ajukan Karena Pengadaan Sebelumnya Belum Diselesaikan"]);
+      }
+      $joinBahan = [];
+      $getIn = [];
+      foreach ($req->jumlah as $key => $value) {
+        $getIn[] = $key;
+        $joinBahan[] = ["id_produk"=>$key,"jumlah"=>$value,"harga"=>$req->harga[$key],"id_pengadaan_produk"=>$req->id_pengadaan_produk];
+      }
+      // return $joinBahan;
+      $pengadaan = ["id_pengadaan_produk"=>$req->id_pengadaan_produk,"id_suplier"=>$req->id_suplier,"catatan_pengadaan"=>$req->catatan_pengadaan,"dibaca_direktur"=>0];
+      $insPengadaan = PengadaanProduk::create($pengadaan);
+      if ($insPengadaan) {
+        $insBahanBaku = PengadaanProdukDetail::insert($joinBahan);
+        if ($insBahanBaku) {
+          return response()->json(["status"=>1,"msg"=>"Pengadaan Produk Sukses Di Ajukan, Menunggu Persetujuan Direktur"]);
+        }else {
+          PengadaanProduk::find($req->id_pengadaan_produk)->delete();
+          return response()->json(["status"=>0,"msg"=>"Pengadaan Produk Gagal Di Ajukan"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Pengadaan Produk Gagal Di Ajukan"]);
+      }
+    }
+
     public function pengandaan_bahanabaku_insert(Request $req)
     {
       $req->validate([
