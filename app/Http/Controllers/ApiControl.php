@@ -93,6 +93,64 @@ class ApiControl extends Controller
         return response()->json(["status"=>0],500);
       }
     }
+    public function pproduk_read_direktur($id = null)
+    {
+      if ($id != null) {
+        $whereGet = PengadaanProduk::where(["id_pengadaan_produk"=>$id]);
+        if ($whereGet->count() > 0) {
+          $row = $whereGet->first();
+          $row->master_suplier;
+          foreach ($row->pengadaan__produk_details as $key => $value) {
+            $value->master_produk;
+            $value->master_produk->master_satuan;
+          }
+          return response()->json(["status"=>1,"data"=>$row]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Not Found"]);
+        }
+      }else {
+        $getAll = PengadaanProduk::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $data = [];
+        $data["data"] = [];
+        $btnCreate = function($id,$status){
+          if ($status == 0) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian_produk" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item setujui_produk" data-id="'.$id.'"  type="button">
+            Setujui Pengadaan
+            </button>
+            <button class="dropdown-item tolak_produk" data-id="'.$id.'"  type="button">
+            Tolak Pengadaan
+            </button>
+            </div>';
+          }elseif ($status == 6) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian_produk" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item retur_produk" data-id="'.$id.'"  type="button">
+            Retur Barang
+            </button>
+            </div>';
+          }else {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian_produk" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            </div>';
+          }
+        };
+        foreach ($getAll as $key => $value) {
+          $data["data"][] = [($key+1),$value->id_pengadaan_produk,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),date("d-m-Y",strtotime($value->tgl_register)),$btnCreate($value->id_pengadaan_produk,$value->status_pengadaan)];
+        }
+        return response()->json($data);
+      }
+    }
 
     public function pbahanbaku_read_direktur($id = null)
     {
@@ -170,6 +228,27 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+
+    public function pproduk_setujui_direktur($id)
+    {
+      $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>2,"konfirmasi_direktur"=>1,"tgl_perubahan"=>date("Y-m-d")]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pproduk_tolak_direktur($id,$catatan=null)
+    {
+      $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>1,"catatan_direktur"=>$catatan,"tgl_perubahan"=>date("Y-m-d")]);
+      if ($find) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+
+
     public function master_satuan_read($id = null)
     {
       if ($id != null) {

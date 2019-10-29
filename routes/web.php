@@ -66,9 +66,13 @@ Route::group(['middleware' => ['direktur']], function () {
 
   //Monitoring Pengadaan
   Route::get('/api/direktur/pbahanbaku_read_direktur/{id?}',"ApiControl@pbahanbaku_read_direktur")->name("private.api.pbahanbaku_read_direktur");
+  Route::get('/api/direktur/pproduk_read_direktur/{id?}',"ApiControl@pproduk_read_direktur")->name("private.api.pproduk_read_direktur");
   Route::get('/api/direktur/pbahanbaku_setujui_direktur/{id?}',"ApiControl@pbahanbaku_setujui_direktur")->name("private.api.pbahanbaku_setujui_direktur");
   Route::get('/api/direktur/pbahanbaku_tolak_direktur/{id?}/{catatan?}',"ApiControl@pbahanbaku_tolak_direktur")->name("private.api.pbahanbaku_tolak_direktur");
+  Route::get('/api/direktur/pproduk_setujui_direktur/{id?}',"ApiControl@pproduk_setujui_direktur")->name("private.api.pproduk_setujui_direktur");
+  Route::get('/api/direktur/pproduk_tolak_direktur/{id?}/{catatan?}',"ApiControl@pproduk_tolak_direktur")->name("private.api.pproduk_tolak_direktur");
   Route::get('/api/direktur/konfirretur/{status?}/{id?}',"ApiControl@pbahanbakudirektur_konfirmasi")->name("private.api.konfirmasi_retur");
+  Route::get('/api/direktur/konfirreturproduk/{status?}/{id?}',"ApiControl@pprodukdirektur_konfirmasi")->name("private.api.konfirmasi_retur_produk");
 
   Route::get('/api/direktur/pbahanbakugudangretur_check/{id?}',"ApiControl@pbahanbakugudangretur_check")->name("private.api.pbahanbakugudangretur_check");
   Route::get('/api/direktur/pbahanbakugudangretur_poread/{id?}',"ApiControl@pbahanbakugudangretur_poread")->name("private.api.pbahanbakugudangretur_poread");
@@ -78,6 +82,15 @@ Route::group(['middleware' => ['direktur']], function () {
   Route::get('/api/direktur/kode_pbahanbakugudangretur/{id?}',"ApiControl@kode_pbahanbakugudangretur")->name("private.api.kode_pbahanbakugudangretur");
   Route::post('/api/direktur/pbahanbakugudangretur_edit/{id?}',"ApiControl@pbahanbakugudangretur_edit")->name("private.api.pbahanbakugudangretur_edit");
   Route::post('/api/direktur/pbahanbakugudangretur_ajukan/{id?}',"ApiControl@pbahanbakugudangretur_ajukan")->name("private.api.pbahanbakugudangretur_ajukan");
+
+  Route::get('/api/direktur/pprodukgudangretur_check/{id?}',"ApiControl@pprodukgudangretur_check")->name("private.api.pprodukgudangretur_check");
+  Route::get('/api/direktur/pprodukgudangretur_poread/{id?}',"ApiControl@pprodukgudangretur_poread")->name("private.api.pprodukgudangretur_poread");
+  Route::get('/api/direktur/pprodukgudangretur_read/{id?}',"ApiControl@pprodukgudangretur_read")->name("private.api.pprodukgudangretur_read");
+  Route::get('/api/direktur/pprodukgudangretur_show/{id?}',"ApiControl@pprodukgudangretur_show")->name("private.api.pprodukgudangretur_show");
+  Route::get('/api/direktur/pprodukgudangretur_detailretur/{id?}',"ApiControl@pprodukgudangretur_detailretur")->name("private.api.pprodukgudangretur_detailretur");
+  Route::get('/api/direktur/kode_pprodukgudangretur/{id?}',"ApiControl@kode_pprodukgudangretur")->name("private.api.kode_pprodukgudangretur");
+  Route::post('/api/direktur/pprodukgudangretur_edit/{id?}',"ApiControl@pprodukgudangretur_edit")->name("private.api.pprodukgudangretur_edit");
+  Route::post('/api/direktur/pprodukgudangretur_ajukan/{id?}',"ApiControl@pprodukgudangretur_ajukan")->name("private.api.pprodukgudangretur_ajukan");
 
 });
 Route::group(['middleware' => ['pengadaan']], function () {
