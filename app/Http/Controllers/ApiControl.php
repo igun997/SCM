@@ -1289,6 +1289,8 @@ class ApiControl extends Controller
       $cek = PengadaanBbRetur::where(["id_pengadaan_bb_retur"=>$id]);
       if ($cek->count() > 0) {
         // return response()->json(["status"=>0]);
+        // $obj = $cek->first();
+        // return $obj->pengadaan__bb_retur_details;
         if ($status == 1) {
           $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>4,"catatan_direktur"=>$catatan]);
 
@@ -1300,11 +1302,11 @@ class ApiControl extends Controller
           $list = $obj->pengadaan__bb_retur_details;
           $fail = [];
           foreach ($list as $key => $value) {
-            $value = $value->pengadaan_bb_detail;
-            $find = MasterBb::where(["id_bb"=>$value->id_bb]);
+            $vs = $value->pengadaan_bb_detail;
+            $find = MasterBb::where(["id_bb"=>$vs->id_bb]);
             $r = $find->first();
             if ($find->count() > 0) {
-              $now = ($r->stok - $value->jumlah);
+              $now = ($r->stok - $value->total_retur);
               $up = $find->update(["stok"=>$now]);
               if (!$up) {
                 $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Stok Barang Tidak Terupdate"];
@@ -1313,7 +1315,8 @@ class ApiControl extends Controller
               $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
-          return response()->json(["status"=>1]);
+          return response()->json(["status"=>1,"data"=>$fail]);
+
         }else {
           return response()->json(["status"=>0]);
         }
