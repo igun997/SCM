@@ -36,7 +36,6 @@ class PengadaanProdukRetur extends Eloquent
 	public $timestamps = false;
 
 	protected $casts = [
-		'status_retur' => 'bool',
 		'konfirmasi_direktur' => 'bool',
 		'konfirmasi_pengadaan' => 'bool'
 	];

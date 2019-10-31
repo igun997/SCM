@@ -736,6 +736,17 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pengandaan_produk_selesai($id='')
+    {
+      $cek = PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id])->whereNotIn("status_retur",[0,2]);
+      // return $cek->count();
+      if ($cek->count() > 0) {
+        $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>7]);
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function pengandaan_bahanabaku_proses(Request $req,$id)
     {
       $a = $req->input("perkiraan_tiba");
@@ -1039,6 +1050,71 @@ class ApiControl extends Controller
       }
     }
     //Gudang
+    public function pprodukgudang_read($id = null)
+    {
+      if ($id != null) {
+        $whereGet = PengadaanProduk::where(["id_pengadaan_produk"=>$id]);
+        if ($whereGet->count() > 0) {
+          $row = $whereGet->first();
+          $row->master_suplier;
+          foreach ($row->pengadaan__produk_details as $key => $value) {
+            $value->master_produk;
+            $value->master_produk->master_satuan;
+          }
+          return response()->json(["status"=>1,"data"=>$row]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Not Found"]);
+        }
+      }else {
+        $getAll = PengadaanProduk::orderBy("tgl_register","desc")->orderBy("status_pengadaan","asc")->get();
+        $data = [];
+        $data["data"] = [];
+        $btnCreate = function($id,$status,$perkiraan,$ptiba=null){
+          if ($status == 4) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item terima_barang" data-id="'.$id.'" data-tiba="'.$ptiba.'"  type="button">
+            Konfirmasi Penerimaan
+            </button>
+            </div>';
+          }elseif ($status == 3 && ($perkiraan)) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item terima_barang" data-id="'.$id.'" data-tiba="'.$ptiba.'"  type="button">
+            Konfirmasi Penerimaan
+            </button>
+            </div>';
+          }elseif ($status == 6) {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            <button class="dropdown-item retur" data-id="'.$id.'"   type="button">
+            Retur Barang
+            </button>
+            </div>';
+          }else {
+            return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+            <div class="dropdown-menu dropdown-menu-right">
+            <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
+            Rincian
+            </button>
+            </div>';
+          }
+        };
+        foreach ($getAll as $key => $value) {
+          $data["data"][] = [($key+1),$value->id_pengadaan_produk,"[".$value->id_suplier."]"." ".$value->master_suplier->nama_suplier,status_pengadaan($value->status_pengadaan),konfirmasi($value->konfirmasi_direktur),konfirmasi($value->konfirmasi_gudang),$value->catatan_gudang,$value->catatan_direktur,date("d-m-Y",strtotime($value->tgl_register)),($value->tgl_perubahan == null)?null:date("d-m-Y",strtotime($value->tgl_perubahan)),$btnCreate($value->id_pengadaan_produk,$value->status_pengadaan,(time() >= strtotime($value->perkiraan_tiba)),$value->perkiraan_tiba)];
+        }
+        return response()->json($data);
+      }
+    }
     public function pbahanabakugudang_read($id = null)
     {
       if ($id != null) {
@@ -1104,6 +1180,38 @@ class ApiControl extends Controller
         return response()->json($data);
       }
     }
+    public function pprodukgudang_konfirmasi(Request $req, $id)
+    {
+      $find = PengadaanProduk::where(["id_pengadaan_produk"=>$id]);
+      $dpost = $req->all();
+      if ($find->count() > 0) {
+        $up = $find->update($dpost);
+        if ($up) {
+          $cariBarang = PengadaanProduk::where(["id_pengadaan_produk"=>$id])->first();
+          $list = $cariBarang->pengadaan__produk_details;
+          $fail = [];
+          foreach ($list as $key => $value) {
+            $find = MasterProduk::where(["id_produk"=>$value->id_produk]);
+            $r = $find->first();
+            if ($find->count() > 0) {
+              $now = ($r->stok + $value->jumlah);
+              $up = $find->update(["stok"=>$now]);
+              if (!$up) {
+                $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Stok Barang Tidak Terupdate"];
+              }
+            }else {
+              $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Barang Tidak Ditemukan"];
+            }
+          }
+          return response()->json(["status"=>1,"msg"=>"Konfirmasi Barang Berhasil","fail"=>$fail]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Data Tidak Tersimpan"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Pengadaan Barang Tidak Ditemukan"]);
+      }
+    }
+
     public function pbahanbakugudang_konfirmasi(Request $req, $id)
     {
       $find = PengadaanBb::where(["id_pengadaan_bb"=>$id]);
@@ -1144,6 +1252,15 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pprodukgudangretur_check($id)
+    {
+      $find = PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id]);
+      if ($find->count() > 0) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function pbahanbakugudangretur_read($id)
     {
       $btn = function($id){
@@ -1167,6 +1284,30 @@ class ApiControl extends Controller
       }
       return response()->json($data);
     }
+    public function pprodukgudangretur_read($id)
+    {
+      $btn = function($id){
+        return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
+        <div class="dropdown-menu dropdown-menu-right">
+        <button class="dropdown-item edit_item" data-id="'.$id.'"  type="button">
+        Edit
+        </button>
+        <button class="dropdown-item hapus_item" data-id="'.$id.'"  type="button">
+          Hapus
+        </button>
+        </div>';
+      };
+      $g = PengadaanProdukReturDetail::where(["id_pengadaan_produk_retur"=>$id]);
+      $data = [];
+      $data["data"] = [];
+      foreach ($g->get() as $key => $value) {
+        $keDetail = $value->pengadaan_produk_detail;
+        $keBarang = $keDetail->master_produk;
+        $data["data"][] = [($key+1),"[".$keBarang->id_produk."]".$keBarang->nama_produk,$keDetail->jumlah,$value->total_retur,$btn($value->id_pengadaan_produk_retur_detail)];
+      }
+      return response()->json($data);
+    }
+
     public function pbahanbakugudangretur_show($id)
     {
       $x = PengadaanBbReturDetail::where(["id_pengadaan_bb_retur_detail"=>$id]);
@@ -1180,6 +1321,20 @@ class ApiControl extends Controller
         return  response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
       }
     }
+    public function pprodukgudangretur_show($id)
+    {
+      $x = PengadaanProdukReturDetail::where(["id_pengadaan_produk_retur_detail"=>$id]);
+      if ($x->count() > 0) {
+        $row = $x->first();
+        $row->pengadaan_produk_retur;
+        $row->pengadaan_produk_detail;
+        $row->pengadaan_produk_detail->master_produk;
+        return  response()->json(["status"=>1,"data"=>$row]);
+      }else {
+        return  response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
+      }
+    }
+
     public function pbahanbakugudangretur_detailretur($id)
     {
       $find = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id]);
@@ -1196,6 +1351,23 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pprodukgudangretur_detailretur($id)
+    {
+      $find = PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id]);
+      if ($find->count() > 0) {
+        $data = $find->first();
+        $data->pengadaan_produk;
+        $data->pengadaan__produk_retur_details;
+        foreach ($data->pengadaan__produk_retur_details as $key => &$value) {
+          $value->pengadaan_produk_detail;
+          $value->pengadaan_produk_detail->master_produk;
+        }
+        return response()->json(["status"=>1,"data"=>$data]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+
     public function pbahanbakugudangretur_edit(Request $req,$id)
     {
       $find = PengadaanBbReturDetail::where(["id_pengadaan_bb_retur_detail"=>$id]);
@@ -1210,6 +1382,21 @@ class ApiControl extends Controller
         return response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
       }
     }
+    public function pprodukgudangretur_edit(Request $req,$id)
+    {
+      $find = PengadaanProdukReturDetail::where(["id_pengadaan_produk_retur_detail"=>$id]);
+      if ($find->count() > 0) {
+        $up = $find->update($req->all());
+        if ($up) {
+          return response()->json(["status"=>1,"msg"=>"Data Gagal Di Ubah"]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Data Gagal Di Ubah"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Data Tidak Ditemukan"]);
+      }
+    }
+
     public function pbahanbakugudangretur_poread($id)
     {
       $find = PengadaanBb::where(["id_pengadaan_bb"=>$id]);
@@ -1235,12 +1422,45 @@ class ApiControl extends Controller
         return response()->json(["data"=>[]]);
       }
     }
+    public function pprodukgudangretur_poread($id)
+    {
+      $find = PengadaanProduk::where(["id_pengadaan_produk"=>$id]);
+      $cek = function($any){
+        $check = '<div class="custom-controls-stacked">
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input listcheck" data-nama="'.$any["nama"].'" data-id="'.$any["id"].'" data-jumlah="'.$any["jumlah"].'" data-kode_barang="'.$any["id_barang"].'">
+                          <span class="custom-control-label">'.$any["id_barang"].'</span>
+                        </label>
+                  </div>';
+        return $check;
+      };
+      if ($find->count() > 0) {
+        $t = $find->first();
+        $rs = $t->pengadaan__produk_details;
+        $data = [];
+        $data["data"] = [];
+        foreach ($rs as $key => $value) {
+          $data["data"][] = [$cek(["id"=>$value->id_pbb_detail,"id_barang"=>$value->master_produk->id_produk,"nama"=>$value->master_produk->nama_produk,"jumlah"=>$value->jumlah]),$value->master_produk->nama_produk,$value->jumlah];
+        }
+        return response()->json($data);
+      }else {
+        return response()->json(["data"=>[]]);
+      }
+    }
+
     public function kode_pbahanbakugudangretur()
     {
       $kode = (PengadaanBbRetur::count()+1);
       $kodekan = "PBBR".date("dmy")."-".$kode;
       return $kodekan;
     }
+    public function kode_pprodukgudangretur()
+    {
+      $kode = (PengadaanBbRetur::count()+1);
+      $kodekan = "PPR".date("dmy")."-".$kode;
+      return $kodekan;
+    }
+
     public function pbahanbakugudangretur_ajukan(Request $req,$id)
     {
       $data = $req->all();
@@ -1263,6 +1483,29 @@ class ApiControl extends Controller
       }
       // return response()->json(["status"=>1]);
     }
+    public function pprodukgudangretur_ajukan(Request $req,$id)
+    {
+      $data = $req->all();
+      // return $detail;
+      $dataSet = ["id_pengadaan_produk_retur"=>$data["id_pengadaan_produk_retur"],"tanggal_retur"=>$data["tanggal_retur"],"id_pengadaan_produk"=>$id];
+      $createRetur = PengadaanProdukRetur::create($dataSet);
+      if ($createRetur) {
+        $detail = [];
+        foreach ($data["id_pbb"] as $key => $value) {
+          $detail[] = ["id_pengadaan_produk_detail"=>$value,"id_pengadaan_produk_retur"=>$data["id_pengadaan_produk_retur"],"total_retur"=>$data["total_retur"][$key],"catatan_retur"=>$data["rincian_retur"][$key]];
+        }
+        $createDetail = PengadaanProdukReturDetail::insert($detail);
+        if ($createDetail) {
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+      // return response()->json(["status"=>1]);
+    }
+
     public function pbahanbakupengadaan_konfirmasi(Request $req,$status,$id)
     {
       $catatan = $req->input("catatan");
@@ -1283,6 +1526,27 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pprodukpengadaan_konfirmasi(Request $req,$status,$id)
+    {
+      $catatan = $req->input("catatan");
+      $cek = PengadaanProdukRetur::where(["id_pengadaan_produk_retur"=>$id]);
+      if ($cek->count() > 0) {
+        // return response()->json(["status"=>0]);
+        if ($status == 1) {
+          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>2,"catatan_pengadaan"=>$catatan]);
+        }else {
+          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
+        }
+        if ($up) {
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+
     public function pbahanbakudirektur_konfirmasi(Request $req,$status,$id)
     {
       $catatan = $req->input("catatan");
@@ -1313,6 +1577,47 @@ class ApiControl extends Controller
               }
             }else {
               $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
+            }
+          }
+          return response()->json(["status"=>1,"data"=>$fail]);
+
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pprodukdirektur_konfirmasi(Request $req,$status,$id)
+    {
+      $catatan = $req->input("catatan");
+      $cek = PengadaanProdukRetur::where(["id_pengadaan_produk_retur"=>$id]);
+      if ($cek->count() > 0) {
+        // return response()->json(["status"=>0]);
+        // $obj = $cek->first();
+        // return $obj->pengadaan__bb_retur_details;
+        if ($status == 1) {
+          $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>4,"catatan_direktur"=>$catatan]);
+
+        }else {
+          $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>3,"catatan_direktur"=>$catatan]);
+        }
+        if ($up) {
+          $obj = $cek->first();
+          $list = $obj->pengadaan__produk_retur_details;
+          $fail = [];
+          foreach ($list as $key => $value) {
+            $vs = $value->pengadaan_produk_detail;
+            $find = MasterProduk::where(["id_produk"=>$vs->id_produk]);
+            $r = $find->first();
+            if ($find->count() > 0) {
+              $now = ($r->stok - $value->total_retur);
+              $up = $find->update(["stok"=>$now]);
+              if (!$up) {
+                $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Stok Barang Tidak Terupdate"];
+              }
+            }else {
+              $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
           return response()->json(["status"=>1,"data"=>$fail]);

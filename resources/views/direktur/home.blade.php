@@ -2988,7 +2988,7 @@
                   if (rs.status == 1) {
                     compact = [];
                     $.each(rs.data.pengadaan__produk_retur_details,function(index, el) {
-                      compact[index] = [el.pengadaan_produk_detail.master_produk.id_produk,el.pengadaan_bb_detail.master_produk.nama_produk,el.pengadaan_produk_detail.jumlah,el.total_retur,el.catatan_retur];
+                      compact[index] = [el.pengadaan_produk_detail.master_produk.id_produk,el.pengadaan_produk_detail.master_produk.nama_produk,el.pengadaan_produk_detail.jumlah,el.total_retur,el.catatan_retur];
                     });
                     tbls_init = table(["Kode Barang","Nama Barang","Total Pesan","Total Retur","Catatan Retur"],compact,"tbls_init");
                     function confirmBtn(id) {
