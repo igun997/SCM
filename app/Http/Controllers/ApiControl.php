@@ -844,12 +844,18 @@ class ApiControl extends Controller
             </button>
             </div>';
           }else {
+            $c = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id]);
+            $retur = null;
+            if ($c->count() > 0) {
+              $retur = '<button class="dropdown-item retur" data-id="'.$id.'"  type="button">
+              Retur Barang
+              </button>';
+            }
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
             <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
             Rincian
-            </button>
-            </div>';
+            </button>'.$retur.'</div>';
           }
         };
         foreach ($getAll as $key => $value) {
@@ -912,12 +918,18 @@ class ApiControl extends Controller
             </button>
             </div>';
           }else {
+            $c = PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id]);
+            $retur = null;
+            if ($c->count() > 0) {
+              $retur = '<button class="dropdown-item retur" data-id="'.$id.'"  type="button">
+              Retur Barang
+              </button>';
+            }
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
             <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
             Rincian
-            </button>
-            </div>';
+            </button>'.$retur.'</div>';
           }
         };
         foreach ($getAll as $key => $value) {
