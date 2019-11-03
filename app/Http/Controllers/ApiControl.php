@@ -1540,7 +1540,7 @@ class ApiControl extends Controller
         if ($status == 1) {
           $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>2,"catatan_pengadaan"=>$catatan]);
         }else {
-          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
+          $up = $cek->update(["konfirmasi_direktur"=>1,"catatan_direktur"=>"Ditolak Oleh Bag. Pengadaan","konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
         }
         if ($up) {
           return response()->json(["status"=>1]);
@@ -1560,7 +1560,7 @@ class ApiControl extends Controller
         if ($status == 1) {
           $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>2,"catatan_pengadaan"=>$catatan]);
         }else {
-          $up = $cek->update(["konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
+          $up = $cek->update(["konfirmasi_direktur"=>1,"catatan_direktur"=>"Ditolak Oleh Bag. Pengadaan","konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
         }
         if ($up) {
           return response()->json(["status"=>1]);
