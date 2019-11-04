@@ -44,6 +44,7 @@ class Pemesanan extends Eloquent
 		'id_pelanggan',
 		'status_pesanan',
 		'status_pembayaran',
+		'pajak',
 		'catatan_pemesanan',
 		'tgl_register'
 	];
