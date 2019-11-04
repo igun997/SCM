@@ -15,14 +15,9 @@ class CreatePengaturanTable extends Migration {
 		Schema::create('pengaturan', function(Blueprint $table)
 		{
 			$table->integer('id_pengaturan', true);
-			$table->float('keuntungan_ppn', 10, 0)->nullable();
-			$table->float('keuntungan_mentor', 10, 0)->nullable();
-			$table->float('keuntungan_marketing', 10, 0)->nullable();
-			$table->float('keuntungan_pusat', 10, 0)->nullable();
-			$table->float('kentungan_mitra', 10, 0)->nullable();
-			$table->integer('keuntungan_produksi')->nullable();
-			$table->float('keuntungan_tukang', 10, 0)->nullable();
-			$table->date('tgl_perubahan')->nullable();
+			$table->text('meta_key', 65535);
+			$table->text('meta_value', 65535);
+			$table->timestamp('valid')->nullable()->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}
 
