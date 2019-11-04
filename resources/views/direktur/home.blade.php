@@ -2116,6 +2116,9 @@
                               },{
                                 value:"pengadaan",
                                 text:"Pengadaan"
+                              },{
+                                value:"pemasaran",
+                                text:"Pemasaran"
                               },
                             ];
                             selectbuilder(level,html.find("#level"));
