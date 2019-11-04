@@ -3159,6 +3159,103 @@
         });
         instance = mpengadaan.open();
       });
+      $("#pengaturan").on('click', function(event) {
+        event.preventDefault();
+        console.log("Menu Pengaturan");
+        frm = [
+          [
+            {
+              label:"PPn",
+              type:"text",
+              id:"ppn"
+            },{
+              label:"PPh",
+              type:"text",
+              id:"pph"
+            }
+          ]
+        ];
+        btn = {name:"Update",class:"warning",type:"submit"};
+        frmPengaturan = builder(frm,btn,"update",true,12);
+        modal = new jBox('Modal', {
+                    title: 'Pengaturan Aplikasi',
+                    overlay: false,
+                    width: '500px',
+                    responsiveWidth:true,
+                    height: 'auto',
+                    createOnInit: true,
+                    content: frmPengaturan,
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      f = this.content;
+                      function load(){
+                        $.get("{{route("private.api.pengaturan")}}/ppn",function(r){
+                          tr = r;
+                          $.get("{{route("private.api.pengaturan")}}/pph",function(rr){
+                            trr = rr;
+                            f.find("#ppn").val(tr.meta_value)
+                            f.find("#pph").val(trr.meta_value)
+                          })
+                        })
+                      }
+                      load();
+                      f.find("#update").on('submit',function(event) {
+                        event.preventDefault();
+                        console.log("Loading .. ");
+                        on();
+                        drm = {ppn:f.find("#ppn").val(),pph:f.find("#pph").val()};
+                        console.log(drm);
+                        $.ajax({
+                          url: '{{route("private.api.pengaturan_update")}}',
+                          type: 'POST',
+                          dataType: 'JSON',
+                          data: drm
+                        })
+                        .done(function(r) {
+                          if (r.status == 1) {
+                            new jBox('Notice', {content: 'Update Pengaturan Berhasil',showCountdown:true, color: 'green'});
+                          }else {
+                            new jBox('Notice', {content: 'Update Pengaturan Gagal',showCountdown:true, color: 'red'});
+                          }
+
+                        })
+                        .fail(function(rs) {
+                          var msg = "";
+                          $.each(rs.responseJSON.errors,function(index,item){
+                            msg += item[0]+"<br>";
+                          });
+                          if (rs.responseJSON.errors == undefined) {
+                            var msg = "Kehilangan Komunikasi Dengan Server"
+                          }
+                          Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            html: msg,
+                            footer: '<a href>Laporkan Error</a>'
+                          })
+                        })
+                        .always(function() {
+                          off();
+                          load();
+                        });
+
+                      });
+                    }
+                });
+          modal.open();
+      });
     });
   });
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
+use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
     //Public API
@@ -26,6 +27,38 @@ class ApiControl extends Controller
     }
 
     //Direktur
+    public function pengaturan_read($id = "")
+    {
+      if ($id != "") {
+        return PengaturanHelper::get(["meta_key"=>$id])->first();
+      }else {
+        return PengaturanHelper::get(null);
+      }
+    }
+    public function pengaturan_add()
+    {
+      // code...
+    }
+    public function pengaturan_update(Request $req)
+    {
+      $req->validate([
+        "ppn"=>"numeric|required",
+        "pph"=>"numeric|required"
+      ]);
+      $ppn = $req->ppn;
+      $pph = $req->pph;
+      $up1 = PengaturanHelper::up(["meta_key"=>"ppn"],["meta_value"=>$ppn]);
+      $up2 = PengaturanHelper::up(["meta_key"=>"pph"],["meta_value"=>$pph]);
+      if ($up1 || $up2) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pengaturan_delete()
+    {
+      // code...
+    }
     public function master_bb_read(Request $req,$id = null)
     {
       if ($id != null) {

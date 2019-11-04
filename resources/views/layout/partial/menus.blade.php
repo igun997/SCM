@@ -29,7 +29,7 @@
             </div>
           </li>
           <li class="nav-item">
-            <a href="" class="nav-link"><i class="fe fe-settings"></i> Pengaturan Aplikasi</a>
+            <a href="" id="pengaturan" class="nav-link"><i class="fe fe-settings"></i> Pengaturan Aplikasi</a>
           </li>
           @elseif(session()->get("level") == "pengadaan")
           <li class="nav-item">
