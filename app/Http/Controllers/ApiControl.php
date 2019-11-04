@@ -779,6 +779,10 @@ class ApiControl extends Controller
         $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
         return response()->json(["status"=>1]);
       }else {
+        if (PengadaanBbRetur::where(["id_pengadaan_bb"=>$id])->count() == 0) {
+          $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
+          return response()->json(["status"=>1]);
+        }
         return response()->json(["status"=>0]);
       }
     }
@@ -790,6 +794,10 @@ class ApiControl extends Controller
         $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>7]);
         return response()->json(["status"=>1]);
       }else {
+        if (PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id])->count() == 0) {
+          $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>7]);
+          return response()->json(["status"=>1]);
+        }
         return response()->json(["status"=>0]);
       }
     }
