@@ -25,13 +25,17 @@ class Pengaturan
       return false;
     }
   }
-  static function get($data)
+  static function get($data = null)
   {
-    $get = ModelPengaturan::where($data);
-    if ($get->count() > 0) {
-      return $get;
+    if ($data != null) {
+      $get = ModelPengaturan::where($data);
+      if ($get->count() > 0) {
+        return $get;
+      }else {
+        return false;
+      }
     }else {
-      return false;
+      return ModelPengaturan::get();
     }
   }
   static function del($data){
