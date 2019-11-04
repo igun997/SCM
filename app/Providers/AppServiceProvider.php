@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
       require_once app_path('Helpers/StatusHelper.php');
       require_once app_path('Helpers/KonversiUnit.php');
       require_once app_path('Helpers/AlgoritmaClass.php');
+      require_once app_path('Helpers/Pengaturan.php');
       if ($this->app->environment() !== 'production') {
            $this->app->register(\Way\Generators\GeneratorsServiceProvider::class);
            $this->app->register(\Xethron\MigrationsGenerator\MigrationsGeneratorServiceProvider::class);
