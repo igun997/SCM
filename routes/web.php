@@ -30,6 +30,11 @@ Route::group(['middleware' => ['direktur']], function () {
   //NormalRoute
   Route::get('/direktur',"DirekturControl@index")->name('private.direktur.home');
   // API
+  //Pengaturan
+  Route::get('/api/direktur/pengaturan/{id?}',"ApiControl@pengaturan_read")->name("private.api.pengaturan");
+  Route::post('/api/direktur/pengaturan/add',"ApiControl@pengaturan_add")->name("private.api.pengaturan_add");
+  Route::post('/api/direktur/pengaturan/update',"ApiControl@pengaturan_update")->name("private.api.pengaturan_update");
+  Route::get('/api/direktur/pengaturan/del/{id?}',"ApiControl@pengaturan_delete")->name("private.api.pengaturan_delete");
   //Satuan
   Route::get('/api/direktur/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("private.api.master_satuan_read");
   Route::post('/api/direktur/master_satuan_insert',"ApiControl@master_satuan_insert")->name("private.api.master_satuan_insert");
