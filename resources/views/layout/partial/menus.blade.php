@@ -71,6 +71,31 @@
               <a href="" id="pproduk" class="dropdown-item ">Produk</a>
             </div>
           </li>
+          @elseif(session()->get("level") == "pemasaran")
+          <li class="nav-item">
+            <a href="{{route("private.pemasaran.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Data Master</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="mastersuplier" class="dropdown-item ">Suplier</a>
+              <a href="" id="masterpelanggan" class="dropdown-item ">Pelanggan</a>
+              <a href="" id="masterproduk" class="dropdown-item ">Produk</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-upload"></i>Pemasaran</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="pmproduk" class="dropdown-item ">Pemasaran Produk</a>
+              <a href="" id="manajemenpos" class="dropdown-item ">Manajemen PoS</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan Pemasaran</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="lppmproduk" class="dropdown-item ">Pemasaran Produk</a>
+            </div>
+          </li>
           @endif
         </ul>
       </div>
