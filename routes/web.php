@@ -11,6 +11,7 @@
 |
 */
 //Test Deply
+Route::get('/test',"TestControl@model");
 //Normal Route
 Route::get('/', function(){
   $data["title"] = "SCM Wenow";
