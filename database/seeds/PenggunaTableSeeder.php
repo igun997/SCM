@@ -19,6 +19,18 @@ class PenggunaTableSeeder extends Seeder
         \DB::table('pengguna')->insert(array (
             0 => 
             array (
+                'id_pengguna' => 'PG041119-004',
+                'nama_pengguna' => 'Pemasaran',
+                'no_kontak' => '6765667766544',
+                'alamat' => 'asasas',
+                'level' => 'pemasaran',
+                'status' => 1,
+                'email' => 'pemasaran@wenow.id',
+                'password' => 'pemasaran@wenow.id',
+                'tgl_register' => '2019-11-04 19:42:35',
+            ),
+            1 => 
+            array (
                 'id_pengguna' => 'PG090919-002',
                 'nama_pengguna' => 'Pengadaan',
                 'no_kontak' => '081214267696',
@@ -29,7 +41,7 @@ class PenggunaTableSeeder extends Seeder
                 'password' => 'pengadaan@wenow.id',
                 'tgl_register' => '2019-09-09 17:26:29',
             ),
-            1 => 
+            2 => 
             array (
                 'id_pengguna' => 'PG240919-003',
                 'nama_pengguna' => 'Gudang',
@@ -41,7 +53,7 @@ class PenggunaTableSeeder extends Seeder
                 'password' => 'gudang@wenow.id',
                 'tgl_register' => '2019-09-24 19:32:12',
             ),
-            2 => 
+            3 => 
             array (
                 'id_pengguna' => 'PG271019-001',
                 'nama_pengguna' => 'Direktur',
