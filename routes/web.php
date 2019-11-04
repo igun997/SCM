@@ -218,3 +218,6 @@ Route::group(['middleware' => ['gudang']], function () {
 
 
 });
+Route::group(['middleware'=>['pemasaran']],function(){
+  Route::get('/pemasaran',"PemasaranControl@index")->name('private.pemasaran.home');
+});
