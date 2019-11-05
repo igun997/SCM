@@ -78,7 +78,6 @@
           <li class="nav-item">
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Data Master</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" id="mastersuplier" class="dropdown-item ">Suplier</a>
               <a href="" id="masterpelanggan" class="dropdown-item ">Pelanggan</a>
               <a href="" id="masterproduk" class="dropdown-item ">Produk</a>
             </div>
