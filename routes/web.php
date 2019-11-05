@@ -220,4 +220,23 @@ Route::group(['middleware' => ['gudang']], function () {
 });
 Route::group(['middleware'=>['pemasaran']],function(){
   Route::get('/pemasaran',"PemasaranControl@index")->name('private.pemasaran.home');
+  Route::get('/api/pemasaran/master_produk_read/{id?}',"ApiControl@master_produk_read")->name("pemasaran.api.master_produk_read");
+  Route::post('/api/pemasaran/master_produk_insert',"ApiControl@master_produk_insert")->name("pemasaran.api.master_produk_insert");
+  Route::post('/api/pemasaran/master_produk_update/{id?}',"ApiControl@master_produk_update")->name("pemasaran.api.master_produk_update");
+
+  Route::get('/api/pemasaran/master_komposisi_read/{id?}',"ApiControl@master_komposisi_read")->name("pemasaran.api.master_komposisi_read");
+  Route::post('/api/pemasaran/master_komposisi_insert',"ApiControl@master_komposisi_insert")->name("pemasaran.api.master_komposisi_insert");
+  Route::get('/api/pemasaran/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("pemasaran.api.master_komposisi_hapus");
+
+  Route::get('/api/pemasaran/master_transportasi_read/{id?}',"ApiControl@master_transportasi_read")->name("pemasaran.api.master_transportasi_read");
+  Route::post('/api/pemasaran/master_transportasi_insert',"ApiControl@master_transportasi_insert")->name("pemasaran.api.master_transportasi_insert");
+  Route::post('/api/pemasaran/master_transportasi_update/{id?}',"ApiControl@master_transportasi_update")->name("pemasaran.api.master_transportasi_update");
+
+  Route::get('/api/pemasaran/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("pemasaran.api.master_satuan_read");
+  Route::post('/api/pemasaran/master_satuan_insert',"ApiControl@master_satuan_insert")->name("pemasaran.api.master_satuan_insert");
+  Route::post('/api/pemasaran/master_satuan_update/{id?}',"ApiControl@master_satuan_update")->name("pemasaran.api.master_satuan_update");
+
+  Route::get('/api/pemasaran/master_pelanggan_read/{id?}',"ApiControl@master_pelanggan_read")->name("pemasaran.api.master_pelanggan_read");
+  Route::post('/api/pemasaran/master_pelanggan_insert',"ApiControl@master_pelanggan_insert")->name("pemasaran.api.master_pelanggan_insert");
+  Route::post('/api/pemasaran/master_pelanggan_update/{id?}',"ApiControl@master_pelanggan_update")->name("pemasaran.api.master_pelanggan_update");
 });
