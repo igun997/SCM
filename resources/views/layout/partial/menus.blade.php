@@ -91,6 +91,15 @@
             </div>
           </li>
           <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fa fa-spinner"></i> Marketplace Monitoring</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="lazada" class="dropdown-item ">Lazada</a>
+              <a href="" id="shopee" class="dropdown-item ">Shopee</a>
+              <a href="" id="tokopedia" class="dropdown-item ">Tokopedia</a>
+              <a href="" id="bl" class="dropdown-item ">Bukalapak</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan Pemasaran</a>
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="" id="lppmproduk" class="dropdown-item ">Pemasaran Produk</a>
