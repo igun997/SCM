@@ -80,6 +80,7 @@
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="" id="masterpelanggan" class="dropdown-item ">Pelanggan</a>
               <a href="" id="masterproduk" class="dropdown-item ">Produk</a>
+              <a href="" id="mastertransportasi" class="dropdown-item ">Master Transportasi</a>
             </div>
           </li>
           <li class="nav-item dropdown">
