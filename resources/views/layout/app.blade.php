@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha256-siyOpF/pBWUPgIcQi17TLBkjvNgNQArcmwJB8YvkAgg=" crossorigin="anonymous" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{url("assets/plugins/jbox/jBox.all.css")}}">
+    <link rel="stylesheet" href="{{url("assets/plugins/cartjs/dist/css/smart_cart.min.css")}}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style media="screen">
       .table thead th, .text-wrap table thead th {
@@ -283,6 +284,7 @@
        return "Tidak Diketahui";
      }
    }
+
   function builder(inputs, button, id, button_del = true,col=1) {
       var colbuild = [];
       colindex = 0;

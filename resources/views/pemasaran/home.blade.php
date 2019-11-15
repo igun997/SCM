@@ -120,7 +120,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart) {
     $(document).ready(function(){
       //Chart
       // Init NewPlugin
@@ -788,7 +788,117 @@
         instance = mastertransportasi.open();
 
       });
+      $("#pmproduk").on('click', function(event) {
+        event.preventDefault();
+        function createProduct(arr = [], col = 4) {
+          template = [];
+          console.log(arr);
+          for (var i = 0; i < arr.length; i++) {
+            var k = [
+                 '<div class="col-'+col+'">',
+                  '<div class="sc-product-item thumbnail">',
+                  '<img data-name="product_image" src="http://placehold.it/250x150/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">',
+                  '<div class="caption">',
+                  '<h4 data-name="product_name">'+arr[i].product_name+'</h4>',
+                  '<p data-name="product_desc">'+arr[i].product_desc+'</p>',
+                  '<hr class="line">',
+                  '<div>',
+                  '<div class="form-group2">',
+                  '<input class="sc-cart-item-qty" name="product_quantity" min="1" value="1" type="number">',
+                  '</div>',
+                  '<strong class="price pull-left">Rp. '+arr[i].price+'</strong>',
+                  '<input name="product_price" value="'+arr[i].product_price+'" type="hidden" />',
+                  '<input name="product_id" value="'+arr[i].product_id+'" type="hidden" />',
+                  '<button class="sc-add-to-cart btn btn-success btn-sm pull-right" >Tambah</button>',
+                  '</div>',
+                  '<div class="clearfix"></div>',
+                  '</div>',
+                  '</div>',
+                  '</div>'
+             ];
+             console.log(k.join(""));
+             template[i] = k.join("");
+          }
+          return template.join("");
+        }
+        var konten = [
+          '<div class=row>',
+          '<div class=col-8 >',
+          '<div class=row id=list>',
+          '</div>',
+          '</div>',
+          '<div class=col-4>',
+          '<form action="" method=post id=fsave onsubmit="return false">',
+          '<div id=cart>',
+          '</div>',
+          '</form>',
+          '</div>',
+          '</div>',
+        ];
+        modal = new jBox('Modal', {
+          title: 'Penjualan Produk',
+          overlay: false,
+          width: '800px',
+          responsiveWidth:true,
+          height: 'auto',
+          createOnInit: true,
+          content: konten.join(""),
+          draggable: true,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
 
+          },
+          onCreated:function(x){
+            k = this.content;
+            k.find("#list").html("");
+            $.get("{{route("pemasaran.api.p_produk_read")}}",function(r){
+              if (r.status == 1) {
+                $.each(r.data,function(index, el) {
+                  data = createProduct([{product_name:el.nama_produk,product_desc:"",price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk}]);
+                  k.find("#list").html(data);
+                });
+              }else{
+                new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
+              }
+              k.find("#cart").smartCart({
+              currencySettings:{
+                  locales: 'id-ID',
+                  currencyOptions:  {
+                      style: 'currency',
+                      currency: 'IDR',
+                      currencyDisplay: 'symbol'
+                  }
+              },
+              lang: { // Language variables
+                  cartTitle: "Keranjang Belanja",
+                  checkout: 'Bayar',
+                  clear: 'Bersihkan',
+                  subtotal: 'Subtotal:',
+                  cartRemove: '×',
+                  cartEmpty: 'Keranjang Kosong, Mohon Pilih Barang'
+              },
+              submitSettings: {
+                    submitType: 'ajax', // form, paypal, ajax
+                    ajaxURL: '', // Ajax submit URL
+                    ajaxSettings: {} // Ajax extra settings for submit call
+              },
+            });
+            }).fail(function(r){
+              new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+            });
+
+          }
+        });
+      modal.open();
+      });
     });
   });
 </script>

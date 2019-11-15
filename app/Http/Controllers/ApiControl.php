@@ -1695,4 +1695,23 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    //Pemasaran
+    public function p_produk_read($id=null)
+    {
+      if ($id == null) {
+        $d = MasterProduk::get();
+        return response()->json(["status"=>1,"data"=>$d]);
+      }else {
+        $d = MasterProduk::where(["id_produk"=>$keyword]);
+        if ($d->count() > 0) {
+          return response()->json(["status"=>1,"data"=>$d->get()]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Data Dengan Kode Barang ".$keyword." Tidak Ditemukan"]);
+        }
+      }
+    }
+    public function p_produk_trans(Request $req)
+    {
+      return $req->cart_list;
+    }
 }
