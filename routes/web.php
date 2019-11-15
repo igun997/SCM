@@ -239,5 +239,8 @@ Route::group(['middleware'=>['pemasaran']],function(){
   Route::get('/api/pemasaran/master_pelanggan_read/{id?}',"ApiControl@master_pelanggan_read")->name("pemasaran.api.master_pelanggan_read");
   Route::post('/api/pemasaran/master_pelanggan_insert',"ApiControl@master_pelanggan_insert")->name("pemasaran.api.master_pelanggan_insert");
   Route::post('/api/pemasaran/master_pelanggan_update/{id?}',"ApiControl@master_pelanggan_update")->name("pemasaran.api.master_pelanggan_update");
+
   Route::get("api/pemasaran/p_produk_read/{id?}","ApiControl@p_produk_read")->name("pemasaran.api.p_produk_read");
+  Route::get("api/pemasaran/listpelanggan","ApiControl@listpelanggan")->name("pemasaran.api.listpelanggan");
+  Route::post("api/pemasaran/p_produk_trans","ApiControl@p_produk_trans")->name("pemasaran.api.p_produk_trans");
 });

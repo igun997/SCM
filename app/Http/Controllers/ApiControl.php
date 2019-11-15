@@ -1702,7 +1702,7 @@ class ApiControl extends Controller
         $d = MasterProduk::get();
         return response()->json(["status"=>1,"data"=>$d]);
       }else {
-        $d = MasterProduk::where(["id_produk"=>$keyword]);
+        $d = MasterProduk::where(["id_produk"=>$id]);
         if ($d->count() > 0) {
           return response()->json(["status"=>1,"data"=>$d->get()]);
         }else {
@@ -1710,8 +1710,86 @@ class ApiControl extends Controller
         }
       }
     }
+    public function __createTransaction($parent,$child)
+    {
+      $fail = [];
+      foreach ($child as $key => $value) {
+        $s = MasterProduk::where(["id_produk"=>$value["id_produk"]]);
+        if ($s->count() > 0) {
+          $obj = $s->first();
+          if ($obj->stok < $value["jumlah"]) {
+            $fail[] = ["id"=>$value["id_produk"],"msg"=>"Kuantitas Barang Tidak Cukup"];
+          }
+        }else {
+            $fail[] = ["id"=>$value["id_produk"],"msg"=>"Barang Tidak Ditemukan"];
+        }
+      }
+      if (count($fail) > 0) {
+        return ["status"=>0,"msg"=>"Error Ditemukan","data"=>$fail];
+      }
+      $parent["id_pemesanan"] = "PP".date("dmy")."-".str_pad((Pemesanan::count()+1),3,0,STR_PAD_LEFT);
+      $parent["status_pesanan"] = 0;
+      $parent["status_pembayaran"] = 0;
+      $ins = Pemesanan::create($parent);
+      foreach ($child as $key => &$value) {
+        $value["id_pemesanan"] = $parent["id_pemesanan"];
+      }
+      // return ["status"=>0,"msg"=>"Error Ditemukan","debug"=>$child,"data"=>$fail];
+      if ($ins) {
+        $lastid = $parent["id_pemesanan"];
+        foreach ($child as $key => &$value) {
+          $value["id_pemesanan"] = $lastid;
+        }
+        $chil = PemesananDetail::insert($child);
+        if ($chil) {
+          foreach ($child as $key => $value) {
+            $s = MasterProduk::where(["id_produk"=>$value["id_produk"]]);
+            if ($s->count() > 0) {
+              $obj = $s->first();
+              $a = $s->update(["stok"=>($obj->stok-$value["jumlah"])]);
+              if (!$a) {
+                $fail[] = ["id"=>$value["id_produk"],"msg"=>"Gagal Merubah Stok Tersedia"];
+              }
+            }else {
+                $fail[] = ["id"=>$value["id_produk"],"msg"=>"Barang Tidak Ditemukan"];
+            }
+          }
+          if (count($fail) > 0) {
+            return ["status"=>0,"msg"=>"Error Ditemukan","data"=>$fail];
+          }
+          return ["status"=>1,"data"=>[],"msg"=>"Sukses Melakukan Transaksi"];
+        }else {
+          Pemesanan::delete(["id_pemesanan"=>$lastid]);
+          return ["status"=>0,"data"=>[],"msg"=>"Gagal Melakukan Input Item Pada Transaksi"];
+        }
+      }else {
+        return ["status"=>0,"data"=>[],"msg"=>"Gagal Melakukan Sambungan Pada Database"];
+      }
+    }
     public function p_produk_trans(Request $req)
     {
-      return $req->cart_list;
+      //Ambil Pajak
+      $ppn = PengaturanHelper::get(["meta_value"=>"ppn"]);
+      if ($ppn !== false) {
+        $ppn = ($ppn->first()->meta_value/100);
+      }else {
+        $ppn = 0.1;
+      }
+      $d = json_decode($req->cart_list);
+      $compact = [];
+      foreach ($d as $key => $value) {
+        $compact[] = ["id_produk"=>$value->product_id,"jumlah"=>$value->product_quantity,"harga"=>$value->product_price];
+      }
+      $s = $this->__createTransaction(["id_pelanggan"=>$req->id_pelanggan,"catatan_pemesanan"=>$req->catatan_pemesanan,"pajak"=>$ppn],$compact);
+      if ($s["status"] == 1) {
+        return response()->json(["status"=>1,"msg"=>$s["msg"]]);
+      }else {
+        return response()->json(["status"=>0,"msg"=>$s["msg"],"data"=>$s["data"]]);
+      }
+      // return response()->json(["status"=>0,"msg"=>$compact]);
+    }
+    public function listpelanggan()
+    {
+      return MasterPelanggan::get();
     }
 }

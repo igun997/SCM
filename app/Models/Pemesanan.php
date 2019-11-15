@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Tue, 03 Sep 2019 04:48:32 +0000.
+ * Date: Fri, 15 Nov 2019 17:38:16 +0000.
  */
 
 namespace App\Models;
@@ -16,6 +16,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $id_pelanggan
  * @property int $status_pesanan
  * @property string $catatan_pemesanan
+ * @property int $status_pembayaran
+ * @property string $bukti
+ * @property float $pajak
  * @property \Carbon\Carbon $tgl_register
  *
  * @property \App\Models\MasterPelanggan $master_pelanggan
@@ -32,7 +35,9 @@ class Pemesanan extends Eloquent
 	public $timestamps = false;
 
 	protected $casts = [
-		'status_pesanan' => 'int'
+		'status_pesanan' => 'int',
+		'status_pembayaran' => 'int',
+		'pajak' => 'float'
 	];
 
 	protected $dates = [
@@ -40,12 +45,13 @@ class Pemesanan extends Eloquent
 	];
 
 	protected $fillable = [
-		'id_pemesanan',
 		'id_pelanggan',
+		'id_pemesanan',
 		'status_pesanan',
-		'status_pembayaran',
-		'pajak',
 		'catatan_pemesanan',
+		'status_pembayaran',
+		'bukti',
+		'pajak',
 		'tgl_register'
 	];
 

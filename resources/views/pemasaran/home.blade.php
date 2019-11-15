@@ -788,6 +788,7 @@
         instance = mastertransportasi.open();
 
       });
+      var keyword = null;
       $("#pmproduk").on('click', function(event) {
         event.preventDefault();
         function createProduct(arr = [], col = 4) {
@@ -795,12 +796,13 @@
           console.log(arr);
           for (var i = 0; i < arr.length; i++) {
             var k = [
-                 '<div class="col-'+col+'">',
+                 '<div class="col-'+col+' m-2">',
                   '<div class="sc-product-item thumbnail">',
                   '<img data-name="product_image" src="http://placehold.it/250x150/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">',
                   '<div class="caption">',
                   '<h4 data-name="product_name">'+arr[i].product_name+'</h4>',
                   '<p data-name="product_desc">'+arr[i].product_desc+'</p>',
+                  '<p data-name="product_desc">SKU : '+arr[i].product_id+'</p>',
                   '<hr class="line">',
                   '<div>',
                   '<div class="form-group2">',
@@ -821,8 +823,22 @@
           }
           return template.join("");
         }
+        btn = null;
+        if (keyword != null) {
+          btn = '<button class="btn btn-danger" id=delfit>Hapus Filter</button>';
+        }else{
+          keyword = "";
+        }
         var konten = [
           '<div class=row>',
+          '<div class=col-md-6>',
+          '<div class=form-group>',
+          '<input class="form-control" id=cari value="'+keyword+'" placeholder="Cari Dengan Kode Barang"/>',
+          '</div>',
+          '</div>',
+          '<div class=col-md-3>',
+          btn,
+          '</div>',
           '<div class=col-8 >',
           '<div class=row id=list>',
           '</div>',
@@ -835,15 +851,20 @@
           '</div>',
           '</div>',
         ];
+        url = "{{route("pemasaran.api.p_produk_read")}}";
+        if (keyword != null) {
+          url = "{{route("pemasaran.api.p_produk_read")}}/"+keyword;
+        }
+        $.get(url,function(r){
         modal = new jBox('Modal', {
           title: 'Penjualan Produk',
           overlay: false,
-          width: '800px',
+          width: '100%',
           responsiveWidth:true,
-          height: 'auto',
+          height: '100%',
           createOnInit: true,
           content: konten.join(""),
-          draggable: true,
+          draggable: false,
           adjustPosition: true,
           adjustTracker: true,
           repositionOnOpen: false,
@@ -859,45 +880,97 @@
           onCreated:function(x){
             k = this.content;
             k.find("#list").html("");
-            $.get("{{route("pemasaran.api.p_produk_read")}}",function(r){
               if (r.status == 1) {
                 $.each(r.data,function(index, el) {
-                  data = createProduct([{product_name:el.nama_produk,product_desc:"",price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk}]);
-                  k.find("#list").html(data);
+                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk}],3);
+                  k.find("#list").append(data);
                 });
               }else{
                 new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
               }
               k.find("#cart").smartCart({
-              currencySettings:{
+                currencySettings:{
                   locales: 'id-ID',
                   currencyOptions:  {
-                      style: 'currency',
-                      currency: 'IDR',
-                      currencyDisplay: 'symbol'
+                    style: 'currency',
+                    currency: 'IDR',
+                    currencyDisplay: 'symbol'
                   }
-              },
-              lang: { // Language variables
-                  cartTitle: "Keranjang Belanja",
+                },
+                lang: { // Language variables
+                  cartTitle: "Pemasaran Produk",
                   checkout: 'Bayar',
                   clear: 'Bersihkan',
                   subtotal: 'Subtotal:',
                   cartRemove: '×',
                   cartEmpty: 'Keranjang Kosong, Mohon Pilih Barang'
-              },
-              submitSettings: {
-                    submitType: 'ajax', // form, paypal, ajax
-                    ajaxURL: '', // Ajax submit URL
-                    ajaxSettings: {} // Ajax extra settings for submit call
-              },
-            });
-            }).fail(function(r){
-              new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
-            });
+                },
+                submitSettings: {
+                  submitType: 'ajax', // form, paypal, ajax
+                  ajaxURL: '{{route("pemasaran.api.p_produk_trans")}}', // Ajax submit URL
+                  ajaxSettings: {
+                    success:function(rs){
+                      if (rs.status == 1) {
+                        new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'green'})
+                        modal.close();
+                        $("#pmproduk").trigger("click");
+                      }else {
+                        console.log("Data Error");
+                        console.log(rs.data);
+                        new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'red'})
+                        msg = [];
+                        for (var i = 0; i < rs.data.length; i++) {
+                          msg[i] = "<p>Barang Dengan ID "+rs.data[i].id+" - "+rs.data[i].msg+"</p>";
+                        }
+                        new jBox('Notice', {content: msg.join("") ,showCountdown:true, color: 'blue'});
 
+                      }
+                    },
+                    error:function(rs){
+                      console.log("Catatan Gagal");
+                      new jBox('Notice', {content: 'Maaf anda tida bisa melakukan transaksi saat ini',showCountdown:true, color: 'red'})
+                    }
+                  } // Ajax extra settings for submit call
+                },
+              });
+              onchart = [
+                '<div class=form-group>',
+                '<label>Pilih Pelanggan</label>',
+                '<select class=form-control id=pelangganlist name=id_pelanggan></select>',
+                '</div>',
+                '<div class=form-group>',
+                '<label>Catatan</label>',
+                '<textarea class=form-control name=catatan_pemesanan></textarea>',
+                '</div>',
+              ];
+              k.find("#cart").find(".sc-cart-heading").after(onchart.join(""));
+              $.get("{{route("pemasaran.api.listpelanggan")}}",function(s){
+                $.each(s,function(index, el) {
+                  k.find("#cart").find("#pelangganlist").append("<option value='"+el.id_pelanggan+"'>"+el.nama_pelanggan+"</option>");
+                });
+              })
+              k.find("#cart").on('cartSubmitted', function(event) {
+                event.preventDefault();
+                new jBox('Notice', {content: 'Transaksi Selesai',showCountdown:true, color: 'green'});
+              });
+              k.find("#cari").on('change', function(event) {
+                event.preventDefault();
+                keyword = $(this).val();
+                modal.close();
+                $("#pmproduk").trigger("click");
+              });
+              k.find("#delfit").on('click', function(event) {
+                event.preventDefault();
+                keyword = null;
+                modal.close();
+                $("#pmproduk").trigger("click");
+              });
           }
         });
-      modal.open();
+        modal.open();
+      }).fail(function(r){
+        new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+      });
       });
     });
   });
