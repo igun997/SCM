@@ -796,17 +796,21 @@
           console.log(arr);
           for (var i = 0; i < arr.length; i++) {
             var k = [
-                 '<div class="col-'+col+' m-2">',
+              '<div class="col-'+col+'">',
+              '<div class="card">',
+                 '<div class="card-body">',
                   '<div class="sc-product-item thumbnail">',
                   '<img data-name="product_image" src="http://placehold.it/250x150/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">',
-                  '<div class="caption">',
+                  '<div class="caption m-2">',
                   '<h4 data-name="product_name">'+arr[i].product_name+'</h4>',
-                  '<p data-name="product_desc">'+arr[i].product_desc+'</p>',
-                  '<p data-name="product_desc">SKU : '+arr[i].product_id+'</p>',
+                  '<p>'+arr[i].product_desc+'</p>',
+                  '<p>SKU : '+arr[i].product_id+'</p>',
+                  '<p>Sisa : '+arr[i].stok+'</p>',
                   '<hr class="line">',
                   '<div>',
-                  '<div class="form-group2">',
-                  '<input class="sc-cart-item-qty" name="product_quantity" min="1" value="1" type="number">',
+                  '<div class="form-group">',
+                  '<label>Jumlah<label>',
+                  '<input class="form-control sc-cart-item-qty" name="product_quantity" min="1" value="1" type="number">',
                   '</div>',
                   '<strong class="price pull-left">Rp. '+arr[i].price+'</strong>',
                   '<input name="product_price" value="'+arr[i].product_price+'" type="hidden" />',
@@ -814,6 +818,8 @@
                   '<button class="sc-add-to-cart btn btn-success btn-sm pull-right" >Tambah</button>',
                   '</div>',
                   '<div class="clearfix"></div>',
+                  '</div>',
+                  '</div>',
                   '</div>',
                   '</div>',
                   '</div>'
@@ -882,7 +888,7 @@
             k.find("#list").html("");
               if (r.status == 1) {
                 $.each(r.data,function(index, el) {
-                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk}],3);
+                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
                   k.find("#list").append(data);
                 });
               }else{
