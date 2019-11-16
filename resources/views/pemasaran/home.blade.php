@@ -120,7 +120,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart) {
     $(document).ready(function(){
       //Chart
       // Init NewPlugin
@@ -788,7 +788,196 @@
         instance = mastertransportasi.open();
 
       });
+      var keyword = null;
+      $("#pmproduk").on('click', function(event) {
+        event.preventDefault();
+        function createProduct(arr = [], col = 4) {
+          template = [];
+          console.log(arr);
+          for (var i = 0; i < arr.length; i++) {
+            var k = [
+              '<div class="col-'+col+'">',
+              '<div class="card">',
+                 '<div class="card-body">',
+                  '<div class="sc-product-item thumbnail">',
+                  '<img data-name="product_image" src="http://placehold.it/250x150/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">',
+                  '<div class="caption m-2">',
+                  '<h4 data-name="product_name">'+arr[i].product_name+'</h4>',
+                  '<p>'+arr[i].product_desc+'</p>',
+                  '<p>SKU : '+arr[i].product_id+'</p>',
+                  '<p>Sisa : '+arr[i].stok+'</p>',
+                  '<hr class="line">',
+                  '<div>',
+                  '<div class="form-group">',
+                  '<label>Jumlah<label>',
+                  '<input class="form-control sc-cart-item-qty" name="product_quantity" min="1" value="1" type="number">',
+                  '</div>',
+                  '<strong class="price pull-left">Rp. '+arr[i].price+'</strong>',
+                  '<input name="product_price" value="'+arr[i].product_price+'" type="hidden" />',
+                  '<input name="product_id" value="'+arr[i].product_id+'" type="hidden" />',
+                  '<button class="sc-add-to-cart btn btn-success btn-sm pull-right" >Tambah</button>',
+                  '</div>',
+                  '<div class="clearfix"></div>',
+                  '</div>',
+                  '</div>',
+                  '</div>',
+                  '</div>',
+                  '</div>'
+             ];
+             console.log(k.join(""));
+             template[i] = k.join("");
+          }
+          return template.join("");
+        }
+        btn = null;
+        if (keyword != null) {
+          btn = '<button class="btn btn-danger" id=delfit>Hapus Filter</button>';
+        }else{
+          keyword = "";
+        }
+        var konten = [
+          '<div class=row>',
+          '<div class=col-md-6>',
+          '<div class=form-group>',
+          '<input class="form-control" id=cari value="'+keyword+'" placeholder="Cari Dengan Kode Barang"/>',
+          '</div>',
+          '</div>',
+          '<div class=col-md-3>',
+          btn,
+          '</div>',
+          '<div class=col-8 >',
+          '<div class=row id=list>',
+          '</div>',
+          '</div>',
+          '<div class=col-4>',
+          '<form action="" method=post id=fsave onsubmit="return false">',
+          '<div id=cart>',
+          '</div>',
+          '</form>',
+          '</div>',
+          '</div>',
+        ];
+        url = "{{route("pemasaran.api.p_produk_read")}}";
+        if (keyword != null) {
+          url = "{{route("pemasaran.api.p_produk_read")}}/"+keyword;
+        }
+        $.get(url,function(r){
+        modal = new jBox('Modal', {
+          title: 'Penjualan Produk',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: '100%',
+          createOnInit: true,
+          content: konten.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
 
+          },
+          onCreated:function(x){
+            k = this.content;
+            k.find("#list").html("");
+              if (r.status == 1) {
+                $.each(r.data,function(index, el) {
+                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
+                  k.find("#list").append(data);
+                });
+              }else{
+                new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
+              }
+              k.find("#cart").smartCart({
+                currencySettings:{
+                  locales: 'id-ID',
+                  currencyOptions:  {
+                    style: 'currency',
+                    currency: 'IDR',
+                    currencyDisplay: 'symbol'
+                  }
+                },
+                lang: { // Language variables
+                  cartTitle: "Pemasaran Produk",
+                  checkout: 'Bayar',
+                  clear: 'Bersihkan',
+                  subtotal: 'Subtotal:',
+                  cartRemove: '×',
+                  cartEmpty: 'Keranjang Kosong, Mohon Pilih Barang'
+                },
+                submitSettings: {
+                  submitType: 'ajax', // form, paypal, ajax
+                  ajaxURL: '{{route("pemasaran.api.p_produk_trans")}}', // Ajax submit URL
+                  ajaxSettings: {
+                    success:function(rs){
+                      if (rs.status == 1) {
+                        new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'green'})
+                        modal.close();
+                        $("#pmproduk").trigger("click");
+                      }else {
+                        console.log("Data Error");
+                        console.log(rs.data);
+                        new jBox('Notice', {content: rs.msg,showCountdown:true, color: 'red'})
+                        msg = [];
+                        for (var i = 0; i < rs.data.length; i++) {
+                          msg[i] = "<p>Barang Dengan ID "+rs.data[i].id+" - "+rs.data[i].msg+"</p>";
+                        }
+                        new jBox('Notice', {content: msg.join("") ,showCountdown:true, color: 'blue'});
+
+                      }
+                    },
+                    error:function(rs){
+                      console.log("Catatan Gagal");
+                      new jBox('Notice', {content: 'Maaf anda tida bisa melakukan transaksi saat ini',showCountdown:true, color: 'red'})
+                    }
+                  } // Ajax extra settings for submit call
+                },
+              });
+              onchart = [
+                '<div class=form-group>',
+                '<label>Pilih Pelanggan</label>',
+                '<select class=form-control id=pelangganlist name=id_pelanggan></select>',
+                '</div>',
+                '<div class=form-group>',
+                '<label>Catatan</label>',
+                '<textarea class=form-control name=catatan_pemesanan></textarea>',
+                '</div>',
+              ];
+              k.find("#cart").find(".sc-cart-heading").after(onchart.join(""));
+              $.get("{{route("pemasaran.api.listpelanggan")}}",function(s){
+                $.each(s,function(index, el) {
+                  k.find("#cart").find("#pelangganlist").append("<option value='"+el.id_pelanggan+"'>"+el.nama_pelanggan+"</option>");
+                });
+              })
+              k.find("#cart").on('cartSubmitted', function(event) {
+                event.preventDefault();
+                new jBox('Notice', {content: 'Transaksi Selesai',showCountdown:true, color: 'green'});
+              });
+              k.find("#cari").on('change', function(event) {
+                event.preventDefault();
+                keyword = $(this).val();
+                modal.close();
+                $("#pmproduk").trigger("click");
+              });
+              k.find("#delfit").on('click', function(event) {
+                event.preventDefault();
+                keyword = null;
+                modal.close();
+                $("#pmproduk").trigger("click");
+              });
+          }
+        });
+        modal.open();
+      }).fail(function(r){
+        new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+      });
+      });
     });
   });
 </script>

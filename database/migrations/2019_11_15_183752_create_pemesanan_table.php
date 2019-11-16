@@ -20,6 +20,7 @@ class CreatePemesananTable extends Migration {
 			$table->text('catatan_pemesanan', 65535)->nullable();
 			$table->integer('status_pembayaran')->default(0);
 			$table->string('bukti', 100)->nullable();
+			$table->float('pajak', 10, 0)->default(0.1);
 			$table->timestamp('tgl_register')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}
