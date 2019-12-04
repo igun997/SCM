@@ -23,6 +23,9 @@ Route::get("/logout",function(){
 })->name("public.normal.logout");
 //Public API
 Route::post('/api/public/login',"ApiControl@login")->name("public.api.login");
+
+Route::post('/api/android/login',"AndroidAPI@pelanggan_login");
+Route::post('/api/android/register',"AndroidAPI@pelanggan_register");
 //Private API
 //All Access
 // -- Direktur ---
