@@ -11,6 +11,50 @@ class MentorControl extends Controller
   {
     return view("franchise.mentor.home")->with(["title"=>"Dashboard Mentor"]);
   }
+  public function franchise_layanan($id)
+  {
+    $c = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna"),"id_pengguna"=>$id]);
+    if ($c->count() > 0) {
+      $d = $c->first();
+      return view("franchise.mentor.franchise_layanan")->with(["title"=>"Manajemen Layanan MITRA","data"=>$d]);
+    }else {
+      return back()->withErrors(["msg"=>"Data Tidak Ditemukan"]);
+    }
+  }
+  public function franchise_layananadd(Request $req,$id)
+  {
+    if ($req->has("nama")) {
+      $req->validate([
+        "harga"=>"required|numeric",
+        "nama"=>"required",
+      ]);
+      $d = $req->all();
+      $d["pemilik_id"] = $id;
+      $ins = GeraiLayanan::create($d);
+      return redirect(route("mentor.franchise.layanan",$id));
+    }
+    return view("franchise.mentor.franchise_layananform")->with(["title"=>"Tambah Layanan"]);
+  }
+  public function franchise_layananedit(Request $req,$id,$ids)
+  {
+    if ($req->has("nama")) {
+      $req->validate([
+        "harga"=>"required|numeric",
+        "nama"=>"required",
+      ]);
+      $d = $req->all();
+      $d["pemilik_id"] = $id;
+      unset($d["_token"]);
+      $ins = GeraiLayanan::where(["id"=>$ids])->update($d);
+      return redirect(route("mentor.franchise.layanan",$id));
+    }
+    $data = GeraiLayanan::where(["id"=>$ids]);
+    if ($data->count() > 0) {
+      return view("franchise.mentor.franchise_layananform")->with(["title"=>"Edit Layanan","data"=>$data->first()]);
+    }else {
+      return back();
+    }
+  }
   public function franchise()
   {
     $frs = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna")])->get();

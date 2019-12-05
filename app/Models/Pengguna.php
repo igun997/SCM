@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Tue, 03 Dec 2019 17:37:27 +0000.
+ * Date: Thu, 05 Dec 2019 21:45:30 +0000.
  */
 
 namespace App\Models;
@@ -83,7 +83,7 @@ class Pengguna extends Eloquent
 
 	public function gerai_drivers()
 	{
-		return $this->hasMany(\App\Models\GeraiDriver::class);
+		return $this->hasMany(\App\Models\GeraiDriver::class, 'pemilik_id');
 	}
 
 	public function gerai_kontrols()
@@ -93,7 +93,7 @@ class Pengguna extends Eloquent
 
 	public function gerai_layanans()
 	{
-		return $this->hasMany(\App\Models\GeraiLayanan::class);
+		return $this->hasMany(\App\Models\GeraiLayanan::class, 'pemilik_id');
 	}
 
 	public function gerai_orders()

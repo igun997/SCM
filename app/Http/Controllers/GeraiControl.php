@@ -11,6 +11,12 @@ class GeraiControl extends Controller
     {
       return view("franchise.gerai.home")->with(["title"=>"Dashboard Gerai"]);
     }
+    public function layanan()
+    {
+      $d = GeraiLayanan::where(["pemilik_id"=>session()->get("id_pengguna")])->orderBy("id","desc")->get();
+      $data = ["title"=>"Data Layanan","data"=>$d];
+      return view("franchise.gerai.layanan")->with($data);
+    }
     public function barang()
     {
       $brg = GeraiBarang::where(["pemilik_id"=>session()->get("id_pengguna")])->orderBy("id","desc")->get();

@@ -254,6 +254,8 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/barang/trx/{id}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::get('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::post('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
+  Route::get('/gerai/layanan',"GeraiControl@layanan")->name('gerai.layanan');
+
 });
 
 Route::group(['middleware' => ['mentor']], function () {
@@ -265,6 +267,10 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::post('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::get('/mentor/franchise/layanan/{id}',"MentorControl@franchise_layanan")->name('mentor.franchise.layanan');
+  Route::get('/mentor/franchise/layanan/{id}/add',"MentorControl@franchise_layananadd")->name('mentor.franchise.layananadd');
+  Route::post('/mentor/franchise/layanan/{id}/add',"MentorControl@franchise_layananadd")->name('mentor.franchise.layananadd');
+  Route::get('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
+  Route::post('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
 
 
 });
