@@ -70,6 +70,7 @@ Route::group(['middleware' => ['direktur']], function () {
 
   //Pengguna
   Route::get('/api/direktur/pengguna_read/{id?}',"ApiControl@pengguna_read")->name("private.api.pengguna_read");
+  Route::get('/api/direktur/listmentor',"ApiControl@listmentor")->name("private.api.listmentor");
   Route::post('/api/direktur/pengguna_insert',"ApiControl@pengguna_insert")->name("private.api.pengguna_insert");
   Route::post('/api/direktur/pengguna_update/{id?}',"ApiControl@pengguna_update")->name("private.api.pengguna_update");
 
@@ -246,4 +247,24 @@ Route::group(['middleware'=>['pemasaran']],function(){
   Route::get("api/pemasaran/p_produk_read/{id?}","ApiControl@p_produk_read")->name("pemasaran.api.p_produk_read");
   Route::get("api/pemasaran/listpelanggan","ApiControl@listpelanggan")->name("pemasaran.api.listpelanggan");
   Route::post("api/pemasaran/p_produk_trans","ApiControl@p_produk_trans")->name("pemasaran.api.p_produk_trans");
+});
+Route::group(['middleware' => ['gerai']], function () {
+  Route::get('/gerai',"GeraiControl@index")->name('gerai.home');
+  Route::get('/gerai/barang',"GeraiControl@barang")->name('gerai.barang');
+  Route::get('/gerai/barang/trx/{id}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
+  Route::get('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
+  Route::post('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
+});
+
+Route::group(['middleware' => ['mentor']], function () {
+  Route::get('/mentor',"MentorControl@index")->name('mentor.home');
+  Route::get('/mentor/franchise',"MentorControl@franchise")->name('mentor.franchise');
+  Route::get('/mentor/franchise/barang/{id}',"MentorControl@franchise_barang")->name('mentor.franchise.barang');
+  Route::get('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');
+  Route::post('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');
+  Route::get('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
+  Route::post('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
+  Route::get('/mentor/franchise/layanan/{id}',"MentorControl@franchise_layanan")->name('mentor.franchise.layanan');
+
+
 });

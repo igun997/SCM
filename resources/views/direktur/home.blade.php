@@ -2074,6 +2074,11 @@
                               type:"select2",
                               name:"level",
                               id:"level",
+                            },{
+                              label:"Induk",
+                              type:"select2",
+                              name:"pengguna_id",
+                              id:"pengguna_id",
                             }
                           ]
                         ];
@@ -2119,47 +2124,113 @@
                               },{
                                 value:"pemasaran",
                                 text:"Pemasaran"
+                              },{
+                                value:"gerai",
+                                text:"Pemilik Gerai"
+                              },{
+                                value:"mentor",
+                                text:"Mentor Gerai"
                               },
                             ];
                             selectbuilder(level,html.find("#level"));
+                            $.get("{{route("private.api.listmentor")}}",function(d){
+                              mentor =  [];
+                              is = 0;
+                              if (d.status == 1) {
+                                $.each(d.data,function(i,el){
+                                  mentor[i] = {value:el.id_pengguna,text:el.id_pengguna+" - "+el.nama_pengguna};
+                                });
+                                selectbuilder(mentor,html.find("#pengguna_id"));
+                              }
+                            }).fail(function(){
+                              new jBox('Notice', {content: 'Anda terputus dari server',showCountdown:true, color: 'red'});
+                            })
+                            html.find("#pengguna_id").append("<option value=''>== Pilih ==</option>");
                             html.find("#create").on('submit',function(event) {
                               event.preventDefault();
-                              dform = $(this).serializeArray();
-                              console.log(dform);
-                              on();
-                              $.ajax({
-                                url: '{{route("private.api.pengguna_insert")}}',
-                                type: 'POST',
-                                dataType: 'json',
-                                data: dform
-                              })
-                              .done(function(rs) {
-
-                                if (rs.status == 1) {
-                                  new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
-                                }else {
-                                  new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
-                                }
-                              })
-                              .fail(function(rs) {
-                                var msg = "";
-                                $.each(rs.responseJSON.errors,function(index,item){
-                                  msg += item[0]+"<br>";
-                                });
-                                if (rs.responseJSON.errors == undefined) {
-                                  var msg = "Kehilangan Komunikasi Dengan Server"
-                                }
-                                Swal.fire({
-                                  type: 'error',
-                                  title: 'Oops...',
-                                  html: msg,
-                                  footer: '<a href>Laporkan Error</a>'
+                              pg = html.find("#pengguna_id").val();
+                              tipe = html.find("#level").val();
+                              console.log(pg);
+                              if (pg == "" || pg == null) {
+                                dform = $(this).serializeArray();
+                                console.log(dform);
+                                on();
+                                $.ajax({
+                                  url: '{{route("private.api.pengguna_insert")}}',
+                                  type: 'POST',
+                                  dataType: 'json',
+                                  data: dform
                                 })
-                              })
-                              .always(function() {
-                                off();
-                                set.close();
-                              });
+                                .done(function(rs) {
+
+                                  if (rs.status == 1) {
+                                    new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
+                                  }else {
+                                    new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
+                                  }
+                                })
+                                .fail(function(rs) {
+                                  var msg = "";
+                                  $.each(rs.responseJSON.errors,function(index,item){
+                                    msg += item[0]+"<br>";
+                                  });
+                                  if (rs.responseJSON.errors == undefined) {
+                                    var msg = "Kehilangan Komunikasi Dengan Server"
+                                  }
+                                  Swal.fire({
+                                    type: 'error',
+                                    title: 'Oops...',
+                                    html: msg,
+                                    footer: '<a href>Laporkan Error</a>'
+                                  })
+                                })
+                                .always(function() {
+                                  off();
+                                  set.close();
+                                });
+                              }else {
+                                if (tipe == "gerai") {
+                                  dform = $(this).serializeArray();
+                                  console.log(dform);
+                                  on();
+                                  $.ajax({
+                                    url: '{{route("private.api.pengguna_insert")}}',
+                                    type: 'POST',
+                                    dataType: 'json',
+                                    data: dform
+                                  })
+                                  .done(function(rs) {
+
+                                    if (rs.status == 1) {
+                                      new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
+                                    }else {
+                                      new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
+                                    }
+                                  })
+                                  .fail(function(rs) {
+                                    var msg = "";
+                                    $.each(rs.responseJSON.errors,function(index,item){
+                                      msg += item[0]+"<br>";
+                                    });
+                                    if (rs.responseJSON.errors == undefined) {
+                                      var msg = "Kehilangan Komunikasi Dengan Server"
+                                    }
+                                    Swal.fire({
+                                      type: 'error',
+                                      title: 'Oops...',
+                                      html: msg,
+                                      footer: '<a href>Laporkan Error</a>'
+                                    })
+                                  })
+                                  .always(function() {
+                                    off();
+                                    set.close();
+                                  });
+
+                                }else {
+                                    new jBox('Notice', {content: 'Akun Induk Hanya Untuk Bagian Gerai',showCountdown:true, color: 'red'});
+                                }
+                              }
 
                             });
 

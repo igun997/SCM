@@ -53,4 +53,10 @@ class GeraiBarang extends Eloquent
 	{
 		return $this->hasMany(\App\Models\GeraiBarangDetail::class);
 	}
+	public function stok($idbarang)
+	{
+		$minus = $this->hasMany(\App\Models\GeraiBarangDetail::class)->where(["konf_pemilik"=>1,"jenis"=>"keluar","gerai_barang_id"=>$idbarang])->sum("qty");
+		$plus = $this->hasMany(\App\Models\GeraiBarangDetail::class)->where(["konf_pemilik"=>1,"jenis"=>"masuk","gerai_barang_id"=>$idbarang])->sum("qty");
+		return (($plus*1) + ($minus*-1));
+	}
 }

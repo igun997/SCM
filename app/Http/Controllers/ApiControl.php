@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
@@ -19,7 +19,7 @@ class ApiControl extends Controller
       $cek = Pengguna::where($data);
       if ($cek->count() > 0) {
         $row = $cek->first();
-        session(["level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna]);
+        session(["url"=>url($row->level),"level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna]);
         return response()->json(["status"=>1,"path"=>url("$row->level")]);
       }else {
         return response()->json(["status"=>0]);
@@ -639,6 +639,9 @@ class ApiControl extends Controller
         "alamat"=>"required|min:5",
       ]);
       $data = $req->all();
+      if ($data["pelanggan_id"] == "") {
+        unset($data["pelanggan_id"]);
+      }
       $kodifikasi = "PL".date("dmy")."-".str_pad((MasterPelanggan::count()+1),3,0,STR_PAD_LEFT);
       $data["id_pelanggan"] = $kodifikasi;
       $ins = MasterPelanggan::create($data);
@@ -662,6 +665,15 @@ class ApiControl extends Controller
         return response()->json(["status"=>1],200);
       }else {
         return response()->json(["status"=>0],500);
+      }
+    }
+    public function listmentor()
+    {
+      $a = Pengguna::where(["level"=>"mentor","status"=>1]);
+      if ($a->count() > 0) {
+        return response()->json(["status"=>1,"data"=>$a->get()]);
+      }else {
+        return response()->json(["status"=>0]);
       }
     }
     public function pengguna_read($id = null)
@@ -699,8 +711,6 @@ class ApiControl extends Controller
           </button>
           </div>';
         }
-
-
       };
       foreach ($getAll as $key => $value) {
         $data["data"][] = [$value->id_pengguna,$value->nama_pengguna,$value->no_kontak,$value->alamat,$value->email,ucfirst($value->level),status_akun($value->status),date("d-m-Y",strtotime($value->tgl_register)),$btnCreate($value->id_pengguna,$value->status)];
@@ -1791,5 +1801,59 @@ class ApiControl extends Controller
     public function listpelanggan()
     {
       return MasterPelanggan::get();
+    }
+    public function barangerai_read()
+    {
+      $data = [];
+      $data["data"] = [];
+      $id = session()->get("id_pengguna");
+      $d = GeraiBarang::where(["pemilik_id"=>$id]);
+      foreach ($d->get() as $key => $value) {
+        $b = "<a href='' class='btn btn-primary'>Transaksi</a>";
+        $data["data"][] = [($key+1),$value->nama_barang,$value->deskripsi,date("d-m-Y",strtotime($value->dibuat)),$b];
+      }
+      return response()->json($data);
+    }
+    public function baranggerai_add(Request $req)
+    {
+      $req->validate([
+        "nama_barang"=>"required",
+        "deskripsi"=>"required",
+        "pemilik_id"=>"required",
+      ]);
+      $createInstance = GeraiBarang::create($req->all());
+      if ($createInstance) {
+        return back()->with(["msg"=>"Sukses Input Barang"]);
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Input Barang"]);
+      }
+    }
+    public function baranggerai_trans(Request $req)
+    {
+      $req->validate([
+        "gerai_barang_id"=>"required",
+        "jenis"=>"required",
+      ]);
+      $ins = GeraiBarangDetail::create($req->all());
+      if ($ins) {
+        return back()->with(["msg"=>"Sukses Input Barang"]);
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Input Barang"]);
+      }
+    }
+    public function baranggerai_konf(Request $req,$id)
+    {
+      $data = $req->all();
+      $cek = GeraiBarangDetail::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $u = $cek->update(["konf_pemilik"=>1,"tgl_konf"=>date("Y-m-d")]);
+        if ($u) {
+          return back()->with(["msg"=>"Sukses Update Data"]);
+        }else {
+          return back()->withErrors(["msg"=>"Gagal Update Data"]);
+        }
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update Data"]);
+      }
     }
 }
