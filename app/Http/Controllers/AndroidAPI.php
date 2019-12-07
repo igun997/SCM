@@ -39,4 +39,28 @@ class AndroidAPI extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function penggunalist()
+    {
+      $get = Pengguna::where(["level"=>"gerai"]);
+      if ($get->count() > 0) {
+        $data = $get->get();
+        return response()->json(["status"=>1,"data"=>$data]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function layananlist($id)
+    {
+      $get = GeraiLayanan::where(["pemilik_id"=>$id]);
+      if ($get->count() > 0) {
+        $data = $get->get();
+        return response()->json(["status"=>1,"data"=>$data]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function submitorder(Request $req)
+    {
+      return $req->all();
+    }
 }

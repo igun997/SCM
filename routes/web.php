@@ -26,6 +26,8 @@ Route::post('/api/public/login',"ApiControl@login")->name("public.api.login");
 
 Route::post('/api/android/login',"AndroidAPI@pelanggan_login");
 Route::post('/api/android/register',"AndroidAPI@pelanggan_register");
+Route::get('/api/android/penggunalist',"AndroidAPI@penggunalist");
+Route::get('/api/android/layananlist/{id}',"AndroidAPI@layananlist");
 //Private API
 //All Access
 // -- Direktur ---
@@ -255,6 +257,7 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::post('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::get('/gerai/layanan',"GeraiControl@layanan")->name('gerai.layanan');
+  Route::get('/gerai/pesanan',"GeraiControl@pesanan")->name('gerai.pesanan');
 
 });
 

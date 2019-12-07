@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 05 Dec 2019 21:45:30 +0000.
+ * Date: Thu, 05 Dec 2019 22:06:27 +0000.
  */
 
 namespace App\Models;
@@ -98,7 +98,7 @@ class Pengguna extends Eloquent
 
 	public function gerai_orders()
 	{
-		return $this->hasMany(\App\Models\GeraiOrder::class);
+		return $this->hasMany(\App\Models\GeraiOrder::class, 'pemilik_id');
 	}
 
 	public function penggunas()

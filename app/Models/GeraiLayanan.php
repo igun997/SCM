@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Tue, 03 Dec 2019 17:41:21 +0000.
+ * Date: Thu, 05 Dec 2019 22:08:44 +0000.
  */
 
 namespace App\Models;
@@ -11,14 +11,14 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class GeraiLayanan
- *
+ * 
  * @property int $id
  * @property string $pemilik_id
  * @property string $nama
  * @property float $harga
  * @property string $foto
  * @property \Carbon\Carbon $dibuat
- *
+ * 
  * @property \App\Models\Pengguna $pengguna
  * @property \Illuminate\Database\Eloquent\Collection $gerai_orders
  *
@@ -45,7 +45,7 @@ class GeraiLayanan extends Eloquent
 		'dibuat'
 	];
 
-	public function pemilik()
+	public function pengguna()
 	{
 		return $this->belongsTo(\App\Models\Pengguna::class, 'pemilik_id');
 	}
