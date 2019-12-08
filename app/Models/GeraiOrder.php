@@ -44,7 +44,7 @@ class GeraiOrder extends Eloquent
 		'dijemput' => 'bool',
 		'gerai_driver_id' => 'int',
 		'jarak' => 'int',
-		'totalharga' => 'float'
+		'totalharga' => 'float',
 	];
 
 	protected $dates = [
@@ -61,6 +61,10 @@ class GeraiOrder extends Eloquent
 		'gerai_driver_id',
 		'jarak',
 		'totalharga',
+		'cLat',
+		'cLng',
+		'dLat',
+		'dLng',
 		'dibuat'
 	];
 

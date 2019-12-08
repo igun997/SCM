@@ -49,12 +49,13 @@ class AndroidAPI extends Controller
         return response()->json(["status"=>0]);
       }
     }
-    public function dijemput($status,$id)
+    public function dijemput(Request $req,$status,$id)
     {
+      $data = $req->all();
       $c = GeraiOrder::where(["id"=>$id]);
       if ($c->count() > 0) {
         if ($status == 1) {
-          $c->update(["dijemput"=>$status,"status_order"=>5]);
+          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat"=>$data["lat"],"cLng"=>$data["lng"]]);
         }else {
           $c->update(["dijemput"=>$status]);
         }

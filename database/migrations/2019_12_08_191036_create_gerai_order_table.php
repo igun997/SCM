@@ -25,6 +25,10 @@ class CreateGeraiOrderTable extends Migration {
 			$table->integer('jarak')->nullable();
 			$table->float('totalharga', 10, 0);
 			$table->timestamp('dibuat')->default(DB::raw('CURRENT_TIMESTAMP'));
+			$table->string('cLat', 100)->nullable();
+			$table->string('cLng', 100)->nullable();
+			$table->string('dLat', 100)->nullable();
+			$table->string('dLng', 100)->nullable();
 		});
 	}
 
