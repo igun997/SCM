@@ -22,6 +22,6 @@ class VerifyCsrfToken extends Middleware
       "/api/android/login",
       "/api/android/register",
       '/api/android/submitorder',
-      '/api/android/dijemput'
+      '/api/android/dijemput/{status?}/{id?}'
     ];
 }
