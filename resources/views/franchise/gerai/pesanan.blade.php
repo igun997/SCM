@@ -49,7 +49,15 @@
                  <td>Rp. {{number_format($v->totalharga)}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
-                   <a href="#" class="btn btn-success m-2">Test Button</a>
+                   @if($v->dijemput == 1 && $v->status_order != 6)
+                   <a href="{{route("gerai.layanan_selesai",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan</a>
+                   @elseif($v->status_order == 1)
+                   <a href="{{route("gerai.layanan_diterima",$v->id)}}" class="btn btn-success m-2 selesaikan">Diterima</a>
+                   @elseif($v->status_order == 2)
+                   <a href="{{route("gerai.layanan_cuci",$v->id)}}" class="btn btn-success m-2 selesaikan">Cuci Sekarang</a>
+                   @elseif($v->status_order == 3)
+                   <a href="{{route("gerai.layanan_cuciselesai",$v->id)}}" class="btn btn-success m-2 selesaikan">Pencucian Selesai</a>
+                   @endif
                  </td>
                </tr>
                @endforeach
@@ -70,6 +78,7 @@
     $("#dtable").DataTable({
 
     });
+
   });
 </script>
 @endsection

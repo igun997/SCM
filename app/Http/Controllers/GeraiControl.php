@@ -23,6 +23,46 @@ class GeraiControl extends Controller
       $data = ["title"=>"Data Layanan","data"=>$d];
       return view("franchise.gerai.layanan")->with($data);
     }
+    public function pesanan_selesai($id)
+    {
+      $cek = GeraiOrder::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $cek->update(["status_order"=>6]);
+        return back();
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update"]);
+      }
+    }
+    public function layanan_diterima($id)
+    {
+      $cek = GeraiOrder::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $cek->update(["status_order"=>2]);
+        return back();
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update"]);
+      }
+    }
+    public function layanan_cuci($id)
+    {
+      $cek = GeraiOrder::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $cek->update(["status_order"=>3]);
+        return back();
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update"]);
+      }
+    }
+    public function layanan_cuciselesai($id)
+    {
+      $cek = GeraiOrder::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $cek->update(["status_order"=>4]);
+        return back();
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update"]);
+      }
+    }
     public function barang()
     {
       $brg = GeraiBarang::where(["pemilik_id"=>session()->get("id_pengguna")])->orderBy("id","desc")->get();
