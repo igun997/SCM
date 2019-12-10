@@ -26,19 +26,19 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="" class="nav-link">
+        <a href="{{route("gerai.keuangan")}}" class="nav-link">
           <i class="nav-icon fas fa-file"></i>
           <p>Laporan Keuangan</p>
         </a>
       </li>
       <li class="nav-item">
-        <a href="" class="nav-link">
+        <a href="{{route("gerai.lapbarang")}}" class="nav-link">
           <i class="nav-icon fas fa-file"></i>
           <p>Laporan Barang</p>
         </a>
       </li>
       <li class="nav-item">
-        <a href="" class="nav-link">
+        <a href="{{route("gerai.lappesanan")}}" class="nav-link">
           <i class="nav-icon fas fa-file"></i>
           <p>Laporan Pesanan</p>
         </a>

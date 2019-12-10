@@ -258,6 +258,9 @@ Route::group(['middleware'=>['pemasaran']],function(){
 Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai',"GeraiControl@index")->name('gerai.home');
   Route::get('/gerai/barang',"GeraiControl@barang")->name('gerai.barang');
+  Route::get('/gerai/keuangan',"GeraiControl@keuangan")->name('gerai.keuangan');
+  Route::get('/gerai/lapbarang',"GeraiControl@laporanbarang")->name('gerai.lapbarang');
+  Route::get('/gerai/lappesanan',"GeraiControl@laporanpesanan")->name('gerai.lappesanan');
   Route::get('/gerai/barang/trx/{id}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::get('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');
   Route::post('/gerai/barang/trx/{id}/{konf?}',"GeraiControl@barang_trans")->name('gerai.barang.transaksi');

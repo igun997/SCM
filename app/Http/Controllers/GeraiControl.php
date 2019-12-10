@@ -63,6 +63,29 @@ class GeraiControl extends Controller
         return back()->withErrors(["msg"=>"Gagal Update"]);
       }
     }
+    public function laporanpesanan()
+    {
+      $d = GeraiOrder::where(["pemilik_id"=>session()->get("id_pengguna")])->get();
+      $data = ["title"=>"Laporan Pesanan","data"=>$d];
+      return view("franchise.gerai.lappesanan")->with($data);
+    }
+    public function laporanbarang()
+    {
+      $d = GeraiBarang::where(["pemilik_id"=>session()->get("id_pengguna")]);
+      $data = $d->get();
+      $c = ["title"=>"Laporan Data Barang","data"=>$data];
+      return view("franchise.gerai.laporanbarang")->with($c);
+    }
+    public function keuangan()
+    {
+      $d = GeraiOrder::where(["status_order"=>6]);
+      if ($d->count() > 0) {
+        $data =$d->get();
+        return view("franchise.gerai.keuangan")->with(["title"=>"Laporan Keuangan","data"=>$data]);
+      }else {
+        return back();
+      }
+    }
     public function barang()
     {
       $brg = GeraiBarang::where(["pemilik_id"=>session()->get("id_pengguna")])->orderBy("id","desc")->get();
