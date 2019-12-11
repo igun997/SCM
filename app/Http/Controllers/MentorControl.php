@@ -51,6 +51,7 @@ class MentorControl extends Controller
       unset($data["status_evaluasi"]);
     }
     $data["mentor_id"] = session()->get("id_pengguna");
+    $data["pemilik_id"] = $id;
     $ins = GeraiKontrol::create($data);
     return back();
   }
