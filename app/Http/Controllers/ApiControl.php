@@ -22,7 +22,14 @@ class ApiControl extends Controller
         session(["url"=>url($row->level),"level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna]);
         return response()->json(["status"=>1,"path"=>url("$row->level")]);
       }else {
-        return response()->json(["status"=>0]);
+        $d = GeraiDriver::where(["username"=>$req->email,"password"=>$req->password]);
+        if ($d->count() > 0) {
+          $row = $d->first();
+          session(["url"=>url("driver"),"id"=>$row->id,"nama"=>$row->nama]);
+          return response()->json(["status"=>1,"path"=>url("driver")]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
       }
     }
 
