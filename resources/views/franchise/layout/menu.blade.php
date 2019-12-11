@@ -80,6 +80,19 @@
           <p>Logout</p>
         </a>
       </li>
+      @elseif(session()->get("level") == "driver")
+      <li class="nav-item">
+        <a href="{{session()->get("url")}}" class="nav-link">
+          <i class="nav-icon fas fa-home"></i>
+          <p>Beranda</p>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="{{route("public.normal.logout")}}" class="nav-link">
+          <i class="nav-icon fas fa-sign-out-alt"></i>
+          <p>Logout</p>
+        </a>
+      </li>
       @else
         <li class="nav-item">
           <a href="{{route("public.normal.login")}}" class="nav-link">

@@ -273,7 +273,10 @@ Route::group(['middleware' => ['gerai']], function () {
 
   Route::get('/gerai/fixing/{id}',"GeraiControl@index_fix")->name('gerai.home.fixing');
 });
-
+Route::group(['middleware' => ['driver']], function () {
+    Route::get('/driver',"DriverControl@index")->name('driver.home');
+    
+});
 Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor',"MentorControl@index")->name('mentor.home');
   Route::get('/mentor/kontrol/{id?}',"MentorControl@kontrol")->name('mentor.kontrol.done');

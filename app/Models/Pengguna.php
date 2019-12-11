@@ -96,8 +96,11 @@ class Pengguna extends Eloquent
 		return $this->hasMany(\App\Models\GeraiLayanan::class, 'pemilik_id');
 	}
 
-	public function gerai_orders()
+	public function gerai_orders($d = null)
 	{
+		if ($d != null) {
+			return $this->hasMany(\App\Models\GeraiOrder::class, 'pemilik_id')->whereIn("status_order",$d)->get();
+		}
 		return $this->hasMany(\App\Models\GeraiOrder::class, 'pemilik_id');
 	}
 

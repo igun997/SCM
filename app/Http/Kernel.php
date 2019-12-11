@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'pengadaan' => \App\Http\Middleware\Pengadaan::class,
         'gerai' => \App\Http\Middleware\Gerai::class,
         'mentor' => \App\Http\Middleware\Mentor::class,
+        'driver' => \App\Http\Middleware\Driver::class,
     ];
 
     /**

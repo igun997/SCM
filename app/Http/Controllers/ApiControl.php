@@ -25,7 +25,7 @@ class ApiControl extends Controller
         $d = GeraiDriver::where(["username"=>$req->email,"password"=>$req->password]);
         if ($d->count() > 0) {
           $row = $d->first();
-          session(["url"=>url("driver"),"id"=>$row->id,"nama"=>$row->nama]);
+          session(["url"=>url("driver"),"level"=>"driver","id"=>$row->id,"nama"=>$row->nama]);
           return response()->json(["status"=>1,"path"=>url("driver")]);
         }else {
           return response()->json(["status"=>0]);
