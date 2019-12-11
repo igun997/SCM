@@ -11,6 +11,26 @@ class MentorControl extends Controller
   {
     return view("franchise.mentor.home")->with(["title"=>"Dashboard Mentor"]);
   }
+  public function franchise_driver($id)
+  {
+    $c = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna"),"id_pengguna"=>$id]);
+    if ($c->count() > 0) {
+      $d = $c->first();
+      return view("franchise.mentor.franchise_driver")->with(["title"=>"Manajemen Driver","data"=>$d]);
+    }else {
+      return back()->withErrors(["msg"=>"Data Tidak Ditemukan"]);
+    }
+  }
+  public function franchise_driveradd(Request $req,$id)
+  {
+    if ($req->has("nama")) {
+      $d = $req->all();
+      $d["pemilik_id"] = $id;
+      $ins = GeraiDriver::create($d);
+      return redirect(route("mentor.franchise.driver",$id));
+    }
+    return view("franchise.mentor.franchise_driverform")->with(["title"=>"Tambah Layanan"]);
+  }
   public function controlling_audit($id)
   {
     $trx = GeraiKontrol::where(["pemilik_id"=>$id]);

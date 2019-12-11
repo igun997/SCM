@@ -284,6 +284,9 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::post('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::get('/mentor/franchise/layanan/{id}',"MentorControl@franchise_layanan")->name('mentor.franchise.layanan');
+  Route::get('/mentor/franchise/driver/{id}',"MentorControl@franchise_driver")->name('mentor.franchise.driver');
+  Route::get('/mentor/franchise/driver/{id}/add',"MentorControl@franchise_driveradd")->name('mentor.franchise.driveradd');
+  Route::post('/mentor/franchise/driver/{id}/add',"MentorControl@franchise_driveradd")->name('mentor.franchise.driveradd');
   Route::get('/mentor/controlling',"MentorControl@controlling")->name('mentor.controlling');
   Route::get('/mentor/controlling/audit/{id}',"MentorControl@controlling_audit")->name('mentor.controlling.audit');
   Route::post('/mentor/controlling/audit/{id}',"MentorControl@controlling_auditpost")->name('mentor.controlling.audit');

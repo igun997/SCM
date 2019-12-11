@@ -40,6 +40,9 @@
                    <a href="{{route("mentor.franchise.layanan",$v->id_pengguna)}}" class="btn btn-primary m-1">
                      Data Layanan
                    </a>
+                   <a href="{{route("mentor.franchise.driver",$v->id_pengguna)}}" class="btn btn-primary m-1">
+                     Data Driver
+                   </a>
                  </td>
                </tr>
                @endforeach
