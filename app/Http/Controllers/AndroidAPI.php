@@ -55,7 +55,7 @@ class AndroidAPI extends Controller
       $c = GeraiOrder::where(["id"=>$id]);
       if ($c->count() > 0) {
         if ($status == 1) {
-          $c->update(["dijemput"=>$status,"status_order"=>5]);
+          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat"=>$data["lat"],"cLng"=>$data["lng"]]);
         }else {
           $c->update(["dijemput"=>$status]);
         }
@@ -63,6 +63,7 @@ class AndroidAPI extends Controller
       }else {
         return response(["status"=>0]);
       }
+      // return $data;
     }
     public function cekharga($id)
     {

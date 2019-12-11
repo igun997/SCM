@@ -274,8 +274,12 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/fixing/{id}',"GeraiControl@index_fix")->name('gerai.home.fixing');
 });
 Route::group(['middleware' => ['driver']], function () {
-    Route::get('/driver',"DriverControl@index")->name('driver.home');
-    
+  Route::get('/driver',"DriverControl@index")->name('driver.home');
+  Route::get('/driver/selesai/{id?}',"DriverControl@selesai")->name('driver.selesaiantar');
+  Route::post('/driver/terima/{id?}',"DriverControl@terima")->name('driver.terima');
+  Route::get('/driver/test',"DriverControl@test")->name('driver.test');
+
+
 });
 Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor',"MentorControl@index")->name('mentor.home');
