@@ -97,10 +97,6 @@ class AndroidAPI extends Controller
     {
 
       $data = $req->all();
-      $cek = GeraiOrder::where(["gerai_pelanggan_id"=>$req->gerai_pelanggan_id])->whereIn("status_order",[0,1,2,3,4,5]);
-      if ($cek->count() > 0) {
-        return response()->json(["status"=>0,"msg"=>"Orderan Masih Ada"]);
-      }
       $data["totalharga"] = 0;
       $a = GeraiOrder::create($data);
       if ($a) {
