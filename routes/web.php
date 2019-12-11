@@ -271,10 +271,12 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/layanan/layanan_cuciselesai/{id}',"GeraiControl@layanan_cuciselesai")->name('gerai.layanan_cuciselesai');
   Route::get('/gerai/pesanan',"GeraiControl@pesanan")->name('gerai.pesanan');
 
+  Route::get('/gerai/fixing/{id}',"GeraiControl@index_fix")->name('gerai.home.fixing');
 });
 
 Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor',"MentorControl@index")->name('mentor.home');
+  Route::get('/mentor/kontrol/{id?}',"MentorControl@kontrol")->name('mentor.kontrol.done');
   Route::get('/mentor/franchise',"MentorControl@franchise")->name('mentor.franchise');
   Route::get('/mentor/franchise/barang/{id}',"MentorControl@franchise_barang")->name('mentor.franchise.barang');
   Route::get('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');

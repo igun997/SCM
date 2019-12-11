@@ -19,6 +19,11 @@ class MentorControl extends Controller
     $c = ["title"=>"Audit Gerai","data"=>$data,"gerai"=>$gerailist];
     return view("franchise.mentor.controlling_audit")->with($c);
   }
+  public function kontrol($id)
+  {
+    $up = GeraiKontrol::where(["id"=>$id])->update(["status_kontrol"=>1]);
+    return back();
+  }
   public function controlling_auditpost(Request $req,$id)
   {
     $data = $req->all();

@@ -7,9 +7,17 @@ use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
 class GeraiControl extends Controller
 {
+    public function index_fix($id)
+    {
+      $a = GeraiKontrol::where(["id"=>$id]);
+      $a->update(["status_evaluasi"=>1]);
+      return back();
+    }
     public function index()
     {
-      return view("franchise.gerai.home")->with(["title"=>"Dashboard Gerai"]);
+      $trx = GeraiKontrol::where(["pemilik_id"=>session()->get("id_pengguna")]);
+      $data = $trx->get();
+      return view("franchise.gerai.home")->with(["title"=>"Dashboard Gerai","data"=>$data]);
     }
     public function pesanan()
     {
