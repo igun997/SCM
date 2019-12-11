@@ -78,7 +78,7 @@ class GeraiControl extends Controller
     }
     public function keuangan()
     {
-      $d = GeraiOrder::where(["status_order"=>6]);
+      $d = GeraiOrder::where(["pemilik_id"=>session()->get("id_pengguna"),"status_order"=>6]);
       if ($d->count() > 0) {
         $data =$d->get();
         return view("franchise.gerai.keuangan")->with(["title"=>"Laporan Keuangan","data"=>$data]);

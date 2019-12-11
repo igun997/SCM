@@ -34,7 +34,6 @@ class GeraiKontrol extends Eloquent
 
 	protected $casts = [
 		'status_kontrol' => 'int',
-		'status_evaluasi' => 'int'
 	];
 
 	protected $dates = [

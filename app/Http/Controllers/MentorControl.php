@@ -11,6 +11,52 @@ class MentorControl extends Controller
   {
     return view("franchise.mentor.home")->with(["title"=>"Dashboard Mentor"]);
   }
+  public function controlling_audit($id)
+  {
+    $trx = GeraiKontrol::where(["pemilik_id"=>$id]);
+    $data = $trx->get();
+    $gerailist = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna")])->get();
+    $c = ["title"=>"Audit Gerai","data"=>$data,"gerai"=>$gerailist];
+    return view("franchise.mentor.controlling_audit")->with($c);
+  }
+  public function controlling_auditpost(Request $req,$id)
+  {
+    $data = $req->all();
+    if ($data["status_evaluasi"] == "") {
+      unset($data["status_evaluasi"]);
+    }
+    $data["mentor_id"] = session()->get("id_pengguna");
+    $ins = GeraiKontrol::create($data);
+    return back();
+  }
+  public function laporankeuangan($id)
+  {
+    $d = GeraiOrder::where(["pemilik_id"=>$id,"status_order"=>6]);
+    if ($d->count() > 0) {
+      $data =$d->get();
+      return view("franchise.gerai.keuangan")->with(["title"=>"Laporan Keuangan","data"=>$data]);
+    }else {
+      return back();
+    }
+  }
+  public function laporanbarang($id)
+  {
+    $d = GeraiBarang::where(["pemilik_id"=>$id]);
+    $data = $d->get();
+    $c = ["title"=>"Laporan Data Barang","data"=>$data];
+    return view("franchise.gerai.laporanbarang")->with($c);
+  }
+  public function laporanpesanan($id)
+  {
+    $d = GeraiOrder::where(["pemilik_id"=>$id])->get();
+    $data = ["title"=>"Laporan Pesanan","data"=>$d];
+    return view("franchise.gerai.lappesanan")->with($data);
+  }
+  public function controlling()
+  {
+    $frs = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna")])->get();
+    return view("franchise.mentor.controlling")->with(["title"=>"Data Controlling","frs"=>$frs]);
+  }
   public function franchise_layanan($id)
   {
     $c = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna"),"id_pengguna"=>$id]);
