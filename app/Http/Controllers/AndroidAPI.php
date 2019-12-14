@@ -122,18 +122,18 @@ class AndroidAPI extends Controller
     }
     public function driver_login(Request $req)
     {
-      // $req->validate([
-      //   "username"=>"required",
-      //   "password"=>"required",
-      // ]);
-      // $where = $req->all();
-      // $get = GeraiDriver::where($where);
-      // if ($get->count() > 0) {
-      //   $d = $get->first();
-      //   return response()->json(["status"=>1,"data"=>$d]);
-      // }else {
-      //   return response()->json(["status"=>0]);
-      // }
-      return response()->json(["status"=>1]);
+      $req->validate([
+        "username"=>"required",
+        "password"=>"required",
+      ]);
+      $where = $req->all();
+      $get = GeraiDriver::where($where);
+      if ($get->count() > 0) {
+        $d = $get->first();
+        return response()->json(["status"=>1,"data"=>$d]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+      // return response()->json(["status"=>1]);
     }
 }
