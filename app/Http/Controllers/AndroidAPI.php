@@ -151,9 +151,11 @@ class AndroidAPI extends Controller
             return $miles;
           }
     }
-    public function terima(Request $req,$id)
+    public function terima(Request $req)
     {
       $data = $req->all();
+      $id = $data["id"];
+      unset($data["id"]);
       $cek = GeraiOrder::where("id",$id);
       if ($cek->count() > 0) {
         $cLat = $cek->first()->cLat;
@@ -163,6 +165,21 @@ class AndroidAPI extends Controller
         $km = $this->_distance($cLat,$cLng,$data["dLat"],$data["dLng"],"km");
         $data["jarak"] = round($km);
         $data["totalharga"] = ($qty*$harga)+($data["jarak"]*5000);
+        $data["status_order"] = 1;
+        $cek->update($data);
+        return response()->json(["status"=>1,"data"=>$data]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+      // return $req->all();
+    }
+    public function statusorder_driver(Request $req)
+    {
+      $data = $req->all();
+      $id = $data["id"];
+      unset($data["id"]);
+      $cek = GeraiOrder::where("id",$id);
+      if ($cek->count() > 0) {
         $cek->update($data);
         return response()->json(["status"=>1,"data"=>$data]);
       }else {
@@ -178,8 +195,20 @@ class AndroidAPI extends Controller
         $v->nama_layanan = $v->gerai_layanan->nama;
         $v->jarakTempuh = ($v->jarak == null)?"Belum Ditentukan":$v->jarak." KM";
         $v->harga = number_format($v->totalharga);
+        $v->ownId = $id;
 
       }
       return $order;
+    }
+    public function driver_detailpesanan($id)
+    {
+      $d = GeraiOrder::where("id",$id);
+      $data = $d->first();
+      $data->nama_pelanggan = $data->gerai_pelanggan->nama;
+      $data->kode = str_pad($data->id,5,0,STR_PAD_LEFT);
+      $data->nama_layanan = $data->gerai_layanan->nama;
+      $data->jarakTempuh = ($data->jarak == null)?"Belum Ditentukan":$data->jarak." KM";
+      $data->dibuatFormat = date("Y-m-d",strtotime($data->dibuat));
+      return $data;
     }
 }

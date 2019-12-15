@@ -35,6 +35,8 @@ Route::get('/api/android/dijemput/{status?}/{id?}',"AndroidAPI@dijemput");
 Route::get('/api/android/driver/login',"AndroidAPI@driver_login");
 Route::get('/api/android/driver/driver_listpesanan/{id?}',"AndroidAPI@driver_listpesanan");
 Route::get('/api/android/driver/terima/{id?}',"AndroidAPI@terima");
+Route::get('/api/android/driver/selesai',"AndroidAPI@statusorder_driver");
+Route::get('/api/android/driver/driver_detailpesanan/{id?}',"AndroidAPI@driver_detailpesanan");
 //Private API
 //All Access
 // -- Direktur ---

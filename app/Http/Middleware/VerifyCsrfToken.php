@@ -19,9 +19,6 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-      "/api/android/login",
-      "/api/android/register",
-      '/api/android/submitorder',
-      '/api/android/driver/login',
+      "/api/*",
     ];
 }
