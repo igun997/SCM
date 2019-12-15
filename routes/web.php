@@ -32,7 +32,9 @@ Route::get('/api/android/listpesanan/{id}',"AndroidAPI@listpesanan");
 Route::post('/api/android/submitorder',"AndroidAPI@submitorder");
 Route::get('/api/android/pesanan/{id?}',"AndroidAPI@pesanan");
 Route::get('/api/android/dijemput/{status?}/{id?}',"AndroidAPI@dijemput");
-Route::post('/api/android/driver/login',"AndroidAPI@driver_login");
+Route::get('/api/android/driver/login',"AndroidAPI@driver_login");
+Route::get('/api/android/driver/driver_listpesanan/{id?}',"AndroidAPI@driver_listpesanan");
+Route::get('/api/android/driver/terima/{id?}',"AndroidAPI@terima");
 //Private API
 //All Access
 // -- Direktur ---
