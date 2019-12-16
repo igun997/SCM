@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Mail;
 use Illuminate\Http\Request;
 use App\Models\{Pengguna,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarang,GeraiBarangDetail,GeraiBagihasil};
 class AndroidAPI extends Controller
@@ -13,12 +13,41 @@ class AndroidAPI extends Controller
         "password"=>"required",
       ]);
       $where = $req->all();
+      $where["status"] = 1;
       $get = GeraiPelanggan::where($where);
       if ($get->count() > 0) {
         $d = $get->first();
         return response()->json(["status"=>1,"data"=>$d]);
       }else {
         return response()->json(["status"=>0]);
+      }
+    }
+    public function mailsend($data)
+    {
+      $a = Mail::send($data["view"], $data["view_data"], function ($m) use ($data) {
+           $m->from('no-reply@wenow.id', "WENOW SERVICE MAIL");
+
+           $m->to($data["to"],$data["to_name"])->subject($data["subject"]);
+       });
+       return $a;
+    }
+    public function mailsend_test()
+    {
+      $data_mail["view"] = "emails.activation";
+      $data_mail["view_data"] = ["url"=>route("activate.email",[1,1])];
+      $data_mail["subject"] = "Aktivasi Email Anda";
+      $data_mail["to"] = "indra.gunanda@gmail.com";
+      $data_mail["to_name"] = "Indra Gunanda";
+      $this->mailsend($data_mail);
+
+    }
+    public function activate($key,$id)
+    {
+      $find = GeraiPelanggan::where(["id"=>$id]);
+      $key_pelanggan = md5($find->first()->email."|".$find->first()->password);
+      if ($key == $key_pelanggan) {
+        $find->update(["status"=>1]);
+        echo "Selamat Akun Anda Sudah Aktif";
       }
     }
     public function pelanggan_register(Request $req)
@@ -34,6 +63,12 @@ class AndroidAPI extends Controller
       $data = $req->all();
       $ins = GeraiPelanggan::create($data);
       if ($ins) {
+        $data_mail["view"] = "emails.activation";
+        $data_mail["view_data"] = ["url"=>route("activate.email",[md5($req->email."|".$req->password),$ins->id])];
+        $data_mail["subject"] = "Aktivasi Email Anda";
+        $data_mail["to"] = $req->email;
+        $data_mail["to_name"] = $req->nama;
+        $this->mailsend($data_mail);
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);

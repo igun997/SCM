@@ -13,6 +13,7 @@
         "barryvdh/laravel-cors": "^0.11.4",
         "fideloper/proxy": "^4.0",
         "guszandy/laravel-tabler": "^1.4",
+        "guzzlehttp/guzzle": "^6.5",
         "laracademy/generators": "^1.5",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",

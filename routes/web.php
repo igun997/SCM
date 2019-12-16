@@ -37,6 +37,8 @@ Route::get('/api/android/driver/driver_listpesanan/{id?}',"AndroidAPI@driver_lis
 Route::get('/api/android/driver/terima/{id?}',"AndroidAPI@terima");
 Route::get('/api/android/driver/selesai',"AndroidAPI@statusorder_driver");
 Route::get('/api/android/driver/driver_detailpesanan/{id?}',"AndroidAPI@driver_detailpesanan");
+Route::get('/api/test',"AndroidAPI@mailsend_test");
+Route::get('/activate/email/{key}/{id}',"AndroidAPI@activate")->name("activate.email");
 //Private API
 //All Access
 // -- Direktur ---
