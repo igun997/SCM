@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Mail;
 use Illuminate\Http\Request;
-use App\Models\{Pengguna,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarang,GeraiBarangDetail,GeraiBagihasil};
+use App\Models\{Pengguna,GeraiPelanggan,GeraiOrder,GeraiOrderDetail,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarang,GeraiBarangDetail,GeraiBagihasil};
 class AndroidAPI extends Controller
 {
     public function pelanggan_login(Request $req)
@@ -90,7 +90,7 @@ class AndroidAPI extends Controller
       $c = GeraiOrder::where(["id"=>$id]);
       if ($c->count() > 0) {
         if ($status == 1) {
-          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat"=>$data["lat"],"cLng"=>$data["lng"]]);
+          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat"=>$data["lat"],"cLng"=>$data["lng"],"alamat_antar"=>$data["alamat_antar"]]);
         }else {
           $c->update(["dijemput"=>$status]);
         }
@@ -100,10 +100,16 @@ class AndroidAPI extends Controller
       }
       // return $data;
     }
-    public function cekharga($id)
+    public function cekharga(Request $req)
     {
-      $d = GeraiLayanan::where(["id"=>$id])->first();
-      return $d->harga;
+      $d = GeraiLayanan::whereIn("id",$req->layanan)->get();
+      // return $req->rawData["qty_1"];
+      $harga = 0;
+      foreach ($d as $key => $value) {
+        $a = "qty_".$value->id;
+        $harga = $harga + ($value->harga * $req->rawData[$a]);
+      }
+      return number_format($harga);
     }
     public function listpesanan($id)
     {
@@ -111,7 +117,7 @@ class AndroidAPI extends Controller
       if ($d->count() > 0) {
         $data = [];
         foreach ($d->get() as $key => $row) {
-          $data[] = ["id"=>str_pad($row->id,5,0,STR_PAD_LEFT),"id_unformat"=>$row->id,"nama_layanan"=>$row->gerai_layanan->nama];
+          $data[] = ["id"=>str_pad($row->id,5,0,STR_PAD_LEFT),"id_unformat"=>$row->id,"nama_layanan"=>date("d-m-Y",strtotime($row->dibuat)),"data"=>$row->gerai_order_details];
         }
         return ["status"=>1,"data"=>$data];
       }else {
@@ -132,10 +138,29 @@ class AndroidAPI extends Controller
     {
 
       $data = $req->all();
+      // return $data;
+      $layanan = $data["gerai_layanan_id"];
+      $d = [];
+      foreach ($layanan as $key => $value) {
+        $d[] = ["qty"=>$data["qty_".$value],"gerai_layanan_id"=>$value];
+        unset($data["qty_".$value]);
+      }
+      unset($data["gerai_layanan_id"]);
+      // return $data;
       $data["totalharga"] = 0;
       $a = GeraiOrder::create($data);
       if ($a) {
-        return ["status"=>1];
+        $dt = [];
+        foreach ($d as $key => $value) {
+          $dt[] = ["qty"=>$value["qty"],"gerai_layanan_id"=>$value["gerai_layanan_id"],"gerai_order_id"=>$a->id];
+        }
+        $detail = GeraiOrderDetail::insert($dt);
+        if ($detail) {
+          return ["status"=>1];
+        }else {
+          GeraiOrder::find($a->id)->delete();
+          return ["status"=>0];
+        }
       }else {
         return ["status"=>0];
       }
@@ -149,6 +174,9 @@ class AndroidAPI extends Controller
           $value->gerai_layanan;
           $value->id_formatted = str_pad($value->id,5,0,STR_PAD_LEFT);
           $value->order = $value->status_format($value->status_order);
+          foreach ($value->gerai_order_details as $k => $v) {
+            $v->gerai_layanan;
+          }
         }
         return ["status"=>1,"data"=>$c];
       }else {
@@ -196,7 +224,11 @@ class AndroidAPI extends Controller
         $cLat = $cek->first()->cLat;
         $cLng = $cek->first()->cLng;
         $qty = $cek->first()->qty;
-        $harga = $cek->first()->gerai_layanan->harga;
+        $harga = 0;
+        $list_layanan = $cek->first()->gerai_order_details;
+        foreach ($list_layanan as $key => $value) {
+          $harga = $harga + ($value->gerai_layanan->harga*$value->qty);
+        }
         $km = $this->_distance($cLat,$cLng,$data["dLat"],$data["dLng"],"km");
         $data["jarak"] = round($km);
         $data["totalharga"] = ($qty*$harga)+($data["jarak"]*5000);
@@ -206,7 +238,6 @@ class AndroidAPI extends Controller
       }else {
         return response()->json(["status"=>0]);
       }
-      // return $req->all();
     }
     public function statusorder_driver(Request $req)
     {
@@ -227,7 +258,10 @@ class AndroidAPI extends Controller
       foreach ($order as $key => &$v) {
         $v->nama_pelanggan = $v->gerai_pelanggan->nama;
         $v->kode = str_pad($v->id,5,0,STR_PAD_LEFT);
-        $v->nama_layanan = $v->gerai_layanan->nama;
+        foreach ($v->gerai_order_details as $ks => $vs) {
+          $vs->gerai_layanan;
+        }
+        $v->list_layanan = $v->gerai_order_details;
         $v->jarakTempuh = ($v->jarak == null)?"Belum Ditentukan":$v->jarak." KM";
         $v->harga = number_format($v->totalharga);
         $v->ownId = $id;
@@ -241,7 +275,14 @@ class AndroidAPI extends Controller
       $data = $d->first();
       $data->nama_pelanggan = $data->gerai_pelanggan->nama;
       $data->kode = str_pad($data->id,5,0,STR_PAD_LEFT);
-      $data->nama_layanan = $data->gerai_layanan->nama;
+      $s = "";
+      foreach ($data->gerai_order_details as $key => $value) {
+        $s = $s."<p>".($key+1)." - ".$value->gerai_layanan->nama." x ".$value->qty."</p>";
+      }
+      $data->list_layanan = $s;
+      foreach ($data->gerai_order_details as $key => $value) {
+        $value->gerai_layanan;
+      }
       $data->jarakTempuh = ($data->jarak == null)?"Belum Ditentukan":$data->jarak." KM";
       $data->dibuatFormat = date("Y-m-d",strtotime($data->dibuat));
       return $data;

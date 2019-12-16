@@ -17,7 +17,7 @@ class CreateGeraiOrderDetailTable extends Migration {
 			$table->integer('id', true);
 			$table->integer('gerai_order_id')->index('as');
 			$table->integer('gerai_layanan_id')->index('asa');
-			$table->integer('qty');
+			$table->integer('qty')->nullable();
 		});
 	}
 

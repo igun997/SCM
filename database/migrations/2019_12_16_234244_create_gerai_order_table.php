@@ -27,6 +27,7 @@ class CreateGeraiOrderTable extends Migration {
 			$table->string('cLng', 100)->nullable();
 			$table->string('dLat', 100)->nullable();
 			$table->string('dLng', 100)->nullable();
+			$table->text('catatan', 65535)->nullable();
 			$table->text('alamat_antar', 65535)->nullable();
 			$table->text('alamat_jemput', 65535)->nullable();
 		});
