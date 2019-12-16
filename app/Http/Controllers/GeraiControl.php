@@ -13,6 +13,16 @@ class GeraiControl extends Controller
       $a->update(["status_evaluasi"=>1]);
       return back();
     }
+    public function layanan_selesaikanorder($id)
+    {
+      $cek = GeraiOrder::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $cek->update(["status_order"=>6]);
+        return back();
+      }else {
+        return back()->withErrors(["msg"=>"Gagal Update"]);
+      }
+    }
     public function index()
     {
       $trx = GeraiKontrol::where(["pemilik_id"=>session()->get("id_pengguna")]);
