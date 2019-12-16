@@ -17,9 +17,7 @@ class CreateGeraiOrderTable extends Migration {
 			$table->integer('id', true);
 			$table->integer('gerai_pelanggan_id')->index('fkpelanggan');
 			$table->string('pemilik_id', 60)->index('oa');
-			$table->integer('gerai_layanan_id')->index('layanan_id');
 			$table->integer('status_order')->default(0);
-			$table->integer('qty');
 			$table->boolean('dijemput')->nullable();
 			$table->integer('gerai_driver_id')->nullable()->index('did');
 			$table->integer('jarak')->nullable();
@@ -29,6 +27,8 @@ class CreateGeraiOrderTable extends Migration {
 			$table->string('cLng', 100)->nullable();
 			$table->string('dLat', 100)->nullable();
 			$table->string('dLng', 100)->nullable();
+			$table->text('alamat_antar', 65535)->nullable();
+			$table->text('alamat_jemput', 65535)->nullable();
 		});
 	}
 

@@ -19,6 +19,7 @@ class CreateGeraiLayananTable extends Migration {
 			$table->string('nama', 100);
 			$table->float('harga', 10, 0);
 			$table->string('foto', 100)->nullable();
+			$table->enum('jenis', array('tas','sepatu','helm'));
 			$table->timestamp('dibuat')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}

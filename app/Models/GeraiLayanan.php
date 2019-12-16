@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Thu, 05 Dec 2019 22:08:44 +0000.
+ * Date: Mon, 16 Dec 2019 19:19:34 +0000.
  */
 
 namespace App\Models;
@@ -17,10 +17,11 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $nama
  * @property float $harga
  * @property string $foto
+ * @property string $jenis
  * @property \Carbon\Carbon $dibuat
  * 
  * @property \App\Models\Pengguna $pengguna
- * @property \Illuminate\Database\Eloquent\Collection $gerai_orders
+ * @property \Illuminate\Database\Eloquent\Collection $gerai_order_details
  *
  * @package App\Models
  */
@@ -42,6 +43,7 @@ class GeraiLayanan extends Eloquent
 		'nama',
 		'harga',
 		'foto',
+		'jenis',
 		'dibuat'
 	];
 
@@ -50,8 +52,8 @@ class GeraiLayanan extends Eloquent
 		return $this->belongsTo(\App\Models\Pengguna::class, 'pemilik_id');
 	}
 
-	public function gerai_orders()
+	public function gerai_order_details()
 	{
-		return $this->hasMany(\App\Models\GeraiOrder::class);
+		return $this->hasMany(\App\Models\GeraiOrderDetail::class);
 	}
 }
