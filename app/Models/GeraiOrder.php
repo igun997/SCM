@@ -97,7 +97,34 @@ class GeraiOrder extends Eloquent
 	{
 		return $this->belongsTo(\App\Models\GeraiPelanggan::class);
 	}
-
+	public function button($id)
+	{
+		if ($id == 0) {
+			return null;
+		}elseif ($id == 1) {
+			return null;
+		}elseif ($id == 2) {
+			return "Pesanan Diterima Gerai";
+		}elseif ($id == 3) {
+			return "Pesanan Sedang Di Cuci";
+		}elseif ($id == 4) {
+			return "Pencucian Selesai";
+		}elseif ($id == 5) {
+			return "Sedang Di Antar Ke Tempat";
+		}elseif ($id == 6) {
+			return "Pesanan Selesai";
+		}
+	}
+	public function booleanQuestion($id)
+	{
+		if ($id == null) {
+			return "<span class='badge badge-default'>Belum Di Tentukan</span>";
+		}elseif ($id == 0) {
+			return "<span class='badge badge-primary'>Tidak</span>";
+		}elseif ($id == 1) {
+			return "<span class='badge badge-success'>Iya</span>";
+		}
+	}
 	public function pengguna()
 	{
 		return $this->belongsTo(\App\Models\Pengguna::class, 'pemilik_id');

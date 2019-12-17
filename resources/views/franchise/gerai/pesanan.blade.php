@@ -23,7 +23,6 @@
                <th>Nama Pelanggan</th>
                <th>Layanan</th>
                <th>Status Order</th>
-               <th>Jumlah Sepatu</th>
                <th>Dijemput</th>
                <th>Driver</th>
                <th>Jarak</th>
@@ -36,9 +35,12 @@
                <tr>
                  <td>{{($k+1)}}</td>
                  <td>{{$v->gerai_pelanggan->nama}}</td>
-                 <td>{{$v->gerai_layanan->nama}}</td>
+                 <td>
+                   @foreach($v->gerai_order_details as $k => $vs)
+                   <p>{{$vs->gerai_layanan->nama}} x {{$vs->qty}}</p>
+                   @endforeach
+                 </td>
                  <td>{{$v->status_format($v->status_order)}}</td>
-                 <td>{{$v->qty}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
                  <td>
                    @if($v->gerai_driver_id != null)

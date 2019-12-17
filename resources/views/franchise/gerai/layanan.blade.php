@@ -30,7 +30,7 @@
                  <td>{{($k+1)}}</td>
                  <td>{{$v->nama}}</td>
                  <td>{{$v->harga}}</td>
-                 <td>{{$v->gerai_orders->count()}}</td>
+                 <td>{{$v->gerai_order_details->count()}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                </tr>
                @endforeach
