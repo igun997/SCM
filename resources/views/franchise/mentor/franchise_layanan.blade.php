@@ -26,7 +26,7 @@
                <th>No</th>
                <th>Nama Layanan</th>
                <th>Harga</th>
-               <th>Total Transaksi</th>
+               <th>Jenis</th>
                <th>Dibuat</th>
                <th>Opsi</th>
              </thead>
@@ -36,7 +36,7 @@
                  <td>{{($k+1)}}</td>
                  <td>{{$v->nama}}</td>
                  <td>Rp. {{number_format($v->harga)}}</td>
-                 <td>{{$v->gerai_orders->count()}}</td>
+                 <td>{{ucfirst($v->jenis)}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
                    <a href="{{route("mentor.franchise.layananedit",[$data->id_pengguna,$v->id])}}" class="btn btn-warning m-2">Edit</a>
