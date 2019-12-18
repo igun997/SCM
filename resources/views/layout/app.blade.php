@@ -412,6 +412,11 @@
     });
 
   });
+  function onErr(img) {
+    img.onerror = "";
+    img.src = "{{url("notfound.png")}}";
+    return true;
+  }
   </script>
   @stack("script")
 </html>

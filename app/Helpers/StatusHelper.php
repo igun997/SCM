@@ -24,6 +24,10 @@
      return "Sedang Dikirm";
    }elseif ($id == 3) {
      return "Pengiriman Gagal";
+   }elseif ($id == 4) {
+     return "Pengiriman Selesai";
+   }elseif ($id == 5) {
+     return "Dibatalkan";
    }else {
      return "Tidak Diketahui";
    }

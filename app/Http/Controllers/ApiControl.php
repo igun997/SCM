@@ -1792,4 +1792,77 @@ class ApiControl extends Controller
     {
       return MasterPelanggan::get();
     }
+
+    //Pemasarab
+    public function pemesanan_read($id = null)
+    {
+      if ($id != null) {
+        $getData = Pemesanan::where(["id_pemesanan"=>$id]);
+        if ($getData->count() > 0) {
+          $d = $getData->first();
+          $d->status_pesanan_text = status_pesanan($d->status_pesanan);
+          $d->status_pembayaran_text = status_pembayaran($d->status_pembayaran);
+          $d->bukti_url = url("upload/".$d->bukti);
+          $d->master_pelanggan;
+          $d->tgl_register_text = date("d/m/Y",strtotime($d->tgl_register));
+          $total =0;
+          foreach ($d->pemesanan__details as $sum) {
+            $total = $total+($sum->jumlah*$sum->harga);
+          }
+          $d->totalharga = ($total*$d->pajak)+$total;
+          foreach ($d->pemesanan__details as $key => &$value) {
+            $value->master_produk;
+          }
+          return response()->json(["status"=>1,"data"=>$d]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        $getData = Pemesanan::all();
+        $data = [];
+        $data["data"] = [];
+        foreach ($getData as $key => $value) {
+          $total =0;
+          foreach ($value->pemesanan__details as $sum) {
+            $total = $total+($sum->jumlah*$sum->harga);
+          }
+          $data["data"][] = [($key+1),$value->id_pemesanan,$value->master_pelanggan->nama_pelanggan,status_pesanan($value->status_pesanan),$value->catatan_pemesanan,status_pembayaran($value->status_pembayaran),($value->pajak*100)."%",number_format(($total*$value->pajak)+$total),date("d-m-Y",strtotime($value->tgl_register)),$value->id_pemesanan];
+        }
+        return response()->json($data);
+      }
+    }
+    public function pemesanan_update(Request $req,$id)
+    {
+      if ($req->has("file")) {
+        $file_data = $req->file;
+        $image = $file_data;  // your base64 encoded
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $imageName = str_random(10).'.'.'png';
+        $put = \File::put(public_path(). '/upload/' . $imageName, base64_decode($image));
+        if ($put) {
+          // return ["status"=>1];
+          $set = Pemesanan::where(["id_pemesanan"=>$id]);
+          $up = $set->update(["bukti"=>$imageName,"status_pembayaran"=>1]);
+          if ($up) {
+            return ["status"=>1];
+          }else {
+            return ["status"=>0];
+          }
+        }else {
+          return ["status"=>0];
+        }
+      }else {
+        $data = $req->all();
+        $set = Pemesanan::where(["id_pemesanan"=>$id]);
+        if ($set->count() > 0) {
+          $up = $set->update($data);
+          if ($up) {
+            return response()->json(["status"=>1]);
+          }else {
+            return response()->json(["status"=>0]);
+          }
+        }
+      }
+    }
 }

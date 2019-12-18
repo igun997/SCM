@@ -243,4 +243,7 @@ Route::group(['middleware'=>['pemasaran']],function(){
   Route::get("api/pemasaran/p_produk_read/{id?}","ApiControl@p_produk_read")->name("pemasaran.api.p_produk_read");
   Route::get("api/pemasaran/listpelanggan","ApiControl@listpelanggan")->name("pemasaran.api.listpelanggan");
   Route::post("api/pemasaran/p_produk_trans","ApiControl@p_produk_trans")->name("pemasaran.api.p_produk_trans");
+
+  Route::get("api/pemasaran/pemesanan_read/{id?}","ApiControl@pemesanan_read")->name("pemasaran.api.pemesanan_read");
+  Route::post("api/pemasaran/pemesanan_update/{id?}","ApiControl@pemesanan_update")->name("pemasaran.api.pemesanan_update");
 });
