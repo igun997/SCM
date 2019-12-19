@@ -57,6 +57,8 @@ class Pengguna extends Eloquent
 		'id_pengguna',
 		'nama_pengguna',
 		'no_kontak',
+		'lat',
+		'lng',
 		'alamat',
 		'level',
 		'status',

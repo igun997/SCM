@@ -22,7 +22,6 @@
                <th>No</th>
                <th>Nama Pelanggan</th>
                <th>Layanan</th>
-               <th>Jumlah Cuci</th>
                <th>Total Harga</th>
                <th>Dibuat</th>
              </thead>
@@ -31,8 +30,13 @@
                <tr>
                  <td>{{($k+1)}}</td>
                  <td>{{$v->gerai_pelanggan->nama}}</td>
-                 <td>{{$v->gerai_layanan->nama}}</td>
-                 <td>{{$v->qty}}</td>
+                 <td>
+                   @foreach($v->gerai_order_details as $obj)
+                   <p>
+                     {{$obj->gerai_layanan->nama}} x  {{$obj->qty}}
+                   </p>
+                   @endforeach
+                 </td>
                  <td>{{$v->totalharga}}</td>
                  <td>{{$v->dibuat}}</td>
                </tr>

@@ -27,8 +27,16 @@ class CreateGeraiOrderTable extends Migration {
 			$table->string('cLng', 100)->nullable();
 			$table->string('dLat', 100)->nullable();
 			$table->string('dLng', 100)->nullable();
+			$table->string('cLat_antar', 50)->nullable();
+			$table->string('cLng_antar', 50)->nullable();
+			$table->string('dLat_antar', 50)->nullable();
+			$table->string('dLng_antar', 50)->nullable();
+			$table->float('jarak_antar', 10, 0)->nullable();
+			$table->integer('gerai_driver_id_antar')->nullable()->index('asa');
 			$table->text('catatan', 65535)->nullable();
 			$table->text('alamat_antar', 65535)->nullable();
+			$table->float('ongkir_antar', 10, 0)->nullable();
+			$table->float('ongkir_jemput', 10, 0)->nullable();
 			$table->text('alamat_jemput', 65535)->nullable();
 		});
 	}

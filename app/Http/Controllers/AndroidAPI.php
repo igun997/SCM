@@ -19,7 +19,7 @@ class AndroidAPI extends Controller
         $d = $get->first();
         return response()->json(["status"=>1,"data"=>$d]);
       }else {
-        return response()->json(["status"=>0]);
+        return response()->json(["status"=>0,"data"=>$req->all()]);
       }
     }
     public function mailsend($data)
@@ -90,7 +90,7 @@ class AndroidAPI extends Controller
       $c = GeraiOrder::where(["id"=>$id]);
       if ($c->count() > 0) {
         if ($status == 1) {
-          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat"=>$data["lat"],"cLng"=>$data["lng"],"alamat_antar"=>$data["alamat_antar"]]);
+          $c->update(["dijemput"=>$status,"status_order"=>5,"cLat_antar"=>$data["lat"],"cLng_antar"=>$data["lng"],"alamat_antar"=>$data["alamat_antar"]]);
         }else {
           $c->update(["dijemput"=>$status]);
         }
@@ -109,7 +109,7 @@ class AndroidAPI extends Controller
         $a = "qty_".$value->id;
         $harga = $harga + ($value->harga * $req->rawData[$a]);
       }
-      return number_format($harga);
+      return ($harga);
     }
     public function listpesanan($id)
     {
@@ -147,22 +147,38 @@ class AndroidAPI extends Controller
       }
       unset($data["gerai_layanan_id"]);
       // return $data;
-      $data["totalharga"] = 0;
-      $a = GeraiOrder::create($data);
-      if ($a) {
-        $dt = [];
-        foreach ($d as $key => $value) {
-          $dt[] = ["qty"=>$value["qty"],"gerai_layanan_id"=>$value["gerai_layanan_id"],"gerai_order_id"=>$a->id];
-        }
-        $detail = GeraiOrderDetail::insert($dt);
-        if ($detail) {
-          return ["status"=>1];
+      // $data["totalharga"] = 0;
+      $lat = $data["cLat"];
+      $lng = $data["cLng"];
+      $pemilik_id = $data["pemilik_id"];
+      $c = Pengguna::where(["id_pengguna"=>$pemilik_id]);
+      if ($c->count() > 0) {
+        $row = $c->first();
+        $latP = $row->lat;
+        $lngP = $row->lng;
+        $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
+        if ($km <= 25) {
+          $a = GeraiOrder::create($data);
+          if ($a) {
+            $dt = [];
+            foreach ($d as $key => $value) {
+              $dt[] = ["qty"=>$value["qty"],"gerai_layanan_id"=>$value["gerai_layanan_id"],"gerai_order_id"=>$a->id];
+            }
+            $detail = GeraiOrderDetail::insert($dt);
+            if ($detail) {
+              return ["status"=>1];
+            }else {
+              GeraiOrder::find($a->id)->delete();
+              return ["status"=>0];
+            }
+          }else {
+            return ["status"=>0,"msg"=>"Order Gagal Di Lakukan"];
+          }
         }else {
-          GeraiOrder::find($a->id)->delete();
-          return ["status"=>0];
+          return response()->json(["status"=>0,"msg"=>"Maksimal Jarak Adalah 25 KM"]);
         }
       }else {
-        return ["status"=>0];
+        return response()->json(["status"=>0,"msg"=>"Data Gerai Tidak Ditemukan"]);
       }
     }
     public function pesanan($id = null)
@@ -172,6 +188,8 @@ class AndroidAPI extends Controller
         foreach ($c as $key => &$value) {
           $value->gerai_driver;
           $value->gerai_layanan;
+          $value->gerai_driver_antar;
+          $value->gerai_driver_jemput;
           $value->id_formatted = str_pad($value->id,5,0,STR_PAD_LEFT);
           $value->order = $value->status_format($value->status_order);
           foreach ($value->gerai_order_details as $k => $v) {
@@ -221,20 +239,48 @@ class AndroidAPI extends Controller
       unset($data["id"]);
       $cek = GeraiOrder::where("id",$id);
       if ($cek->count() > 0) {
-        $cLat = $cek->first()->cLat;
-        $cLng = $cek->first()->cLng;
-        $qty = $cek->first()->qty;
-        $harga = 0;
-        $list_layanan = $cek->first()->gerai_order_details;
-        foreach ($list_layanan as $key => $value) {
-          $harga = $harga + ($value->gerai_layanan->harga*$value->qty);
+        $row = $cek->first();
+        $sLat = $row->pengguna->lat;
+        $sLng = $row->pengguna->lng;
+        if ($row->dijemput == 1) {
+          $cLat = $cek->first()->cLat_antar;
+          $cLng = $cek->first()->cLng_antar;
+          $harga = 0;
+          $list_layanan = $cek->first()->gerai_order_details;
+          foreach ($list_layanan as $key => $value) {
+            $harga = $harga + ($value->gerai_layanan->harga*$value->qty);
+          }
+          $km = $this->_distance($cLat,$cLng,$sLat,$sLng,"km");
+          $data["dLat_antar"] = $sLat;
+          $data["dLng_antar"] = $sLng;
+          $data["gerai_driver_id_antar"] = $data["gerai_driver_id"];
+          unset($data["dLat"]);
+          unset($data["dLng"]);
+          unset($data["gerai_driver_id"]);
+          $data["jarak_antar"] = round($km);
+          $data["totalharga"] = $harga;
+          $data["ongkir_antar"] = ($data["jarak_antar"]*5000);
+          $data["status_order"] = 5;
+          $cek->update($data);
+          return response()->json(["status"=>1,"data"=>$data]);
+        }else {
+          $cLat = $cek->first()->cLat;
+          $cLng = $cek->first()->cLng;
+          $harga = 0;
+          $list_layanan = $cek->first()->gerai_order_details;
+          foreach ($list_layanan as $key => $value) {
+            $harga = $harga + ($value->gerai_layanan->harga*$value->qty);
+          }
+          $km = $this->_distance($cLat,$cLng,$sLat,$sLng,"km");
+          $data["dLat"] = $sLat;
+          $data["dLng"] = $sLng;
+          $data["jarak"] = round($km);
+          $data["ongkir_jemput"] = ($data["jarak"]*5000);
+          $data["totalharga"] = $harga;
+          $data["status_order"] = 1;
+          $cek->update($data);
+          return response()->json(["status"=>1,"data"=>$data]);
         }
-        $km = $this->_distance($cLat,$cLng,$data["dLat"],$data["dLng"],"km");
-        $data["jarak"] = round($km);
-        $data["totalharga"] = ($qty*$harga)+($data["jarak"]*5000);
-        $data["status_order"] = 1;
-        $cek->update($data);
-        return response()->json(["status"=>1,"data"=>$data]);
       }else {
         return response()->json(["status"=>0]);
       }

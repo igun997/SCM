@@ -2,7 +2,7 @@
 
 /**
  * Created by Reliese Model.
- * Date: Mon, 16 Dec 2019 19:19:04 +0000.
+ * Date: Thu, 19 Dec 2019 12:06:09 +0000.
  */
 
 namespace App\Models;
@@ -25,6 +25,12 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property string $cLng
  * @property string $dLat
  * @property string $dLng
+ * @property string $cLat_antar
+ * @property string $cLng_antar
+ * @property string $dLat_antar
+ * @property string $dLng_antar
+ * @property int $gerai_driver_id_antar
+ * @property string $catatan
  * @property string $alamat_antar
  * @property string $alamat_jemput
  *
@@ -46,7 +52,8 @@ class GeraiOrder extends Eloquent
 		'dijemput' => 'bool',
 		'gerai_driver_id' => 'int',
 		'jarak' => 'int',
-		'totalharga' => 'float'
+		'totalharga' => 'float',
+		'gerai_driver_id_antar' => 'int'
 	];
 
 	protected $dates = [
@@ -66,15 +73,43 @@ class GeraiOrder extends Eloquent
 		'cLng',
 		'dLat',
 		'dLng',
-		'alamat_antar',
+		'ongkir_antar',
+		'jarak_antar',
+		'ongkir_jemput',
+		'cLat_antar',
+		'cLng_antar',
+		'dLat_antar',
+		'dLng_antar',
+		'gerai_driver_id_antar',
 		'catatan',
+		'alamat_antar',
 		'alamat_jemput'
 	];
 
-	public function gerai_driver()
+	public function gerai_driver_jemput()
 	{
-		return $this->belongsTo(\App\Models\GeraiDriver::class);
+		return $this->belongsTo(\App\Models\GeraiDriver::class, 'gerai_driver_id');
 	}
+	public function gerai_driver_antar()
+	{
+		return $this->belongsTo(\App\Models\GeraiDriver::class, 'gerai_driver_id_antar');
+	}
+
+	public function gerai_pelanggan()
+	{
+		return $this->belongsTo(\App\Models\GeraiPelanggan::class);
+	}
+
+	public function pengguna()
+	{
+		return $this->belongsTo(\App\Models\Pengguna::class, 'pemilik_id');
+	}
+
+	public function gerai_order_details()
+	{
+		return $this->hasMany(\App\Models\GeraiOrderDetail::class);
+	}
+
 	public function status_format($id)
 	{
 		if ($id == 0) {
@@ -92,10 +127,6 @@ class GeraiOrder extends Eloquent
 		}elseif ($id == 6) {
 			return "Pesanan Selesai";
 		}
-	}
-	public function gerai_pelanggan()
-	{
-		return $this->belongsTo(\App\Models\GeraiPelanggan::class);
 	}
 	public function button($id)
 	{
@@ -124,14 +155,5 @@ class GeraiOrder extends Eloquent
 		}elseif ($id == 1) {
 			return "<span class='badge badge-success'>Iya</span>";
 		}
-	}
-	public function pengguna()
-	{
-		return $this->belongsTo(\App\Models\Pengguna::class, 'pemilik_id');
-	}
-
-	public function gerai_order_details()
-	{
-		return $this->hasMany(\App\Models\GeraiOrderDetail::class);
 	}
 }

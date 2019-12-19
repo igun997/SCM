@@ -24,7 +24,8 @@
                <th>Layanan</th>
                <th>Status Order</th>
                <th>Dijemput</th>
-               <th>Driver</th>
+               <th>Driver Penjemputan</th>
+               <th>Driver Pengantaran</th>
                <th>Jarak</th>
                <th>Total Harga</th>
                <th>Dibuat</th>
@@ -44,11 +45,16 @@
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
                  <td>
                    @if($v->gerai_driver_id != null)
-                   {{$v->gerai_driver->nama}}
+                   {{$v->gerai_driver_jemput->nama}}
+                   @endif
+                 </td>
+                 <td>
+                   @if($v->gerai_driver_id_antar != null)
+                   {{$v->gerai_driver_antar->nama}}
                    @endif
                  </td>
                  <td>{{number_format($v->jarak)}} KM</td>
-                 <td>Rp. {{number_format($v->totalharga)}}</td>
+                 <td>Rp. {{number_format(($v->totalharga)+($v->jarak*5000))}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
                    @if($v->dijemput == 1 && $v->status_order != 6)

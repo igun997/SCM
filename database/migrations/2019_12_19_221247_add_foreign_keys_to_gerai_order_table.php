@@ -18,6 +18,7 @@ class AddForeignKeysToGeraiOrderTable extends Migration {
 			$table->foreign('gerai_pelanggan_id', 'gerai_order_ibfk_3')->references('id')->on('gerai_pelanggan')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('pemilik_id', 'gerai_order_ibfk_4')->references('id_pengguna')->on('pengguna')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('gerai_driver_id', 'gerai_order_ibfk_5')->references('id')->on('gerai_driver')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('gerai_driver_id_antar', 'gerai_order_ibfk_6')->references('id')->on('gerai_driver')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 
@@ -35,6 +36,7 @@ class AddForeignKeysToGeraiOrderTable extends Migration {
 			$table->dropForeign('gerai_order_ibfk_3');
 			$table->dropForeign('gerai_order_ibfk_4');
 			$table->dropForeign('gerai_order_ibfk_5');
+			$table->dropForeign('gerai_order_ibfk_6');
 		});
 	}
 

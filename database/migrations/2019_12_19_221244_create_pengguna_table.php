@@ -19,6 +19,8 @@ class CreatePenggunaTable extends Migration {
 			$table->string('no_kontak', 20);
 			$table->text('alamat', 65535);
 			$table->enum('level', array('direktur','produksi','gudang','pengadaan','pemasaran','gerai','mentor'));
+			$table->string('lat', 50)->nullable();
+			$table->string('lng', 50)->nullable();
 			$table->integer('status')->default(1);
 			$table->string('email', 60);
 			$table->string('password', 100);
