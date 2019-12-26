@@ -172,29 +172,30 @@ class AndroidAPI extends Controller
         $latP = $row->lat;
         $lngP = $row->lng;
         $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
-        // if ($km <= 25) {
-        //   // $ps = [];
-        //   // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
-        //   // $data["progress"] = "test";
-        //   $a = GeraiOrder::create($data);
-        //   if ($a) {
-        //     $dt = [];
-        //     foreach ($d as $key => $value) {
-        //       $dt[] = ["qty"=>$value["qty"],"gerai_layanan_id"=>$value["gerai_layanan_id"],"gerai_order_id"=>$a->id];
-        //     }
-        //     $detail = GeraiOrderDetail::insert($dt);
-        //     if ($detail) {
-        //       return ["status"=>1];
-        //     }else {
-        //       GeraiOrder::find($a->id)->delete();
-        //       return ["status"=>0];
-        //     }
-        //   }else {
-        //     return ["status"=>0,"msg"=>"Order Gagal Di Lakukan"];
-        //   }
-        // }else {
-        //   return response()->json(["status"=>0,"msg"=>"Maksimal Jarak Adalah 25 KM"]);
-        // }
+        if ($km <= 25) {
+          // $ps = [];
+          // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
+          // $data["progress"] = "test";
+          return $data;
+          $a = GeraiOrder::create($data);
+          if ($a) {
+            $dt = [];
+            foreach ($d as $key => $value) {
+              $dt[] = ["qty"=>$value["qty"],"gerai_layanan_id"=>$value["gerai_layanan_id"],"gerai_order_id"=>$a->id];
+            }
+            $detail = GeraiOrderDetail::insert($dt);
+            if ($detail) {
+              return ["status"=>1];
+            }else {
+              GeraiOrder::find($a->id)->delete();
+              return ["status"=>0];
+            }
+          }else {
+            return ["status"=>0,"msg"=>"Order Gagal Di Lakukan"];
+          }
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Maksimal Jarak Adalah 25 KM"]);
+        }
         return $data;
       }else {
         return response()->json(["status"=>0,"msg"=>"Data Gerai Tidak Ditemukan"]);
