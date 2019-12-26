@@ -176,7 +176,7 @@ class AndroidAPI extends Controller
           // $ps = [];
           // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
           // $data["progress"] = "test";
-          return $data;
+          // return $data;
           $a = GeraiOrder::create($data);
           if ($a) {
             $dt = [];
