@@ -74,6 +74,20 @@ class AndroidAPI extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function updateakun(Request $req,$id)
+    {
+      $cek = GeraiPelanggan::where(["id"=>$id]);
+      if ($cek->count() > 0) {
+        $up = $cek->update($req->all());
+        if ($up) {
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function penggunalist()
     {
       $get = Pengguna::where(["level"=>"gerai"]);
@@ -158,6 +172,9 @@ class AndroidAPI extends Controller
         $lngP = $row->lng;
         $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
         if ($km <= 25) {
+          $p = [];
+          $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
+          $data["progress"] = json_encode($p);
           $a = GeraiOrder::create($data);
           if ($a) {
             $dt = [];
@@ -188,6 +205,7 @@ class AndroidAPI extends Controller
         foreach ($c as $key => &$value) {
           $value->gerai_driver;
           $value->gerai_layanan;
+          $value->pengguna;
           $value->gerai_driver_antar;
           $value->gerai_driver_jemput;
           $value->id_formatted = str_pad($value->id,5,0,STR_PAD_LEFT);

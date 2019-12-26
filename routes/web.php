@@ -25,6 +25,7 @@ Route::get("/logout",function(){
 Route::post('/api/public/login',"ApiControl@login")->name("public.api.login");
 Route::post('/api/android/login',"AndroidAPI@pelanggan_login");
 Route::post('/api/android/register',"AndroidAPI@pelanggan_register");
+Route::post("/api/android/updateakun/{id?}","AndroidAPI@updateakun");
 Route::get('/api/android/penggunalist',"AndroidAPI@penggunalist");
 Route::get('/api/android/layananlist/{id}',"AndroidAPI@layananlist");
 Route::post('/api/android/cekharga',"AndroidAPI@cekharga");

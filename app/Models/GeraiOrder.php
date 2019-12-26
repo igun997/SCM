@@ -53,7 +53,8 @@ class GeraiOrder extends Eloquent
 		'gerai_driver_id' => 'int',
 		'jarak' => 'int',
 		'totalharga' => 'float',
-		'gerai_driver_id_antar' => 'int'
+		'gerai_driver_id_antar' => 'int',
+		"progress"=>"array"
 	];
 
 	protected $dates = [
@@ -62,6 +63,7 @@ class GeraiOrder extends Eloquent
 
 	protected $fillable = [
 		'gerai_pelanggan_id',
+		'progress',
 		'pemilik_id',
 		'status_order',
 		'dijemput',

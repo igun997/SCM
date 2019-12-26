@@ -17,7 +17,10 @@ class GeraiControl extends Controller
     {
       $cek = GeraiOrder::where(["id"=>$id]);
       if ($cek->count() > 0) {
-        $cek->update(["status_order"=>6]);
+        $progress = $cek->first()->progress;
+        $progress[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Selesai"];
+        $p = json_encode($progress);
+        $cek->update(["status_order"=>6,"progress"=>$p]);
         return back();
       }else {
         return back()->withErrors(["msg"=>"Gagal Update"]);
@@ -45,7 +48,10 @@ class GeraiControl extends Controller
     {
       $cek = GeraiOrder::where(["id"=>$id]);
       if ($cek->count() > 0) {
-        $cek->update(["status_order"=>6]);
+        $progress = $cek->first()->progress;
+        $progress[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Selesai"];
+        $p = json_encode($progress);
+        $cek->update(["status_order"=>6,"progress"=>$p]);
         return back();
       }else {
         return back()->withErrors(["msg"=>"Gagal Update"]);
@@ -55,7 +61,10 @@ class GeraiControl extends Controller
     {
       $cek = GeraiOrder::where(["id"=>$id]);
       if ($cek->count() > 0) {
-        $cek->update(["status_order"=>2]);
+        $progress = $cek->first()->progress;
+        $progress[] = ["tgl"=>date("d-m-Y"),"status"=>"Diterima Gerai"];
+        $p = json_encode($progress);
+        $cek->update(["status_order"=>2,"progress"=>$p]);
         return back();
       }else {
         return back()->withErrors(["msg"=>"Gagal Update"]);
@@ -65,7 +74,10 @@ class GeraiControl extends Controller
     {
       $cek = GeraiOrder::where(["id"=>$id]);
       if ($cek->count() > 0) {
-        $cek->update(["status_order"=>3]);
+        $progress = $cek->first()->progress;
+        $progress[] = ["tgl"=>date("d-m-Y"),"status"=>"Sedang Dicuci"];
+        $p = json_encode($progress);
+        $cek->update(["status_order"=>3,"progress"=>$p]);
         return back();
       }else {
         return back()->withErrors(["msg"=>"Gagal Update"]);
@@ -75,7 +87,11 @@ class GeraiControl extends Controller
     {
       $cek = GeraiOrder::where(["id"=>$id]);
       if ($cek->count() > 0) {
-        $cek->update(["status_order"=>4]);
+        $progress = $cek->first()->progress;
+        $progress[] = ["tgl"=>date("d-m-Y"),"status"=>"Selesai Dicuci"];
+
+        $p = json_encode($progress);
+        $cek->update(["status_order"=>4,"progress"=>$p]);
         return back();
       }else {
         return back()->withErrors(["msg"=>"Gagal Update"]);
