@@ -152,6 +152,7 @@ class AndroidAPI extends Controller
     {
 
       $data = $req->all();
+      $data["progress"] = json_encode([["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"]]);
       // return $data;
       $layanan = $data["gerai_layanan_id"];
       $d = [];
@@ -172,9 +173,9 @@ class AndroidAPI extends Controller
         $lngP = $row->lng;
         $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
         if ($km <= 25) {
-          $p = [];
-          $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
-          $data["progress"] = "test";
+          // $ps = [];
+          // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
+          // $data["progress"] = "test";
           $a = GeraiOrder::create($data);
           if ($a) {
             $dt = [];
