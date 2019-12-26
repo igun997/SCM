@@ -240,7 +240,7 @@ class AndroidAPI extends Controller
       // return response()->json(["status"=>1]);
     }
     function _distance($lat1, $lon1, $lat2, $lon2, $unit) {
-      $client = new GuzzleHttp\Client();
+      $client = new \GuzzleHttp\Client();
       $res = $client->request('GET', 'https://maps.googleapis.com/maps/api/distancematrix/json?units='.$unit.'&origins='.$lat1.','.$lon1.'&destinations='.$lat2.','.$lon2.'&key=AIzaSyD1cM44pjtWnEej7CgCeCVtYx5D70ImTdQ');
       $res = json_decode($res->getBody());
       if (isset($res->rows[0]->elements[0]->distance->value)) {
