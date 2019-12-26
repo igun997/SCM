@@ -244,7 +244,7 @@ class AndroidAPI extends Controller
       $res = $client->request('GET', 'https://maps.googleapis.com/maps/api/distancematrix/json?units='.$unit.'&origins='.$lat1.','.$lon1.'&destinations='.$lat2.','.$lon2.'&key=AIzaSyD1cM44pjtWnEej7CgCeCVtYx5D70ImTdQ');
       $res = json_decode($res->getBody());
       if (isset($res->rows[0]->elements[0]->distance->value)) {
-        return $res->rows[0]->elements[0]->distance->value;
+        return ($res->rows[0]->elements[0]->distance->value)/1000;
       }else {
         return false;
       }
@@ -276,7 +276,10 @@ class AndroidAPI extends Controller
           unset($data["gerai_driver_id"]);
           $data["jarak_antar"] = round($km);
           $data["totalharga"] = $harga;
-          $data["ongkir_antar"] = ($data["jarak_antar"]*5000);
+          $data["ongkir_jemput"] = 5000;
+          if ($data["jarak"] > 0) {
+            $data["ongkir_jemput"] = ($data["jarak"]*5000);
+          }
           $data["status_order"] = 5;
           $cek->update($data);
           return response()->json(["status"=>1,"data"=>$data]);
@@ -292,7 +295,10 @@ class AndroidAPI extends Controller
           $data["dLat"] = $sLat;
           $data["dLng"] = $sLng;
           $data["jarak"] = round($km);
-          $data["ongkir_jemput"] = ($data["jarak"]*5000);
+          $data["ongkir_jemput"] = 5000;
+          if ($data["jarak"] > 0) {
+            $data["ongkir_jemput"] = ($data["jarak"]*5000);
+          }
           $data["totalharga"] = $harga;
           $data["status_order"] = 1;
           $cek->update($data);
