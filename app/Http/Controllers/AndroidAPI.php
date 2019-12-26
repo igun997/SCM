@@ -173,8 +173,8 @@ class AndroidAPI extends Controller
         $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
         if ($km <= 25) {
           $p = [];
-          $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
-          $data["progress"] = json_encode($p);
+          // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
+          // $data["progress"] = "test";
           $a = GeraiOrder::create($data);
           if ($a) {
             $dt = [];
