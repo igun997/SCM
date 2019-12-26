@@ -38,6 +38,7 @@ class CreateGeraiOrderTable extends Migration {
 			$table->float('ongkir_antar', 10, 0)->nullable();
 			$table->float('ongkir_jemput', 10, 0)->nullable();
 			$table->text('alamat_jemput', 65535)->nullable();
+			$table->text('progress')->nullable();
 		});
 	}
 
