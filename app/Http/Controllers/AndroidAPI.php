@@ -171,7 +171,7 @@ class AndroidAPI extends Controller
         $latP = $row->lat;
         $lngP = $row->lng;
         $km = $this->_distance($lat,$lng,$latP,$lngP,"km");
-        return $km;
+        // return $km;
         if ($km <= 25) {
           // $ps = [];
           // $p[] = ["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"];
