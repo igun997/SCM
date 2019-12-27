@@ -47,6 +47,7 @@ class GeraiDriver extends Eloquent
 		'nama',
 		'alamat',
 		'username',
+		'no_hp',
 		'password',
 		'status',
 		'pemilik_id',

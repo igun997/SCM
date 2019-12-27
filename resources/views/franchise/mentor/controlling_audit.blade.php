@@ -23,10 +23,9 @@
                 @csrf
                 <div class="form-group">
                   <label>Nama Gerai</label>
-                  <select class="form-control" name="pemilik_id" id="pemilik_id">
-                    <option value="" selected> == Pilih == </option>
+                  <select class="form-control" readonly name="pemilik_id" id="pemilik_id">
                     @foreach($gerai as $k => $v)
-                    <option value="{{$v->id_pengguna}}">{{$v->nama_pengguna}}</option>
+                    <option value="{{$v->id_pengguna}}" selected>{{$v->nama_pengguna}}</option>
                     @endforeach
                   </select>
                   <a href="#" class="btn btn-primary m-2" id="lb" target="_blank">Laporan Barang</a>
@@ -124,13 +123,17 @@
     $("#dtable").DataTable({
 
     });
-    $("#pemilik_id").on("click",function(event) {
+
+    $("#pemilik_id").on("change",function(event) {
       id = $(this).val();
       console.log(id);
       $("#lb").attr("href","{{route("mentor.lapbarang")}}/"+id);
       $("#lk").attr("href","{{route("mentor.lapkeuangan")}}/"+id);
       $("#lp").attr("href","{{route("mentor.lappesanan")}}/"+id);
     })
+    setTimeout(function () {
+        $("#pemilik_id").trigger("change");
+    }, 10);
   });
 </script>
 @endsection

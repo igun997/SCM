@@ -13,7 +13,7 @@
     <div class="col-lg-12">
       <div class="card">
         <div class="card-header">
-          <h5 class="m-0">Data Kontrol</h5>
+          <h5 class="m-0">Bagi Hasil</h5>
         </div>
         <div class="card-body">
           <table id="dtable" class="table table-bordered">
@@ -34,8 +34,8 @@
                  <td>{{$v->alamat}}</td>
                  <td>{{date("d-m-Y",strtotime($v->tgl_register))}}</td>
                  <td>
-                   <a href="{{route("mentor.controlling.audit",$v->id_pengguna)}}" class="btn btn-primary m-1">
-                     Audit Gerai
+                   <a href="{{route("mentor.bagihasil.list",$v->id_pengguna)}}" class="btn btn-primary m-1">
+                     Bagi Hasil
                    </a>
                  </td>
                </tr>

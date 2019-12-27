@@ -27,6 +27,7 @@
                <th>Nama Driver</th>
                <th>Alamat</th>
                <th>Username</th>
+               <th>No HP</th>
                <th>Status</th>
                <th>Opsi</th>
              </thead>
@@ -37,9 +38,10 @@
                     <td>{{$v->nama}}</td>
                     <td>{{$v->alamat}}</td>
                     <td>{{$v->username}}</td>
+                    <td>{{$v->no_hp}}</td>
                     <td>{{($v->status == 1)?"Aktif":"Tidak Aktif"}}</td>
                     <td>
-                      <a href="#" class="btn btn-warning">Ubah</a>
+                      <a href="{{route("mentor.franchise.driveredit",$v->id)}}" class="btn btn-warning">Ubah</a>
                     </td>
                   </tr>
                @endforeach

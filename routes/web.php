@@ -278,6 +278,7 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/layanan/layanan_cuciselesai/{id}',"GeraiControl@layanan_cuciselesai")->name('gerai.layanan_cuciselesai');
   Route::get('/gerai/layanan/layanan_selesaikanorder/{id}',"GeraiControl@layanan_selesaikanorder")->name('gerai.layanan_selesaikanorder');
   Route::get('/gerai/pesanan',"GeraiControl@pesanan")->name('gerai.pesanan');
+  Route::get('/gerai/api/pesanan/{id?}',"GeraiControl@detailapi")->name('gerai.pesanan.api.detail');
 // layanan_selesaikanorder
   Route::get('/gerai/fixing/{id}',"GeraiControl@index_fix")->name('gerai.home.fixing');
 });
@@ -298,12 +299,15 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::post('/mentor/api/franchise/setlokasi/{id}',"MentorControl@franchise_setlokasiaksi")->name('mentor.franchise.api.setlokasi');
   Route::get('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');
   Route::post('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');
+  //
   Route::get('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::post('/mentor/franchise/barang/{id}/masuk',"MentorControl@franchise_barangmasuk")->name('mentor.franchise.barangmasuk');
   Route::get('/mentor/franchise/layanan/{id}',"MentorControl@franchise_layanan")->name('mentor.franchise.layanan');
   Route::get('/mentor/franchise/driver/{id}',"MentorControl@franchise_driver")->name('mentor.franchise.driver');
   Route::get('/mentor/franchise/driver/{id}/add',"MentorControl@franchise_driveradd")->name('mentor.franchise.driveradd');
   Route::post('/mentor/franchise/driver/{id}/add',"MentorControl@franchise_driveradd")->name('mentor.franchise.driveradd');
+  Route::post('/mentor/franchise/driver/{id}/edit',"MentorControl@franchise_driveredit")->name('mentor.franchise.driveredit');
+  Route::get('/mentor/franchise/driver/{id}/edit',"MentorControl@franchise_driveredit")->name('mentor.franchise.driveredit');
   Route::get('/mentor/controlling',"MentorControl@controlling")->name('mentor.controlling');
   Route::get('/mentor/controlling/audit/{id}',"MentorControl@controlling_audit")->name('mentor.controlling.audit');
   Route::post('/mentor/controlling/audit/{id}',"MentorControl@controlling_auditpost")->name('mentor.controlling.audit');
@@ -311,6 +315,10 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::post('/mentor/franchise/layanan/{id}/add',"MentorControl@franchise_layananadd")->name('mentor.franchise.layananadd');
   Route::get('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
   Route::post('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
+
+  Route::get('/mentor/bagihasil',"MentorControl@bagihasil")->name('mentor.bagihasil');
+  Route::get('/mentor/bagihasil/{id}/list',"MentorControl@bagihasil_list")->name('mentor.bagihasil.list');
+  Route::post('/mentor/bagihasil/{id}/list',"MentorControl@bagihasil_list")->name('mentor.bagihasil.listpost');
 
   Route::get('/mentor/lapkeuangan/{id?}',"MentorControl@laporankeuangan")->name('mentor.lapkeuangan');
   Route::get('/mentor/lapbarang/{id?}',"MentorControl@laporanbarang")->name('mentor.lapbarang');

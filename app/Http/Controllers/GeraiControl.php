@@ -13,6 +13,27 @@ class GeraiControl extends Controller
       $a->update(["status_evaluasi"=>1]);
       return back();
     }
+    public function detailapi($id)
+    {
+      $d = GeraiOrder::where("id",$id);
+      if ($d->count() > 0) {
+        $data = $d->first();
+        $data->gerai_driver;
+        $data->gerai_layanan;
+        $data->nama_pelanggan = $data->gerai_pelanggan->nama;
+        $data->pengguna;
+        $data->gerai_driver_antar;
+        $data->gerai_driver_jemput;
+        $data->id_formatted = str_pad($data->id,5,0,STR_PAD_LEFT);
+        $data->order = $data->status_format($data->status_order);
+        foreach ($data->gerai_order_details as $k => $v) {
+          $v->gerai_layanan;
+        }
+        return ["status"=>true,"data"=>$data];
+      }else {
+        return ["status"=>false];
+      }
+    }
     public function layanan_selesaikanorder($id)
     {
       $cek = GeraiOrder::where(["id"=>$id]);

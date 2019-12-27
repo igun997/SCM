@@ -185,7 +185,7 @@ class AndroidAPI extends Controller
             }
             $detail = GeraiOrderDetail::insert($dt);
             if ($detail) {
-              GeraiOrder::where(["id"=>$a->id])->update(["progress"=>json_encode([["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"]])]);
+              GeraiOrder::where(["id"=>$a->id])->update(["progress"=>json_encode([["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"]]),"jarak"=>$km]);
               return ["status"=>1];
             }else {
               GeraiOrder::find($a->id)->delete();
@@ -343,6 +343,7 @@ class AndroidAPI extends Controller
       $d = GeraiOrder::where("id",$id);
       $data = $d->first();
       $data->nama_pelanggan = $data->gerai_pelanggan->nama;
+      $data->pengguna;
       $data->kode = str_pad($data->id,5,0,STR_PAD_LEFT);
       $s = "";
       foreach ($data->gerai_order_details as $key => $value) {

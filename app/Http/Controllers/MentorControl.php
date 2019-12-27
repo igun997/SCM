@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
+use \Carbon\Carbon;
 class MentorControl extends Controller
 {
   public function index()
@@ -49,13 +50,87 @@ class MentorControl extends Controller
       $ins = GeraiDriver::create($d);
       return redirect(route("mentor.franchise.driver",$id));
     }
-    return view("franchise.mentor.franchise_driverform")->with(["title"=>"Tambah Layanan"]);
+    return view("franchise.mentor.franchise_driverform")->with(["title"=>"Tambah Driver"]);
+  }
+  public function bagihasil()
+  {
+    $frs = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna")])->get();
+    return view("franchise.mentor.bagihasil")->with(["title"=>"Bagi Hasil","frs"=>$frs]);
+  }
+  public function _bagihasil($id)
+  {
+    $patokan = GeraiBagihasil::where(["pemilik_id"=>$id])->orderBy("dibuat","desc");
+    if ($patokan->count() > 0) {
+      $setTgl = $patokan->first()->dibuat;
+      $tglSekrng = date("Y-m-d");
+      $carbon = new Carbon($setTgl);
+      $now = Carbon::now();
+      $totalHari = $carbon->diff($now)->days;
+      if ($totalHari >= 30) {
+        $a = GeraiOrder::where(["status_order"=>6,"pemilik_id"=>$id])->whereBetween("dibuat",[date($setTgl),date($tglSekrng)])->get();
+        $total = 0;
+        foreach ($a as $key => $value) {
+          $total = $total+$value->totalharga;
+        }
+        $persentase = $total;
+        $pemilik = $persentase*0.6;
+        $pusat = $persentase*0.4;
+        $now = date("d-m-Y",strtotime($tglSekrng));
+        $dec1 = date("d-m-Y",strtotime($setTgl));
+        $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];
+        return $tempData;
+      }else {
+        return ["status"=>false,"msg"=>"Bagi Minimal Dalam 30 Hari atau Lebih"];
+      }
+    }else {
+      $a = GeraiOrder::where(["status_order"=>6,"pemilik_id"=>$id])->get();
+      $total = 0;
+      foreach ($a as $key => $value) {
+        $total = $total+$value->totalharga;
+      }
+      $persentase = $total;
+      $pemilik = $persentase*0.6;
+      $pusat = $persentase*0.4;
+      $now = date("d-m-Y");
+      $dec1 = date("d-m-Y",strtotime("-1 month",strtotime($now)));
+    $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];
+      return $tempData;
+    }
+  }
+  public function bagihasil_list(Request $req,$id)
+  {
+    $a =  $this->_bagihasil($id);
+    if ($req->has("periode")) {
+      $data = $a["data"];
+      $ins = GeraiBagihasil::create($data);
+      return back();
+    }
+    $cek = GeraiBagihasil::where(["pemilik_id"=>$id])->get();
+    $person = Pengguna::where(["id_pengguna"=>$id])->first();
+    $mentor = Pengguna::where(["id_pengguna"=>session()->get("id_pengguna")])->first();
+    return view("franchise.mentor.bagihasil_list")->with(["title"=>"Bagi Hasil","data"=>$cek,"person"=>$person,"mentor"=>$mentor,"form_data"=>$a]);
+  }
+  public function franchise_driveredit(Request $req,$id)
+  {
+    $cek = GeraiDriver::where(["id"=>$id]);
+    if ($cek->count() > 0) {
+      if ($req->has("nama")) {
+        $d = $req->all();
+        unset($d["_token"]);
+        // return $d;
+        $ins = GeraiDriver::where(["id"=>$id])->update($d);
+        return redirect(route("mentor.franchise.driver",$cek->first()->pemilik_id));
+      }
+      return view("franchise.mentor.franchise_driverform")->with(["title"=>"Ubah Driver","data"=>$cek->first()]);
+    }else {
+      return back();
+    }
   }
   public function controlling_audit($id)
   {
     $trx = GeraiKontrol::where(["pemilik_id"=>$id]);
     $data = $trx->get();
-    $gerailist = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna")])->get();
+    $gerailist = Pengguna::where(["pengguna_id"=>session()->get("id_pengguna"),"id_pengguna"=>$id])->get();
     $c = ["title"=>"Audit Gerai","data"=>$data,"gerai"=>$gerailist];
     return view("franchise.mentor.controlling_audit")->with($c);
   }

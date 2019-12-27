@@ -24,9 +24,7 @@
                <th>Layanan</th>
                <th>Status Order</th>
                <th>Dijemput</th>
-               <th>Driver Penjemputan</th>
-               <th>Driver Pengantaran</th>
-               <th>Jarak</th>
+               <th>Catatan</th>
                <th>Total Harga</th>
                <th>Dibuat</th>
                <th>Opsi</th>
@@ -43,20 +41,11 @@
                  </td>
                  <td>{{$v->status_format($v->status_order)}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
-                 <td>
-                   @if($v->gerai_driver_id != null)
-                   {{$v->gerai_driver_jemput->nama}}
-                   @endif
-                 </td>
-                 <td>
-                   @if($v->gerai_driver_id_antar != null)
-                   {{$v->gerai_driver_antar->nama}}
-                   @endif
-                 </td>
-                 <td>{{number_format($v->jarak)}} KM</td>
+                 <td>{{$v->catatan}}</td>
                  <td>Rp. {{number_format(($v->totalharga)+($v->jarak*5000))}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
+                   <button type="button" class="btn btn-primary m-2 detail" data-id="{{$v->id}}">Detail Pesanan</button>
                    @if($v->dijemput == 1 && $v->status_order != 6)
                    <a href="{{route("gerai.layanan_selesai",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan</a>
                    @elseif($v->status_order == 1)
@@ -85,13 +74,127 @@
 @endsection
 
 @section('js')
+<script src="{{url("assets2/plugins/ss/canvas2image.js")}}" charset="utf-8"></script>
+<script src="{{url("assets2/plugins/ss/html2canvas.min.js")}}" charset="utf-8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     console.log("Well Done");
     $("#dtable").DataTable({
 
     });
+    $("#dtable").on("click",".detail", function(event) {
+      id = $(this).data("id");
+      console.log(id);
+      console.log("Detail");
+      var dialog = bootbox.dialog({
+          title: 'Detail Pesanan',
+          message: '<p align="center"><i class="fa fa-spin fa-spinner"></i> Loading...</p>'
+      });
 
+      dialog.init(function(){
+        $.get("{{route("gerai.pesanan.api.detail")}}/"+id,function(r){
+          if (r.status) {
+            dialog.find(".modal-title").html("Detail Pesanan <button class='btn btn-primary' id='print'><li class='fa fa-print'></li></button>");
+            var tempLate = [
+              "<div class=row id=printArea>",
+              "<div class=col-12>",
+              "<h4 align='center'>Slip Pesanan</h4>",
+              "</div>",
+              "<div class=col-md-6>",
+              "<div class=form-group>",
+              "<label>Nama Konsumen</label>",
+              "<input class=form-control value='"+r.data.nama_pelanggan+"' disabled>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Status Order</label>",
+              "<input class=form-control value='"+r.data.order+"' disabled>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Dijemput</label>",
+              "<input class=form-control value='"+((r.data.dijemput == null)?"Belum Di Tentukan":((r.data.dijemput == 1)?"Ya":"Tidak"))+"' disabled>",
+              "</div>",
+              "</div>",
+              "<div class=col-md-6>",
+              "<div class=form-group>",
+              "<label>Catatan Pesanan</label>",
+              "<textarea class=form-control disabled>"+((r.data.catatan != null)?r.data.catatan:"-")+"</textarea>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Tanggal Pemesanan</label>",
+              "<input class=form-control value='"+r.data.dibuat+"' disabled>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Total Harga</label>",
+              "<input class=form-control value='"+r.data.order+"' disabled>",
+              "</div>",
+              "</div>",
+              "<div class=col-md-6>",
+              "<div class=form-group>",
+              "<label>Driver Penjemputan</label>",
+              "<input class=form-control value='"+((r.data.gerai_driver_jemput != null)?r.data.gerai_driver_jemput.nama:"-")+"' disabled>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Ongkos Kirim</label>",
+              "<input class=form-control value='"+((r.data.ongkir_jemput == null)?r.data.ongkir_jemput:"-")+"' disabled>",
+              "</div>",
+              "</div>",
+              "<div class=col-md-6>",
+              "<div class=form-group>",
+              "<label>Driver Pengantaran</label>",
+              "<input class=form-control value='"+((r.data.gerai_driver_antar != null)?r.data.gerai_driver_antar.nama:"-")+"' disabled>",
+              "</div>",
+              "<div class=form-group>",
+              "<label>Ongkos Kirim</label>",
+              "<input class=form-control value='"+((r.data.ongkir_antar != null)?r.data.ongkir_antar:"-")+"' disabled>",
+              "</div>",
+              "</div>",
+              "<div class='col-md-12 table-responsive'>",
+              "<table class='table table-stripped' id='tbs'>",
+              "<thead>",
+              "<th>No</th>",
+              "<th>Nama Layanan</th>",
+              "<th>Jumlah Pesan</th>",
+              "<th>Subtotal</th>",
+              "</thead>",
+              "<tbody>",
+              "</tbody>",
+              "</table>",
+              "</div>",
+              "</div>",
+              ]
+            dialog.find('.bootbox-body').html(tempLate.join(""));
+            var seq = [];
+            $.each(r.data.gerai_order_details, function(index, val) {
+              seq.push([(index+1),"["+(val.gerai_layanan.jenis).toUpperCase()+"] "+val.gerai_layanan.nama,val.qty,(val.gerai_layanan.harga*val.qty)])
+            });
+            dialog.find("#tbs").DataTable({
+              data:seq,
+              ordering:false,
+              searching:false,
+              lengthChange:false,
+              paging:false,
+              bInfo:false
+            });
+            dialog.find("#print").on("click", function(event) {
+              printArea = dialog.find("#printArea").get(0);
+              console.log(printArea);
+              html2canvas(printArea).then(function(canvas) {
+                var canvasWidth = canvas.width;
+                var canvasHeight = canvas.height;
+                var img = Canvas2Image.convertToImage(canvas, canvasWidth, canvasHeight);
+                let type = "png";
+                let f = "slip";
+                Canvas2Image.saveAsImage(canvas, canvasWidth, canvasHeight, type, f);
+              });
+            })
+          }
+        }).fail(function(){
+          alert("Server Error");
+        })
+
+      });
+    })
   });
 </script>
 @endsection

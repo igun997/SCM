@@ -25,6 +25,10 @@
                   <input type="text" class="form-control" name="nama" value="{{@$data->nama}}">
                 </div>
                 <div class="form-group">
+                  <label>No HP</label>
+                  <input type="number" class="form-control" name="no_hp" value="{{@$data->no_hp}}">
+                </div>
+                <div class="form-group">
                   <label>Alamat</label>
                   <textarea name="alamat" class="form-control" rows="8" cols="80">{{@$data->alamat}}</textarea>
                 </div>
@@ -38,7 +42,11 @@
                 </div>
                 <div class="form-group">
                   <label>Status</label>
-                  <input type="status" class="form-control" name="status" value="{{@$data->status}}">
+                  <select class="form-control" name="status">
+                    <option value="{{@$data->status}}" selected>{{(@$data->status == 0)?"Tidak Aktif":"Aktif"}}</option>
+                    <option value="0">Tidak Aktif</option>
+                    <option value="1">Aktif</option>
+                  </select>
                 </div>
                 <div class="form-group">
                   <button type="submit" class="btn btn-success">Simpan Data</button>
