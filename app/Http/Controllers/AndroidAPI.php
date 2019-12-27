@@ -277,8 +277,8 @@ class AndroidAPI extends Controller
           $data["jarak_antar"] = round($km);
           $data["totalharga"] = $harga;
           $data["ongkir_jemput"] = 5000;
-          if ($data["jarak"] > 0) {
-            $data["ongkir_jemput"] = ($data["jarak"]*5000);
+          if ($data["jarak_antar"] > 0) {
+            $data["ongkir_jemput"] = ($data["jarak_antar"]*5000);
           }
           $data["status_order"] = 5;
           $cek->update($data);
