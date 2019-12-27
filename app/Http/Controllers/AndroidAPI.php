@@ -323,7 +323,7 @@ class AndroidAPI extends Controller
     }
     public function driver_listpesanan($id)
     {
-      $order = GeraiDriver::where(["id"=>$id])->first()->pemilik->gerai_orders([0,1],$id);
+      $order = GeraiDriver::all();
       foreach ($order as $key => &$v) {
         $v->nama_pelanggan = $v->gerai_pelanggan->nama;
         $v->kode = str_pad($v->id,5,0,STR_PAD_LEFT);
