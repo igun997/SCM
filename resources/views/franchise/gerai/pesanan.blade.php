@@ -23,7 +23,7 @@
                <th>Nama Pelanggan</th>
                <th>Layanan</th>
                <th>Status Order</th>
-               <th>Dijemput</th>
+               <th>Diantar</th>
                <th>Catatan</th>
                <th>Total Harga</th>
                <th>Dibuat</th>
