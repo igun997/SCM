@@ -63,7 +63,7 @@
                     <small>{{strtoupper($v->jenis)}}</small>
                   </div>
                   <p class="mb-1">
-                    <input type="number" class="check" data-harga="{{$v->harga}}" min=1 name="qty[{{$v->id}}]" value="" required>
+                    <input type="number" class="check" data-harga="{{$v->harga}}" name="qty[{{$v->id}}]" value="" required>
                   </p>
                 </div>
                 @endforeach
