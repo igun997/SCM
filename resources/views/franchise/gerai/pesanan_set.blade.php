@@ -59,7 +59,7 @@
                 @foreach($layanan as $k => $v)
                 <div class="list-group-item list-group-item-action flex-column align-items-start">
                   <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{$v->nama}}</h5>
+                    <h5 class="mb-1">{{$v->nama}} - Rp.{{number_format($v->harga)}}</h5>
                     <small>{{strtoupper($v->jenis)}}</small>
                   </div>
                   <p class="mb-1">
