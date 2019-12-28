@@ -97,10 +97,12 @@
        obj = $("#totalharga");
        totalharga = 0;
        $.each($("input[type=number]"), function(index, val) {
-        // console.log($(val));
-        harga = (parseFloat($(val).data("harga"))*parseFloat($(val).val()));
+        console.log(($(val).val() != ""));
+        if ($(val).val() != "") {
+          harga = (parseFloat($(val).data("harga"))*parseFloat($(val).val()));
+          totalharga = totalharga + harga;
+        }
         // console.log(harga);
-        totalharga = totalharga + harga;
        });
        obj.val(totalharga);
        // console.log(harga);
