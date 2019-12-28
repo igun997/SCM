@@ -22,7 +22,7 @@
           <li class="nav-item dropdown">
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-eye"></i> Monitoring</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" class="dropdown-item ">Pemesanan Produk</a>
+              <a href="" class="dropdown-item " id="mpesanan">Pemesanan Produk</a>
               <a href="" class="dropdown-item " id="mpengadaan">Pengadaan</a>
               <a href="" class="dropdown-item ">Pengiriman</a>
               <a href="" class="dropdown-item ">Produksi</a>

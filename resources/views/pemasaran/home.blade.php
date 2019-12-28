@@ -982,7 +982,7 @@
         var btn = function(id,status_pesanan,status_pembayaran){
           var item = [];
           item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
-          if (status_pembayaran == "Belum Dibayar" || status_pembayaran == "Pembayaran Ditolak") {
+          if ((status_pembayaran == "Belum Dibayar" || status_pembayaran == "Pembayaran Ditolak") && status_pesanan != "Dibatalkan") {
             item.push('<a class="dropdown-item bayar" href="javascript:void(0)" data-id="'+id+'">Bayar</a>');
           }else if (status_pesanan == "Dibatalkan" && status_pembayaran == "Pembayaran Diterima") {
             item.push('<a class="dropdown-item refund" href="javascript:void(0)" data-id="'+id+'">Refund Dana</a>');
@@ -1060,7 +1060,16 @@
                 confirmButtonText: 'Ya'
               }).then((result) => {
                 if (result.value) {
-
+                  $.post("{{route("pemasaran.api.pemesanan_update")}}/"+id,{status_pesanan:5,status_pembayaran:2},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
                 }
               })
             });
