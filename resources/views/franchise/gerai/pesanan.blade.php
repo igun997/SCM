@@ -16,12 +16,12 @@
           <h5 class="m-0">Data Pesanan</h5>
         </div>
         <div class="card-body">
+          <a href="{{route("gerai.pesanan.set")}}" class="btn btn-success m-2">Tambah Transaksi</a>
           <div class="table-responsive">
             <table id="dtable" class="table table-bordered">
              <thead>
                <th>No</th>
                <th>Nama Pelanggan</th>
-               <th>Layanan</th>
                <th>Status Order</th>
                <th>Diantar</th>
                <th>Catatan</th>
@@ -34,11 +34,6 @@
                <tr>
                  <td>{{($k+1)}}</td>
                  <td>{{$v->gerai_pelanggan->nama}}</td>
-                 <td>
-                   @foreach($v->gerai_order_details as $k => $vs)
-                   <p>{{$vs->gerai_layanan->nama}} x {{$vs->qty}}</p>
-                   @endforeach
-                 </td>
                  <td>{{$v->status_format($v->status_order)}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
                  <td>{{$v->catatan}}</td>
@@ -126,7 +121,7 @@
               "</div>",
               "<div class=form-group>",
               "<label>Total Harga</label>",
-              "<input class=form-control value='"+r.data.order+"' disabled>",
+              "<input class=form-control value='"+r.data.totalharga+"' disabled>",
               "</div>",
               "</div>",
               "<div class=col-md-6>",

@@ -278,6 +278,8 @@ Route::group(['middleware' => ['gerai']], function () {
   Route::get('/gerai/layanan/layanan_cuciselesai/{id}',"GeraiControl@layanan_cuciselesai")->name('gerai.layanan_cuciselesai');
   Route::get('/gerai/layanan/layanan_selesaikanorder/{id}',"GeraiControl@layanan_selesaikanorder")->name('gerai.layanan_selesaikanorder');
   Route::get('/gerai/pesanan',"GeraiControl@pesanan")->name('gerai.pesanan');
+  Route::get('/gerai/pesanan/set',"GeraiControl@set_pesanan")->name('gerai.pesanan.set');
+  Route::post('/gerai/pesanan/set',"GeraiControl@set_pesanansimpan")->name('gerai.pesanan.set.save');
   Route::get('/gerai/api/pesanan/{id?}',"GeraiControl@detailapi")->name('gerai.pesanan.api.detail');
 // layanan_selesaikanorder
   Route::get('/gerai/fixing/{id}',"GeraiControl@index_fix")->name('gerai.home.fixing');

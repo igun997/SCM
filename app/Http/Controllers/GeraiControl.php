@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
+use Illuminate\Support\Str;
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiOrderDetail,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
 class GeraiControl extends Controller
 {
     public function index_fix($id)
@@ -12,6 +12,49 @@ class GeraiControl extends Controller
       $a = GeraiKontrol::where(["id"=>$id]);
       $a->update(["status_evaluasi"=>1]);
       return back();
+    }
+    public function set_pesanan()
+    {
+      $data = [
+        "title"=>"Tambah Pesanan",
+        "randomize"=>Str::random(12),
+        "layanan"=>GeraiLayanan::where(["pemilik_id"=>session()->get("id_pengguna")])->get()
+      ];
+      return view("franchise.gerai.pesanan_set")->with($data);
+    }
+    public function set_pesanansimpan(Request $req)
+    {
+      $data = $req->all();
+      $qty = $req->qty;
+      unset($data["qty"]);
+      $data["status"] = 1;
+      $createUser = GeraiPelanggan::create($data);
+      if ($createUser) {
+        $id = $createUser->id;
+        $set = ["gerai_pelanggan_id"=>$id,"pemilik_id"=>session()->get("id_pengguna"),"status_order"=>2,"catatan"=>$req->catatan,"progress"=>[["tgl"=>date("d-m-Y"),"status"=>"Barang Diterima Di Gerai"]],"totalharga"=>$data["totalharga"]];
+        $order = GeraiOrder::create($set);
+        if ($order) {
+          $id = $order->id;
+          $item = [];
+          foreach ($qty as $key => $value) {
+            if ($value > 0) {
+              $item[] = ["gerai_order_id"=>$id,"gerai_layanan_id"=>$key,"qty"=>$value];
+            }
+          }
+          $yes = GeraiOrderDetail::insert($item);
+          if ($yes) {
+            return response()->json(["status"=>1]);
+          }else {
+            return response()->json(["status"=>0]);
+          }
+        }else {
+          return response()->json(["status"=>0]);
+
+        }
+      }else {
+        return response()->json(["status"=>0]);
+
+      }
     }
     public function detailapi($id)
     {
