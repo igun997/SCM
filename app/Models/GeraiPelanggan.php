@@ -40,9 +40,6 @@ class GeraiPelanggan extends Eloquent
 		'dibuat'
 	];
 
-	protected $hidden = [
-		'password'
-	];
 
 	protected $fillable = [
 		'nama',
