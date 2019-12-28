@@ -21,6 +21,7 @@
             <table id="dtable" class="table table-bordered">
              <thead>
                <th>No</th>
+               <th>Kode</th>
                <th>Nama Pelanggan</th>
                <th>Status Order</th>
                <th>Diantar</th>
@@ -33,6 +34,7 @@
                @foreach($data as $k => $v)
                <tr>
                  <td>{{($k+1)}}</td>
+                 <td>#{{str_pad($v->id,3,0,STR_PAD_LEFT)}}</td>
                  <td>{{$v->gerai_pelanggan->nama}}</td>
                  <td>{{$v->status_format($v->status_order)}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
