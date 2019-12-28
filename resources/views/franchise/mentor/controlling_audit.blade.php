@@ -101,6 +101,9 @@
                         @if($v->status_kontrol === 0 && $v->status_evaluasi == 1)
                           <a href="{{route("mentor.kontrol.done",$v->id)}}" class="btn btn-success">Sudah Di Kontrol</a>
                         @endif
+                        @if($v->status_kontrol === 0 && $v->status_evaluasi == null)
+                          <a href="{{route("mentor.kontrol.done",$v->id)}}" class="btn btn-success">Sudah Di Kontrol</a>
+                        @endif
                       </td>
                     </tr>
                     @endforeach
