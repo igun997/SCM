@@ -986,6 +986,8 @@
             item.push('<a class="dropdown-item bayar" href="javascript:void(0)" data-id="'+id+'">Bayar</a>');
           }else if (status_pesanan == "Dibatalkan" && status_pembayaran == "Pembayaran Diterima") {
             item.push('<a class="dropdown-item refund" href="javascript:void(0)" data-id="'+id+'">Refund Dana</a>');
+          }else if (status_pesanan == "Belum Diproses" && status_pembayaran == "Pembayaran Diterima") {
+            item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Pesanan</a>');
           }
           if (status_pesanan == "Belum Diproses") {
             item.push('<a class="dropdown-item batalkan" data-id="'+id+'" href="javascript:void(0)">Batalkan Pesanan</a>');
@@ -1046,6 +1048,61 @@
                 $("td",r).eq(9).html(btn(d[1],d[3],d[5]));
               }
             });
+            k.find("#dtable").on("click", ".refund", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pemesanan_update")}}/"+id,{status_pembayaran:4},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            k.find("#dtable").on("click", ".proses", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pemesanan_update")}}/"+id,{status_pesanan:1},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+
             k.find("#dtable").on("click", ".batalkan", function(event) {
               id = $(this).data("id");
               console.log(id);
@@ -1060,7 +1117,7 @@
                 confirmButtonText: 'Ya'
               }).then((result) => {
                 if (result.value) {
-                  $.post("{{route("pemasaran.api.pemesanan_update")}}/"+id,{status_pesanan:5,status_pembayaran:2},function(d){
+                  $.post("{{route("pemasaran.api.pemesanan_update")}}/"+id,{status_pesanan:5},function(d){
                     if (d.status == 1) {
                       new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
                     }else {
@@ -1288,6 +1345,648 @@
             k.find("#dtable").on('click', '.bayar', function(event) {
               uploadImage($(this).data("id"));
             })
+          }
+        });
+        modal.open();
+      })
+      $("#shipping").on("click", function(event) {
+        var btn = function(id,status_pengiriman,status_pembayaran){
+          var item = [];
+          item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+          if ((status_pengiriman == "Menunggu Muatan")) {
+            // item.push('<a class="dropdown-item muatan" href="javascript:void(0)" data-id="'+id+'">Edit Muatan</a>');
+            item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Pengiriman</a>');
+          }else if ((status_pengiriman == "Sedang Dikirim")) {
+            item.push('<a class="dropdown-item selesaikan" href="javascript:void(0)" data-id="'+id+'">Selesaikan Pengiriman</a>');
+          }
+          if (status_pengiriman == "Menunggu Muatan") {
+            item.push('<a class="dropdown-item batalkan" data-id="'+id+'" href="javascript:void(0)">Batalkan Pengiriman</a>');
+          }
+          if (status_pengiriman == "Sedang Dikirim") {
+            item.push('<a class="dropdown-item hentikan" data-id="'+id+'" href="javascript:void(0)">Hentikan Pengiriman</a>');
+          }
+          return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+        };
+        var tempLate = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<button class='btn btn-success' id=tambah >Tambah Pengiriman</button>",
+          "<div class=table-responsive>",
+          "<table class='table table-stripped' id='dtable'>",
+          "<thead>",
+          "<th>No</th>",
+          "<th>Kode Pengiriman</th>",
+          "<th>No Polisi</th>",
+          "<th>Jenis Kendaraan</th>",
+          "<th>Tanggal Pengiriman</th>",
+          "<th>Tanggal Kembali</th>",
+          "<th>Nama Pengemudi</th>",
+          "<th>Kontak Pengemudi</th>",
+          "<th>Status Pengiriman</th>",
+          "<th>Tanggal Register</th>",
+          "<th>Aksi</th>",
+          "</thead>",
+          "<thead>",
+          "</tbody>",
+          "</table>",
+          "</div>",
+          "</div>",
+          "</div>"
+        ];
+        modal = new jBox('Modal', {
+          title: 'Pengiriman Produk',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: 'auto',
+          createOnInit: true,
+          content: tempLate.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+
+          },
+          onCreated:function(x){
+            k = this.content;
+            var dtable = k.find("#dtable").DataTable({
+              ajax:"{{route("pemasaran.api.pengiriman_read")}}",
+              createdRow:function(r,d,i){
+                console.log(d);
+                $("td",r).eq(10).html(btn(d[10],d[8]));
+              }
+            });
+            k.find("#tambah").on("click", function(event) {
+
+              formData = [
+                "<form id=myform onsubmit='return false' method='post'>",
+                "<div class=row>",
+                "<div class=col-md-6>",
+                "<div class=form-group>",
+                "<label>Kode Pengiriman</label>",
+                "<input class='form-control' value='' name='id_pengiriman' readonly/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Transportasi</label>",
+                "<select class=form-control id=initSelect2 name=id_transportasi ></select>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Tanggal Pengiriman</label>",
+                "<input class='form-control massDate' value='' name='tgl_pengiriman' required/>",
+                "</div>",
+                "<div class=form-group>",
+                "<button class='btn btn-primary btn-block btn-large'>Simpan Data</button>",
+                "</div>",
+                "</div>",
+                "<div class=col-md-6>",
+                "<div class=form-group>",
+                "<label>Nama Pengemudi</label>",
+                "<input class='form-control' value='' name='nama_pengemudi' required />",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Nomor Kontak Pengemudi</label>",
+                "<input class='form-control' value='' name='kontak_pengemudi' required />",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Catatan Pengiriman</label>",
+                "<textarea class=form-control name=catatan_khusus></textarea>",
+                "</div>",
+                "</div>",
+                "</div>",
+                "<div class=col-md-12>",
+                "<div class=table-responsive>",
+                table(["Kode Pesanan","Status Pesanan","Opsi"],[],"dtable1"),
+                "</div>",
+                "</div>",
+                "</form>",
+              ]
+              modal1 = new jBox('Modal', {
+                title: 'Tambah Pengiriman Produk',
+                overlay: false,
+                width: '600px',
+                responsiveWidth:true,
+                height: '600px',
+                createOnInit: true,
+                content: formData.join(""),
+                draggable: false,
+                adjustPosition: true,
+                adjustTracker: true,
+                repositionOnOpen: false,
+                offset: {
+                  x: 0,
+                  y: 0
+                },
+                repositionOnContent: false,
+                onCloseComplete:function(){
+                  console.log("Destruct Table");
+
+                },
+                onCreated:function(x){
+                  k = this.content;
+                  async function kode(){
+                    var kode = await Promise.resolve($.get("{{route("pemasaran.api.pengiriman_kode")}}"));
+                    k.find("input[name=id_pengiriman]").val(kode);
+                  }
+                  async function trasnport(){
+                    var list = await Promise.resolve($.get("{{route("pemasaran.api.aktif_trasport")}}"));
+                    k.find("select[name=id_transportasi]").html("");
+                    $.each(list,function(index,val) {
+                      k.find("select[name=id_transportasi]").append("<option value='"+val.id_transportasi+"'>["+(val.jenis_transportasi).toUpperCase()+"] - "+val.no_polisi+" </option>");
+                    });
+                    // k.find("select[name=id_transportasi]").select2();
+                  }
+                  var date_start = "{{date("Y-m-d")}}";
+                  k.find("input[name=tgl_pengiriman]").datepicker({
+                     format:"yyyy-m-d",
+                     startDate: date_start,
+                     autoclose: true,
+                     todayHighlight: true,
+                  });
+                  kode();
+                  trasnport();
+                  var dtable1 = k.find("#dtable1").DataTable({
+                    ajax:"{{route("pemasaran.api.ready_ship")}}",
+                    createdRow:function(r,d,i){
+                      console.log(d);
+                      $("td",r).eq(2).html("<button class='btn btn-primary detail' type=button data-id='"+d[2]+"'><li class='fa fa-search'></li></button>")
+                    }
+                  });
+                  k.find("#dtable1").on("click",".detail", function(event) {
+                    id = $(this).data("id");
+                    $.get("{{route("pemasaran.api.pemesanan_read")}}/"+id,function(data){
+                      console.log(data);
+                      if (data.status == 1) {
+                        var row = data.data;
+                        var tempLate = [
+                          "<div class=row>",
+                          "<div class=col-md-6>",
+                          "<div class=form-group>",
+                          "<label>Kode Pemesanan</label>",
+                          "<input class='form-control' value='"+row.id_pemesanan+"' disabled />",
+                          "</div>",
+                          "<div class=form-group>",
+                          "<label>Nama Pemesan</label>",
+                          "<div class='row gutters-xs'>",
+                          "<div class=col>",
+                          "<input class='form-control' value='"+row.master_pelanggan.nama_pelanggan+"' disabled />",
+                          "</div>",
+                          "<span class=col-auto>",
+                          "<button class='btn btn-secondary detail_pelanggan' data-id='"+row.id_pelanggan+"' type='button'><span class='fe fe-search'></span></button>",
+                          "</span>",
+                          "</div>",
+                          "</div>",
+                          "<div class=form-group>",
+                          "<label>Status Pemesanan</label>",
+                          "<input class='form-control' value='"+row.status_pesanan_text+"' disabled />",
+                          "</div>",
+                          "<div class=form-group>",
+                          "<label>Status Pembayaran</label>",
+                          "<input class='form-control' value='"+row.status_pembayaran_text+"' disabled />",
+                          "</div>",
+                          "</div>",
+                          "<div class=col-md-6>",
+                          "<div class=form-group>",
+                          "<label>Bukti Pembayaran</label>",
+                          "<img class='img-fluid' onerror='onErr(this)' src='"+row.bukti_url+"'/>",
+                          "<div class=form-group>",
+                          "<label>Catatan Pemesanan</label>",
+                          "<textarea class='form-control' disabled >"+row.catatan_pemesanan+"</textarea>",
+                          "</div>",
+                          "<div class=form-group>",
+                          "<label>Total Harga + Pajak</label>",
+                          "<input class='form-control' value='"+row.totalharga+"' disabled />",
+                          "</div>",
+                          "<div class=form-group>",
+                          "<label>Tangal Pemesanan</label>",
+                          "<input class='form-control' value='"+row.tgl_register_text+"' disabled />",
+                          "</div>",
+                          "</div>",
+                          "</div>",
+                          "<div class=col-md-12>",
+                          "<div class=table-responsive>",
+                          "<table class='table table-stripped' id='dtable1' style='width:100%'>",
+                          "<thead>",
+                          "<th>No</th>",
+                          "<th>Kode Barang</th>",
+                          "<th>Nama Barang</th>",
+                          "<th>Jumlah Pesan</th>",
+                          "<th>Harga <span class='badge badge-danger'>Saat Pemesanan</span></th>",
+                          "</thead>",
+                          "<thead>",
+                          "</tbody>",
+                          "</table>",
+                          "</div>",
+                          "</div>",
+                          "</div>"
+                        ];
+                        modal = new jBox('Modal', {
+                          title: 'Detail Penjualan Produk',
+                          overlay: false,
+                          width: '50%',
+                          responsiveWidth:true,
+                          height: 'auto',
+                          createOnInit: true,
+                          content: tempLate.join(""),
+                          draggable: false,
+                          adjustPosition: true,
+                          adjustTracker: true,
+                          repositionOnOpen: false,
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          repositionOnContent: false,
+                          onCloseComplete:function(){
+                            console.log("Destruct Table");
+
+                          },
+                          onCreated:function(x){
+                            k = this.content;
+                            var data_table = [];
+                            $.each(row.pemesanan__details,function(i,el) {
+                              data_table.push([(i+1),el.id_produk,el.master_produk.nama_produk,el.jumlah,el.harga]);
+                            });
+
+                            var dtable1 = k.find("#dtable1").DataTable({
+                              data:data_table
+                            });
+                            k.find(".detail_pelanggan").on('click', function(event) {
+                              id = $(this).data("id");
+                              console.log(id);
+                              $.get("{{route("pemasaran.api.master_pelanggan_read")}}/"+id,function(rs){
+                              frm = [
+                                [
+                                  {
+                                    label:"Nama Pelanggan",
+                                    type:"disabled",
+                                    name:"nama_pelanggan",
+                                    value:rs.nama_pelanggan
+                                  },{
+                                    label:"Alamat",
+                                    type:"disabled",
+                                    name:"alamat",
+                                    value:rs.alamat
+                                  },{
+                                    label:"No Kontak",
+                                    type:"disabled",
+                                    name:"no_kontak",
+                                    value:rs.no_kontak
+                                  },{
+                                    label:"Email",
+                                    type:"disabled",
+                                    name:"email",
+                                    value:rs.email
+                                  }
+                                ]
+                              ];
+                                formSatuan = builder(frm,null,"update",true,12);
+                                set = new jBox('Modal', {
+                                  title: 'Data Pelanggan',
+                                  overlay: false,
+                                  width: '500px',
+                                  responsiveWidth:true,
+                                  height: 'auto',
+                                  createOnInit: true,
+                                  content: formSatuan,
+                                  draggable: false,
+                                  adjustPosition: true,
+                                  adjustTracker: true,
+                                  repositionOnOpen: false,
+                                  offset: {
+                                    x: 0,
+                                    y: 0
+                                  },
+                                  repositionOnContent: false,
+                                  onCloseComplete:function(){
+                                    console.log("Reloading Tabel");
+                                  },
+                                  onCreated:function(){
+                                    console.log("Initialize");
+                                    html = this.content;
+                                  }
+                                });
+                                set.open();
+                              });
+                            })
+                          }
+                        });
+                        modal.open();
+                      }else {
+                        new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'warning'});
+                      }
+                    }).fail(function(){
+                      new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'danger'});
+                      console.log("Fail Sever Error");
+                    });
+                  })
+                  k.find("#myform").on("submit", function(event) {
+                    data = $(this).serializeArray();
+                    c = confirm("Apakah Kamu Yakin ? ");
+                    if (c) {
+                      $.each(k.find("#dtable1 .listcheck"),function(index, el) {
+                        obj = $(el);
+                        cek = obj.is(':checked');
+                        if (cek) {
+                          console.log(obj.data("id"));
+                          data.push({name:"item[]",value:obj.data("id")});
+                        }
+                      });
+                      console.log(data);
+                      $.post("{{route("pemasaran.api.pengiriman_insert")}}",data,function(d){
+                        console.log(d);
+                        if (d.status == 1) {
+                          new jBox('Notice', {content: d.msg,showCountdown:true, color: 'green'});
+                          modal1.close();
+                        }else {
+
+                          new jBox('Notice', {content: d.msg,showCountdown:true, color: 'red'});
+                        }
+                        dtable.ajax.reload();
+                      }).fail(function(){
+                        new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'red'});
+                        console.log("Fail Sever Error");
+                      });
+                    }
+                  })
+                }
+              });
+              modal1.open();
+            })
+            k.find("#dtable").on("click", ".detail", function(event) {
+              id = $(this).data("id");
+              $.get("{{route("pemasaran.api.pengiriman_read")}}/"+id,function(data){
+                console.log(data);
+                if (data.status == 1) {
+                  var row = data.data;
+                  var tempLate = [
+                    "<div class=row>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Kode Pengiriman</label>",
+                    "<input class='form-control' value='"+row.id_pengiriman+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Total Pesanan</label>",
+                    "<div class='row gutters-xs'>",
+                    "<div class=col>",
+                    "<input class='form-control' value='"+(row.pengiriman__details).length+"' disabled />",
+                    "</div>",
+                    "<span class=col-auto>",
+                    "<button class='btn btn-secondary detail_item' data-id='"+row.id_pengiriman+"' type='button'><span class='fe fe-search'></span></button>",
+                    "</span>",
+                    "</div>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Status Pengiriman</label>",
+                    "<input class='form-control' value='"+row.status_pengiriman_text+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tanggal Pengiriman</label>",
+                    "<input class='form-control' value='"+row.tgl_pengiriman_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Catatan Pengiriman</label>",
+                    "<textarea class='form-control' disabled >"+row.catatan_khusus+"</textarea>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tanggal Kembali</label>",
+                    "<input class='form-control' value='"+row.tgl_kembali_text+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tangal Register</label>",
+                    "<input class='form-control' value='"+row.tgl_register_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                    "</div>"
+                  ];
+                  detail = [
+                    "<div class=row>",
+                    "<div class=col-md-12>",
+                    "<div class=table-responsive>",
+                    "<table class='table table-stripped' id='dtable1' style='width:100%'>",
+                    "<thead>",
+                    "<th>No</th>",
+                    "<th>Kode Pesanan</th>",
+                    "<th>Nama Pelanggan</th>",
+                    "<th>Alamat Tujuan</th>",
+                    "<th>Status Pesanan</th>",
+                    "<th>Opsi</th>",
+                    "</thead>",
+                    "<thead>",
+                    "</tbody>",
+                    "</table>",
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                  ];
+                  modal = new jBox('Modal', {
+                    title: 'Detail Pengiriman',
+                    overlay: false,
+                    width: '50%',
+                    responsiveWidth:true,
+                    height: 'auto',
+                    createOnInit: true,
+                    content: tempLate.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      k = this.content;
+                      dt = [];
+                      detail = row.pengiriman__details;
+                      $.each(detail,function(i,v) {
+                        dt.push([(i+1),v.id_pemesanan,v.pemesanan.master_pelanggan.nama_pelanggan,v.alamat_tujuan,v.pemesanan.status_pesanan_text])
+                      });
+                      k.find(".detail_item").on('click', function(event) {
+                        id = $(this).data("id");
+                        detail = [
+                          "<div class=row>",
+                          "<div class=col-md-12>",
+                          "<div class=table-responsive>",
+                          "<table class='table table-stripped' id='dtable2' style='width:100%'>",
+                          "<thead>",
+                          "<th>No</th>",
+                          "<th>Kode Pesanan</th>",
+                          "<th>Nama Pelanggan</th>",
+                          "<th>Alamat Tujuan</th>",
+                          "<th>Status Pesanan</th>",
+                          "</thead>",
+                          "<thead>",
+                          "</tbody>",
+                          "</table>",
+                          "</div>",
+                          "</div>",
+                          "</div>",
+                        ];
+                        modal2 = new jBox('Modal', {
+                          title: 'Detail Pesanan',
+                          overlay: false,
+                          width: '50%',
+                          responsiveWidth:true,
+                          height: 'auto',
+                          createOnInit: true,
+                          content: detail.join(""),
+                          draggable: false,
+                          adjustPosition: true,
+                          adjustTracker: true,
+                          repositionOnOpen: false,
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          repositionOnContent: false,
+                          onCloseComplete:function(){
+                            console.log("Destruct Table");
+
+                          },
+                          onCreated:function(x){
+                            k = this.content;
+                            $("#dtable2").DataTable({
+                              data:dt
+                            });
+                          }
+                        });
+                        modal2.open();
+                      })
+                    }
+                  });
+                  modal.open();
+                }else {
+                  new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'warning'});
+                }
+              }).fail(function(){
+                new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'danger'});
+                console.log("Fail Sever Error");
+              });
+            })
+            k.find("#dtable").on("click", ".proses", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pengiriman_update")}}/"+id,{status_pengiriman:1},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            k.find("#dtable").on("click", ".batalkan", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pengiriman_update")}}/"+id,{status_pengiriman:4},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            k.find("#dtable").on("click", ".selesaikan", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pengiriman_update")}}/"+id,{status_pengiriman:3},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            k.find("#dtable").on("click", ".hentikan", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("pemasaran.api.pengiriman_update")}}/"+id,{status_pengiriman:2},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+
           }
         });
         modal.open();

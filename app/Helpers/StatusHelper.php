@@ -42,6 +42,8 @@
      return "Pembayaran Ditolak";
    }elseif ($id == 3) {
      return "Pembayaran Diterima";
+   }elseif ($id == 4) {
+     return "Pembayaran Dikembalikan";
    }else {
      return "Tidak Diketahui";
    }
@@ -116,6 +118,8 @@ function konfirmasi($id)
      return "Pengiriman Gagal";
    }elseif ($id == 3) {
      return "Pengiriman Selesai";
+   }elseif ($id == 4) {
+     return "Pengiriman Dibatalkan";
    }else {
      return "Tidak Diketahui";
    }

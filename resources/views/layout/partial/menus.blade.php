@@ -22,10 +22,10 @@
           <li class="nav-item dropdown">
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-eye"></i> Monitoring</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" class="dropdown-item " id="mpesanan">Pemesanan Produk</a>
-              <a href="" class="dropdown-item " id="mpengadaan">Pengadaan</a>
-              <a href="" class="dropdown-item ">Pengiriman</a>
-              <a href="" class="dropdown-item ">Produksi</a>
+              <a href="#" class="dropdown-item " id="mpesanan">Pemesanan Produk</a>
+              <a href="#" class="dropdown-item " id="mpengadaan">Pengadaan</a>
+              <a href="#" class="dropdown-item ">Pengiriman</a>
+              <a href="#" class="dropdown-item ">Produksi</a>
             </div>
           </li>
           <li class="nav-item">
@@ -88,6 +88,7 @@
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="#" id="pmproduk" class="dropdown-item ">Penjualan Produk</a>
               <a href="#" id="produklist" class="dropdown-item ">Daftar Penjualan Produk</a>
+              <a href="#" id="shipping" class="dropdown-item ">Pengiriman Produk</a>
               <!-- <a href="" id="manajemenpos" class="dropdown-item ">Manajemen PoS</a> -->
             </div>
           </li>

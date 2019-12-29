@@ -3259,6 +3259,345 @@
                 });
           modal.open();
       });
+      $("#mpesanan").on("click",function(event) {
+        var btn = function(id,status_pesanan,status_pembayaran){
+          var item = [];
+          item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+          if (status_pesanan == "Belum Diproses" && status_pembayaran == "Sedang Diverifikasi") {
+            item.push('<a class="dropdown-item verifikasi" href="javascript:void(0)" data-id="'+id+'">Verifikasi Pembayaran</a>');
+            item.push('<a class="dropdown-item tolak_verifikasi" href="javascript:void(0)" data-id="'+id+'">Tolak Pembayaran</a>');
+          }
+
+          return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+        };
+        var tempLate = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=table-responsive>",
+          "<table class='table table-stripped' id='dtable'>",
+          "<thead>",
+          "<th>No</th>",
+          "<th>Kode Pemesanan</th>",
+          "<th>Nama Pelanggan</th>",
+          "<th>Status Pemesanan</th>",
+          "<th>Catatan Pemesanan</th>",
+          "<th>Status Pembayaran</th>",
+          "<th>Pajak</th>",
+          "<th>Total + Pajak</th>",
+          "<th>Tanggal</th>",
+          "<th>Aksi</th>",
+          "</thead>",
+          "<thead>",
+          "</tbody>",
+          "</table>",
+          "</div>",
+          "</div>",
+          "</div>"
+        ];
+        modal = new jBox('Modal', {
+          title: 'Daftar Penjualan Produk',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: 'auto',
+          createOnInit: true,
+          content: tempLate.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+
+          },
+          onCreated:function(x){
+            k = this.content;
+            var dtable = k.find("#dtable").DataTable({
+              ajax:"{{route("private.api.pemesanan_read")}}",
+              createdRow:function(r,d,i){
+                console.log(d);
+                $("td",r).eq(9).html(btn(d[1],d[3],d[5]));
+              }
+            });
+            k.find("#dtable").on("click", ".verifikasi", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("private.api.pemesanan_update")}}/"+id,{status_pembayaran:3},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+
+            k.find("#dtable").on("click", ".tolak_verifikasi", function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log("Batalkan");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Data Sebelumnya tidak bisa di kembalikan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("private.api.pemesanan_update")}}/"+id,{status_pembayaran:2},function(d){
+                    if (d.status == 1) {
+                      new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                    }
+                    dtable.ajax.reload();
+                  }).fail(function(r){
+                    new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            async function uploadImage(id,d){
+              const { value: file } = await Swal.fire({
+                title: 'Pilih Bukti Pembayaran',
+                input: 'file',
+                inputAttributes: {
+                  accept: 'image/*',
+                  'aria-label': 'Upload Bukti Pembayaran',
+                  'id':"file"
+                }
+              })
+
+              if (file) {
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                  Swal.fire({
+                    title: 'Apakah Anda Yakin ?',
+                    imageUrl: e.target.result,
+                    imageAlt: 'Bukti yang akan di upload',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya'
+                  }).then(res => {
+                    if (res.value) {
+                      console.log(e.target.result);
+                      // var form_data = new FormData();
+                      // form_data.append('file', e.target.result);
+                      // console.log("Ok");
+                      $.post("{{route("private.api.pemesanan_update")}}/"+id,{file:e.target.result},function(d){
+                        if (d.status == 1) {
+                          new jBox('Notice', {content: "Bukti Pembayaran Telah Di Upload",showCountdown:true, color: 'green'});
+                        }else {
+                          new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'yellow'});
+                        }
+                        dtable.ajax.reload();
+                      }).fail(function(){
+                        new jBox('Notice', {content: "Server Error",showCountdown:true, color: 'red'});
+                      })
+                    }
+                  });
+                }
+                reader.readAsDataURL(file);
+              }
+            }
+            k.find("#dtable").on("click", ".detail", function(event) {
+              id = $(this).data("id");
+              $.get("{{route("private.api.pemesanan_read")}}/"+id,function(data){
+                console.log(data);
+                if (data.status == 1) {
+                  var row = data.data;
+                  var tempLate = [
+                    "<div class=row>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Kode Pemesanan</label>",
+                    "<input class='form-control' value='"+row.id_pemesanan+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Nama Pemesan</label>",
+                    "<div class='row gutters-xs'>",
+                    "<div class=col>",
+                    "<input class='form-control' value='"+row.master_pelanggan.nama_pelanggan+"' disabled />",
+                    "</div>",
+                    "<span class=col-auto>",
+                    "<button class='btn btn-secondary detail_pelanggan' data-id='"+row.id_pelanggan+"' type='button'><span class='fe fe-search'></span></button>",
+                    "</span>",
+                    "</div>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Status Pemesanan</label>",
+                    "<input class='form-control' value='"+row.status_pesanan_text+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Status Pembayaran</label>",
+                    "<input class='form-control' value='"+row.status_pembayaran_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Bukti Pembayaran</label>",
+                    "<img class='img-fluid' onerror='onErr(this)' src='"+row.bukti_url+"'/>",
+                    "<div class=form-group>",
+                    "<label>Catatan Pemesanan</label>",
+                    "<textarea class='form-control' disabled >"+row.catatan_pemesanan+"</textarea>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Total Harga + Pajak</label>",
+                    "<input class='form-control' value='"+row.totalharga+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tangal Pemesanan</label>",
+                    "<input class='form-control' value='"+row.tgl_register_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                    "<div class=col-md-12>",
+                    "<div class=table-responsive>",
+                    "<table class='table table-stripped' id='dtable1' style='width:100%'>",
+                    "<thead>",
+                    "<th>No</th>",
+                    "<th>Kode Barang</th>",
+                    "<th>Nama Barang</th>",
+                    "<th>Jumlah Pesan</th>",
+                    "<th>Harga <span class='badge badge-danger'>Saat Pemesanan</span></th>",
+                    "</thead>",
+                    "<thead>",
+                    "</tbody>",
+                    "</table>",
+                    "</div>",
+                    "</div>",
+                    "</div>"
+                  ];
+                  modal = new jBox('Modal', {
+                    title: 'Detail Penjualan Produk',
+                    overlay: false,
+                    width: '50%',
+                    responsiveWidth:true,
+                    height: 'auto',
+                    createOnInit: true,
+                    content: tempLate.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      k = this.content;
+                      var data_table = [];
+                      $.each(row.pemesanan__details,function(i,el) {
+                        data_table.push([(i+1),el.id_produk,el.master_produk.nama_produk,el.jumlah,el.harga]);
+                      });
+
+                      var dtable1 = k.find("#dtable1").DataTable({
+                        data:data_table
+                      });
+                      k.find(".detail_pelanggan").on('click', function(event) {
+                        id = $(this).data("id");
+                        console.log(id);
+                        $.get("{{route("private.api.master_pelanggan_read")}}/"+id,function(rs){
+                        frm = [
+                          [
+                            {
+                              label:"Nama Pelanggan",
+                              type:"disabled",
+                              name:"nama_pelanggan",
+                              value:rs.nama_pelanggan
+                            },{
+                              label:"Alamat",
+                              type:"disabled",
+                              name:"alamat",
+                              value:rs.alamat
+                            },{
+                              label:"No Kontak",
+                              type:"disabled",
+                              name:"no_kontak",
+                              value:rs.no_kontak
+                            },{
+                              label:"Email",
+                              type:"disabled",
+                              name:"email",
+                              value:rs.email
+                            }
+                          ]
+                        ];
+                          formSatuan = builder(frm,null,"update",true,12);
+                          set = new jBox('Modal', {
+                            title: 'Data Pelanggan',
+                            overlay: false,
+                            width: '500px',
+                            responsiveWidth:true,
+                            height: 'auto',
+                            createOnInit: true,
+                            content: formSatuan,
+                            draggable: false,
+                            adjustPosition: true,
+                            adjustTracker: true,
+                            repositionOnOpen: false,
+                            offset: {
+                              x: 0,
+                              y: 0
+                            },
+                            repositionOnContent: false,
+                            onCloseComplete:function(){
+                              console.log("Reloading Tabel");
+                            },
+                            onCreated:function(){
+                              console.log("Initialize");
+                              html = this.content;
+                            }
+                          });
+                          set.open();
+                        });
+                      })
+                    }
+                  });
+                  modal.open();
+                }else {
+                  new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'warning'});
+                }
+              }).fail(function(){
+                new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'danger'});
+                console.log("Fail Sever Error");
+              });
+            })
+            k.find("#dtable").on('click', '.bayar', function(event) {
+              uploadImage($(this).data("id"));
+            })
+          }
+        });
+        modal.open();
+      })
     });
   });
 </script>

@@ -98,6 +98,10 @@ Route::group(['middleware' => ['direktur']], function () {
   Route::post('/api/direktur/pprodukgudangretur_edit/{id?}',"ApiControl@pprodukgudangretur_edit")->name("private.api.pprodukgudangretur_edit");
   Route::post('/api/direktur/pprodukgudangretur_ajukan/{id?}',"ApiControl@pprodukgudangretur_ajukan")->name("private.api.pprodukgudangretur_ajukan");
 
+
+  Route::get("api/direktur/pemesanan_read/{id?}","ApiControl@direktur_pemesanan_read")->name("private.api.pemesanan_read");
+  Route::post("api/direktur/pemesanan_update/{id?}","ApiControl@direktur_pemesanan_update")->name("private.api.pemesanan_update");
+
 });
 Route::group(['middleware' => ['pengadaan']], function () {
   Route::get('/pengadaan',"PengadaanControl@index")->name('private.pengadaan.home');
@@ -246,4 +250,11 @@ Route::group(['middleware'=>['pemasaran']],function(){
 
   Route::get("api/pemasaran/pemesanan_read/{id?}","ApiControl@pemesanan_read")->name("pemasaran.api.pemesanan_read");
   Route::post("api/pemasaran/pemesanan_update/{id?}","ApiControl@pemesanan_update")->name("pemasaran.api.pemesanan_update");
+
+  Route::get("api/pemasaran/pengiriman_read/{id?}","ApiControl@pengiriman_read")->name("pemasaran.api.pengiriman_read");
+  Route::get("api/pemasaran/transportasi_aktif","ApiControl@aktif_trasport")->name("pemasaran.api.aktif_trasport");
+  Route::get("api/pemasaran/ready_ship","ApiControl@ready_ship")->name("pemasaran.api.ready_ship");
+  Route::get("api/pemasaran/kode","ApiControl@pengiriman_kode")->name("pemasaran.api.pengiriman_kode");
+  Route::post("api/pemasaran/pengiriman_update/{id?}","ApiControl@pengiriman_update")->name("pemasaran.api.pengiriman_update");
+  Route::post("api/pemasaran/pengiriman_insert/{id?}","ApiControl@pengiriman_insert")->name("pemasaran.api.pengiriman_insert");
 });

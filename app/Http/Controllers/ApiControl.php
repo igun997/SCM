@@ -1793,7 +1793,7 @@ class ApiControl extends Controller
       return MasterPelanggan::get();
     }
 
-    //Pemasarab
+    //Pemesanan
     public function pemesanan_read($id = null)
     {
       if ($id != null) {
@@ -1865,4 +1865,236 @@ class ApiControl extends Controller
         }
       }
     }
+
+    public function direktur_pemesanan_read($id = null)
+    {
+      if ($id != null) {
+        $getData = Pemesanan::where(["id_pemesanan"=>$id]);
+        if ($getData->count() > 0) {
+          $d = $getData->first();
+          $d->status_pesanan_text = status_pesanan($d->status_pesanan);
+          $d->status_pembayaran_text = status_pembayaran($d->status_pembayaran);
+          $d->bukti_url = url("upload/".$d->bukti);
+          $d->master_pelanggan;
+          $d->tgl_register_text = date("d/m/Y",strtotime($d->tgl_register));
+          $total =0;
+          foreach ($d->pemesanan__details as $sum) {
+            $total = $total+($sum->jumlah*$sum->harga);
+          }
+          $d->totalharga = ($total*$d->pajak)+$total;
+          foreach ($d->pemesanan__details as $key => &$value) {
+            $value->master_produk;
+          }
+          return response()->json(["status"=>1,"data"=>$d]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        $getData = Pemesanan::all();
+        $data = [];
+        $data["data"] = [];
+        foreach ($getData as $key => $value) {
+          $total =0;
+          foreach ($value->pemesanan__details as $sum) {
+            $total = $total+($sum->jumlah*$sum->harga);
+          }
+          $data["data"][] = [($key+1),$value->id_pemesanan,$value->master_pelanggan->nama_pelanggan,status_pesanan($value->status_pesanan),$value->catatan_pemesanan,status_pembayaran($value->status_pembayaran),($value->pajak*100)."%",number_format(($total*$value->pajak)+$total),date("d-m-Y",strtotime($value->tgl_register)),$value->id_pemesanan];
+        }
+        return response()->json($data);
+      }
+    }
+    public function direktur_pemesanan_update(Request $req,$id)
+    {
+      if ($req->has("file")) {
+        $file_data = $req->file;
+        $image = $file_data;  // your base64 encoded
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $imageName = str_random(10).'.'.'png';
+        $put = \File::put(public_path(). '/upload/' . $imageName, base64_decode($image));
+        if ($put) {
+          // return ["status"=>1];
+          $set = Pemesanan::where(["id_pemesanan"=>$id]);
+          $up = $set->update(["bukti"=>$imageName,"status_pembayaran"=>1]);
+          if ($up) {
+            return ["status"=>1];
+          }else {
+            return ["status"=>0];
+          }
+        }else {
+          return ["status"=>0];
+        }
+      }else {
+        $data = $req->all();
+        $set = Pemesanan::where(["id_pemesanan"=>$id]);
+        if ($set->count() > 0) {
+          $up = $set->update($data);
+          if ($up) {
+            return response()->json(["status"=>1]);
+          }else {
+            return response()->json(["status"=>0]);
+          }
+        }
+      }
+    }
+    // Pengiriman
+    public function pengiriman_read($id = null)
+    {
+      if ($id != null) {
+        $getData = Pengiriman::where(["id_pengiriman"=>$id]);
+        if ($getData->count() > 0) {
+          $d = $getData->first();
+          $d->status_pengiriman_text = status_pengiriman($d->status_pengiriman);
+          $d->tgl_pengiriman_text = date("d-m-Y",strtotime($d->tgl_pengiriman));
+          $d->tgl_register_text =  date("d-m-Y",strtotime($d->tgl_register));
+          $d->tgl_kembali_text = "-";
+          if ($d->tgl_kembali != null) {
+            $d->tgl_kembali_text =  date("d-m-Y",strtotime($d->tgl_kembali));
+          }
+          $d->master_transportasi;
+          $d->pengiriman__details;
+          foreach ($d->pengiriman__details as $key => &$value) {
+            $value->pemesanan->master_pelanggan;
+            $value->pemesanan;
+            $value->pemesanan->status_pesanan_text = status_pesanan($value->pemesanan->status_pesanan);
+          }
+          return response()->json(["status"=>1,"data"=>$d]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }else {
+        $getData = Pengiriman::all();
+        $data = [];
+        $data["data"] = [];
+        foreach ($getData as $key => $value) {
+          $data["data"][] = [
+            ($key+1),
+            $value->id_pengiriman,
+            $value->master_transportasi->no_polisi,
+            strtoupper($value->master_transportasi->jenis_transportasi),
+            date("d-m-Y",strtotime($value->tgl_pengiriman)),
+            (($value->tgl_kembali == null)?"-":date("d-m-Y",strtotime($value->tgl_kembali))),
+            $value->nama_pengemudi,
+            $value->kontak_pengemudi,
+            status_pengiriman($value->status_pengiriman),
+            date("d-m-Y",strtotime($value->tgl_register)),
+            $value->id_pengiriman,
+          ];
+        }
+        return response()->json($data);
+      }
+    }
+    public function pengiriman_kode()
+    {
+      $kodifikasi = "PNP".date("dmy")."-".str_pad((Pengiriman::count()+1),3,0,STR_PAD_LEFT);
+      return $kodifikasi;
+    }
+    public function pengiriman_insert(Request $req,$id=null)
+    {
+      if ($req->has("item")) {
+        $data =  $req->all();
+        unset($data["item"]);
+        $create = Pengiriman::create($data);
+        if ($create) {
+          $id = $req->id_pengiriman;
+          $batch = [];
+          foreach ($req->item as $key => $value) {
+            $alamat = Pemesanan::where(["id_pemesanan"=>$value])->first()->master_pelanggan->alamat;
+            $catatan = Pemesanan::where(["id_pemesanan"=>$value])->first()->catatan_pemesanan;
+            if (PengirimanDetail::where(["id_pemesanan"=>$value])->count() > 0) {
+              Pengiriman::find($id)->delete();;
+              return response()->json(["status"=>0,"msg"=>"Pesanan Dengan ID ".$value." Sedang Di Kirimkan"]);
+            }
+            Pemesanan::where(["id_pemesanan"=>$value])->update(["status_pesanan"=>2]);
+            $batch[] = ["id_pengiriman"=>$id,"id_pemesanan"=>$value,"alamat_tujuan"=>$alamat,"catatan_khusus"=>$catatan];
+          }
+          $ins = PengirimanDetail::insert($batch);
+          if ($ins) {
+            MasterTransportasi::where(["id_transportasi"=>$req->id_transportasi])->update(["status_kendaraan"=>2]);
+            return response()->json(["status"=>1,"msg"=>"Pengiriman Sukses Di Simpan"]);
+          }else {
+            foreach ($req->item as $key => $value) {
+              PengirimanDetail::where(["id_pemesanan"=>$value])->update(["status_pesanan"=>1]);
+            }
+            Pengiriman::find($id)->delete();;
+            return response()->json(["status"=>0,"msg"=>"Pengiriman Gagal Di Simpan"]);
+          }
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Pengiriman Gagal Di Simpan"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Tidak ada pesanan yang akan di kirim"]);
+      }
+    }
+    public function pengiriman_update(Request $req,$id)
+    {
+      $data = $req->all();
+      $set = Pengiriman::where(["id_pengiriman"=>$id]);
+      if ($set->count() > 0) {
+        $row = $set->first();
+        $up = $set->update($data);
+        if ($up) {
+          if ($req->status_pengiriman == 2) {
+            foreach ($row->pengiriman__details as $key => $value) {
+              Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->update(["status_pesanan"=>3]);
+              $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
+              foreach ($d as $k => $v) {
+                $mp = MasterProduk::where(["id_produk"=>$v->id_produk]);
+                $stok = ($mp->first()->stok + $v->jumlah);
+                $mp->update(["stok"=>$stok]);
+              }
+            }
+            MasterTransportasi::where(["id_transportasi"=>$row->id_transportasi])->update(["status_kendaraan"=>0]);
+          }elseif ($req->status_pengiriman == 1) {
+            foreach ($row->pengiriman__details as $key => $value) {
+            $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
+              foreach ($d as $key => $value) {
+                $mp = MasterProduk::where(["id_produk"=>$value->id_produk]);
+                $stok = ($mp->first()->stok - $value->jumlah);
+                $mp->update(["stok"=>$stok]);
+              }
+            }
+          }elseif ($req->status_pengiriman == 3) {
+            foreach ($row->pengiriman__details as $key => $value) {
+              Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->update(["status_pesanan"=>4]);
+            }
+            MasterTransportasi::where(["id_transportasi"=>$row->id_transportasi])->update(["status_kendaraan"=>0]);
+            $set->update(["tgl_kembali"=>date("Y-m-d")]);
+          }
+          return response()->json(["status"=>1]);
+        }else {
+          return response()->json(["status"=>0]);
+        }
+      }
+    }
+    public function ready_ship()
+    {
+      $find = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>1]);
+      $cek = function($any){
+        $check = '<div class="custom-controls-stacked">
+                        <label class="custom-control custom-checkbox">
+                          <input type="checkbox" class="custom-control-input listcheck"   data-id="'.$any["id_pemesanan"].'" >
+                          <span class="custom-control-label">'.$any["id_pemesanan"].'</span>
+                        </label>
+                  </div>';
+        return $check;
+      };
+      if ($find->count() > 0) {
+        $rs = $find->get();
+        $data = [];
+        $data["data"] = [];
+        foreach ($rs as $key => $value) {
+          $data["data"][] = [$cek(["id_pemesanan"=>$value->id_pemesanan]),status_pesanan($value->status_pesanan),$value->id_pemesanan];
+        }
+        return response()->json($data);
+      }else {
+        return response()->json(["data"=>[]]);
+      }
+    }
+    public function aktif_trasport()
+    {
+      $data = MasterTransportasi::where(["status_kendaraan"=>0])->get();
+      return $data;
+    }
+
 }
