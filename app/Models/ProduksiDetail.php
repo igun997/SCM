@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class ProduksiDetail
- * 
+ *
  * @property int $id_pd
  * @property string $id_produksi
  * @property string $id_produk
@@ -19,7 +19,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $bahan_tersedia
  * @property \Carbon\Carbon $tgl_bahan_tersedia
  * @property string $catatan_untuk_pengadaan
- * 
+ *
  * @property \App\Models\Produksi $produksi
  * @property \App\Models\MasterProduk $master_produk
  *
@@ -33,7 +33,7 @@ class ProduksiDetail extends Eloquent
 
 	protected $casts = [
 		'jumlah' => 'float',
-		'bahan_tersedia' => 'int'
+		'bahan_tersedia' => 'bool'
 	];
 
 	protected $dates = [

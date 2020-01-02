@@ -39,9 +39,9 @@ class Produksi extends Eloquent
 	public $timestamps = false;
 
 	protected $casts = [
-		'konfirmasi_perencanaan' => 'int',
-		'konfirmasi_direktur' => 'int',
-		'konfirmasi_gudang' => 'int',
+		'konfirmasi_perencanaan' => 'bool',
+		'konfirmasi_direktur' => 'bool',
+		'konfirmasi_gudang' => 'bool',
 		'status_produksi' => 'int'
 	];
 
