@@ -11,7 +11,6 @@
 |
 */
 //Test Deply
-Route::get('/test',"TestControl@model");
 //Normal Route
 Route::get('/', function(){
   $data["title"] = "SCM Wenow";
@@ -23,6 +22,10 @@ Route::get("/logout",function(){
 })->name("public.normal.logout");
 //Public API
 Route::post('/api/public/login',"ApiControl@login")->name("public.api.login");
+
+Route::get('/gen/invoice/pemesanan/{id?}',"ApiControl@invoicePemesanan")->name("gen.invoice.pemesanan");
+Route::get('/gen/invoice/pengadaan/{id?}',"ApiControl@invoicePengadaaan")->name("gen.invoice.pengadaan");
+Route::get('/gen/invoice/pengadaanbb/{id?}',"ApiControl@invoicePengadaaanbb")->name("gen.invoice.pengadaanbb");
 //Private API
 //All Access
 // -- Direktur ---

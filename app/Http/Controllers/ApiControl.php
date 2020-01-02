@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
+use PDF;
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
@@ -860,6 +861,9 @@ class ApiControl extends Controller
             <button class="dropdown-item batalkan" data-id="'.$id.'"  type="button">
             Batalkan Pengadaan
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaanbb",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }elseif ($status == 2) {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
@@ -870,6 +874,9 @@ class ApiControl extends Controller
             <button class="dropdown-item proses" data-id="'.$id.'"  type="button">
             Proses Pengadaan
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaanbb",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }elseif ($status == 6) {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
@@ -883,6 +890,9 @@ class ApiControl extends Controller
             <button class="dropdown-item selesaikan" data-id="'.$id.'"  type="button">
             Selesaikan Transaksi
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaanbb",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }else {
             $c = PengadaanBbRetur::where(["id_pengadaan_bb"=>$id]);
@@ -896,7 +906,11 @@ class ApiControl extends Controller
             <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
             Rincian
-            </button>'.$retur.'</div>';
+            </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaanbb",$id).'" target="_blank">
+            Cetak
+            </a>
+            '.$retur.'</div>';
           }
         };
         foreach ($getAll as $key => $value) {
@@ -934,6 +948,9 @@ class ApiControl extends Controller
             <button class="dropdown-item batalkan" data-id="'.$id.'"  type="button">
             Batalkan Pengadaan
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaan",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }elseif ($status == 2) {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
@@ -944,6 +961,9 @@ class ApiControl extends Controller
             <button class="dropdown-item proses" data-id="'.$id.'"  type="button">
             Proses Pengadaan
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaan",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }elseif ($status == 6) {
             return $actionBtn = '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle">Aksi</button>
@@ -957,6 +977,9 @@ class ApiControl extends Controller
             <button class="dropdown-item selesaikan" data-id="'.$id.'"  type="button">
             Selesaikan Transaksi
             </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaan",$id).'" target="_blank">
+            Cetak
+            </a>
             </div>';
           }else {
             $c = PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id]);
@@ -970,7 +993,11 @@ class ApiControl extends Controller
             <div class="dropdown-menu dropdown-menu-right">
             <button class="dropdown-item rincian" data-id="'.$id.'"  type="button">
             Rincian
-            </button>'.$retur.'</div>';
+            </button>
+            <a class="dropdown-item" href="'.route("gen.invoice.pengadaan",$id).'" target="_blank">
+            Cetak
+            </a>
+            '.$retur.'</div>';
           }
         };
         foreach ($getAll as $key => $value) {
@@ -2096,5 +2123,48 @@ class ApiControl extends Controller
       $data = MasterTransportasi::where(["status_kendaraan"=>0])->get();
       return $data;
     }
-
+    public function invoicePemesanan($id)
+    {
+      $kode = $id;
+      $invoice = Pemesanan::where(["id_pemesanan"=>$kode])->first();
+      $invoice->kode = $kode;
+      $invoice->pajak_total = 0;
+      $invoice->total_price = 0;
+      $invoice->total = 0;
+      foreach ($invoice->pemesanan__details as $key => $value) {
+        $invoice->total = $invoice->total + ($value->harga*$value->jumlah);
+      }
+        $invoice->pajak_total = ($invoice->pajak * $invoice->total);
+        $invoice->total_price =  ($invoice->pajak_total + $invoice->total);
+      $pdf = PDF::loadView('invoice.pesanan', ["invoice"=>$invoice,"title"=>"INVOICE PEMESANAN"])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
+    public function invoicePengadaaan($id)
+    {
+      $kode = $id;
+      $invoice = PengadaanProduk::where(["id_pengadaan_produk"=>$kode])->first();
+      $invoice->kode = $kode;
+      $invoice->total_price = 0;
+      $invoice->total = 0;
+      foreach ($invoice->pengadaan__produk_details as $key => $value) {
+        $invoice->total = $invoice->total + ($value->harga*$value->jumlah);
+      }
+        $invoice->total_price =  $invoice->total;
+      $pdf = PDF::loadView('invoice.pengadaan', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN PRODUK"])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
+    public function invoicePengadaaanbb($id)
+    {
+      $kode = $id;
+      $invoice = PengadaanBb::where(["id_pengadaan_bb"=>$kode])->first();
+      $invoice->kode = $kode;
+      $invoice->total_price = 0;
+      $invoice->total = 0;
+      foreach ($invoice->pengadaan__bb_details as $key => $value) {
+        $invoice->total = $invoice->total + ($value->harga*$value->jumlah);
+      }
+        $invoice->total_price =  $invoice->total;
+      $pdf = PDF::loadView('invoice.pengadaanbb', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN BAHAN BAKU"])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
 }

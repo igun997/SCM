@@ -74,4 +74,8 @@ class PengadaanBb extends Eloquent
 	{
 		return $this->hasMany(\App\Models\PengadaanBbDetail::class, 'id_pengadaan_bb');
 	}
+	public function pengadaan__bb_returs()
+	{
+		return $this->hasMany(\App\Models\PengadaanBbRetur::class, 'id_pengadaan_bb');
+	}
 }

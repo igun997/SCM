@@ -982,6 +982,8 @@
         var btn = function(id,status_pesanan,status_pembayaran){
           var item = [];
           item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+
+          item.push('<a class="dropdown-item detail" target="_blank" href="{{route("gen.invoice.pemesanan")}}/'+id+'" >Cetak</a>');
           if ((status_pembayaran == "Belum Dibayar" || status_pembayaran == "Pembayaran Ditolak") && status_pesanan != "Dibatalkan") {
             item.push('<a class="dropdown-item bayar" href="javascript:void(0)" data-id="'+id+'">Bayar</a>');
           }else if (status_pesanan == "Dibatalkan" && status_pembayaran == "Pembayaran Diterima") {
