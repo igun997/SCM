@@ -58,14 +58,14 @@
   <div class="col-lg-6">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Aktivitas Produksi</h3>
+        <h3 class="card-title">Aktivitas Industri</h3>
       </div>
       <div id="chart-development-activity" style="height: 10rem"></div>
       <div class="table-responsive">
         <table class="table card-table table-striped table-vcenter">
           <thead>
             <tr>
-              <th colspan="2">Kode Produksi</th>
+              <th colspan="2">Kode Industri</th>
               <th>Status</th>
               <th>Tanggal</th>
               <th></th>

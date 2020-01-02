@@ -107,6 +107,25 @@
               <a href="" id="lppmproduk" class="dropdown-item ">Pemasaran Produk</a>
             </div>
           </li>
+          @elseif(session()->get("level") == "produksi")
+          <li class="nav-item">
+            <a href="{{route("produksi.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-box"></i> Data Master</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="masterbb" class="dropdown-item ">Bahan Baku</a>
+              <a href="" id="masterproduk" class="dropdown-item ">Produk dan Komposisi</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fa fa-industry "></i> Produksi</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="javascript:void(0)" id="produksi" class="dropdown-item ">Produksi</a>
+              <a href="javascript:void(0)" id="produksikontrol" class="dropdown-item ">Kontrol Produksi</a>
+            </div>
+          </li>
+
           @endif
         </ul>
       </div>

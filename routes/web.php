@@ -28,6 +28,27 @@ Route::get('/gen/invoice/pengadaan/{id?}',"ApiControl@invoicePengadaaan")->name(
 Route::get('/gen/invoice/pengadaanbb/{id?}',"ApiControl@invoicePengadaaanbb")->name("gen.invoice.pengadaanbb");
 //Private API
 //All Access
+
+Route::group(['middleware' => ['produksi']], function () {
+  Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');
+  Route::get('/api/produksi/master_bb_read/{id?}',"ApiControl@master_bb_read")->name("produksi.api.master_bb_read");
+  Route::post('/api/produksi/master_bb_insert',"ApiControl@master_bb_insert")->name("produksi.api.master_bb_insert");
+  Route::post('/api/produksi/master_bb_update/{id?}',"ApiControl@master_bb_update")->name("produksi.api.master_bb_update");
+
+  Route::get('/api/produksi/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("produksi.api.master_satuan_read");
+  Route::post('/api/produksi/master_satuan_insert',"ApiControl@master_satuan_insert")->name("produksi.api.master_satuan_insert");
+  Route::post('/api/produksi/master_satuan_update/{id?}',"ApiControl@master_satuan_update")->name("produksi.api.master_satuan_update");
+
+  Route::get('/api/produksi/master_produk_read/{id?}',"ApiControl@master_produk_read")->name("produksi.api.master_produk_read");
+  Route::post('/api/produksi/master_produk_insert',"ApiControl@master_produk_insert")->name("produksi.api.master_produk_insert");
+  Route::post('/api/produksi/master_produk_update/{id?}',"ApiControl@master_produk_update")->name("produksi.api.master_produk_update");
+
+  Route::get('/api/produksi/master_komposisi_read/{id?}',"ApiControl@master_komposisi_read")->name("produksi.api.master_komposisi_read");
+  Route::post('/api/produksi/master_komposisi_insert',"ApiControl@master_komposisi_insert")->name("produksi.api.master_komposisi_insert");
+  Route::get('/api/produksi/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("produksi.api.master_komposisi_hapus");
+  Route::get('/api/kode_produksi',"ApiControl@kode_produksi")->name("produksi.api.kode_produksi");
+
+});
 // -- Direktur ---
 Route::group(['middleware' => ['direktur']], function () {
   //NormalRoute

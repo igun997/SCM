@@ -1072,6 +1072,11 @@ class ApiControl extends Controller
       $kodifikasi = "PBB".date("dmy")."-".str_pad((PengadaanBb::count()+1),3,0,STR_PAD_LEFT);
       return response()->json(["kode"=>$kodifikasi]);
     }
+    public function kode_produksi()
+    {
+      $kodifikasi = "PPR".date("dmy")."-".str_pad((Produksi::count()+1),3,0,STR_PAD_LEFT);
+      return response()->json(["kode"=>$kodifikasi]);
+    }
     public function kode_pp()
     {
       $kodifikasi = "PP".date("dmy")."-".str_pad((PengadaanProduk::count()+1),3,0,STR_PAD_LEFT);
