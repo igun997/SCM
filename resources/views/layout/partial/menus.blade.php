@@ -24,7 +24,7 @@
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="#" class="dropdown-item " id="mpesanan">Pemesanan Produk</a>
               <a href="#" class="dropdown-item " id="mpengadaan">Pengadaan</a>
-              <a href="#" class="dropdown-item ">Pengiriman</a>
+              <a href="#" class="dropdown-item " id="shippingdirektur">Pengiriman</a>
               <a href="#" class="dropdown-item ">Produksi</a>
             </div>
           </li>

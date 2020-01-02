@@ -105,6 +105,8 @@ Route::group(['middleware' => ['direktur']], function () {
   Route::get("api/direktur/pemesanan_read/{id?}","ApiControl@direktur_pemesanan_read")->name("private.api.pemesanan_read");
   Route::post("api/direktur/pemesanan_update/{id?}","ApiControl@direktur_pemesanan_update")->name("private.api.pemesanan_update");
 
+  Route::get("api/direktur/pengiriman_read/{id?}","ApiControl@pengiriman_read")->name("private.api.pengiriman_read");
+
 });
 Route::group(['middleware' => ['pengadaan']], function () {
   Route::get('/pengadaan',"PengadaanControl@index")->name('private.pengadaan.home');

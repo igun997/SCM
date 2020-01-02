@@ -187,6 +187,233 @@
         }
       });
       console.log("Home Excute . . . .");
+      $("#shippingdirektur").on("click", function(event) {
+        var btn = function(id,status_pengiriman,status_pembayaran){
+          var item = [];
+          item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+          return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+        };
+        var tempLate = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=table-responsive>",
+          "<table class='table table-stripped' id='dtable'>",
+          "<thead>",
+          "<th>No</th>",
+          "<th>Kode Pengiriman</th>",
+          "<th>No Polisi</th>",
+          "<th>Jenis Kendaraan</th>",
+          "<th>Tanggal Pengiriman</th>",
+          "<th>Tanggal Kembali</th>",
+          "<th>Nama Pengemudi</th>",
+          "<th>Kontak Pengemudi</th>",
+          "<th>Status Pengiriman</th>",
+          "<th>Tanggal Register</th>",
+          "<th>Aksi</th>",
+          "</thead>",
+          "<thead>",
+          "</tbody>",
+          "</table>",
+          "</div>",
+          "</div>",
+          "</div>"
+        ];
+        modal = new jBox('Modal', {
+          title: 'Pengiriman Produk',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: 'auto',
+          createOnInit: true,
+          content: tempLate.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+
+          },
+          onCreated:function(x){
+            k = this.content;
+            var dtable = k.find("#dtable").DataTable({
+              ajax:"{{route("private.api.pengiriman_read")}}",
+              createdRow:function(r,d,i){
+                console.log(d);
+                console.log(d);
+                $("td",r).eq(10).html(btn(d[10],d[8]));
+              }
+            });
+            k.find("#dtable").on("click", ".detail", function(event) {
+              id = $(this).data("id");
+              $.get("{{route("private.api.pengiriman_read")}}/"+id,function(data){
+                console.log(data);
+                if (data.status == 1) {
+                  var row = data.data;
+                  var tempLate = [
+                    "<div class=row>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Kode Pengiriman</label>",
+                    "<input class='form-control' value='"+row.id_pengiriman+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Total Pesanan</label>",
+                    "<div class='row gutters-xs'>",
+                    "<div class=col>",
+                    "<input class='form-control' value='"+(row.pengiriman__details).length+"' disabled />",
+                    "</div>",
+                    "<span class=col-auto>",
+                    "<button class='btn btn-secondary detail_item' data-id='"+row.id_pengiriman+"' type='button'><span class='fe fe-search'></span></button>",
+                    "</span>",
+                    "</div>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Status Pengiriman</label>",
+                    "<input class='form-control' value='"+row.status_pengiriman_text+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tanggal Pengiriman</label>",
+                    "<input class='form-control' value='"+row.tgl_pengiriman_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "<div class=col-md-6>",
+                    "<div class=form-group>",
+                    "<label>Catatan Pengiriman</label>",
+                    "<textarea class='form-control' disabled >"+row.catatan_khusus+"</textarea>",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tanggal Kembali</label>",
+                    "<input class='form-control' value='"+row.tgl_kembali_text+"' disabled />",
+                    "</div>",
+                    "<div class=form-group>",
+                    "<label>Tangal Register</label>",
+                    "<input class='form-control' value='"+row.tgl_register_text+"' disabled />",
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                    "</div>"
+                  ];
+                  detail = [
+                    "<div class=row>",
+                    "<div class=col-md-12>",
+                    "<div class=table-responsive>",
+                    "<table class='table table-stripped' id='dtable1' style='width:100%'>",
+                    "<thead>",
+                    "<th>No</th>",
+                    "<th>Kode Pesanan</th>",
+                    "<th>Nama Pelanggan</th>",
+                    "<th>Alamat Tujuan</th>",
+                    "<th>Status Pesanan</th>",
+                    "<th>Opsi</th>",
+                    "</thead>",
+                    "<thead>",
+                    "</tbody>",
+                    "</table>",
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                  ];
+                  modal = new jBox('Modal', {
+                    title: 'Detail Pengiriman',
+                    overlay: false,
+                    width: '50%',
+                    responsiveWidth:true,
+                    height: 'auto',
+                    createOnInit: true,
+                    content: tempLate.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      k = this.content;
+                      dt = [];
+                      detail = row.pengiriman__details;
+                      $.each(detail,function(i,v) {
+                        dt.push([(i+1),v.id_pemesanan,v.pemesanan.master_pelanggan.nama_pelanggan,v.alamat_tujuan,v.pemesanan.status_pesanan_text])
+                      });
+                      k.find(".detail_item").on('click', function(event) {
+                        id = $(this).data("id");
+                        detail = [
+                          "<div class=row>",
+                          "<div class=col-md-12>",
+                          "<div class=table-responsive>",
+                          "<table class='table table-stripped' id='dtable2' style='width:100%'>",
+                          "<thead>",
+                          "<th>No</th>",
+                          "<th>Kode Pesanan</th>",
+                          "<th>Nama Pelanggan</th>",
+                          "<th>Alamat Tujuan</th>",
+                          "<th>Status Pesanan</th>",
+                          "</thead>",
+                          "<thead>",
+                          "</tbody>",
+                          "</table>",
+                          "</div>",
+                          "</div>",
+                          "</div>",
+                        ];
+                        modal2 = new jBox('Modal', {
+                          title: 'Detail Pesanan',
+                          overlay: false,
+                          width: '50%',
+                          responsiveWidth:true,
+                          height: 'auto',
+                          createOnInit: true,
+                          content: detail.join(""),
+                          draggable: false,
+                          adjustPosition: true,
+                          adjustTracker: true,
+                          repositionOnOpen: false,
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          repositionOnContent: false,
+                          onCloseComplete:function(){
+                            console.log("Destruct Table");
+
+                          },
+                          onCreated:function(x){
+                            k = this.content;
+                            $("#dtable2").DataTable({
+                              data:dt
+                            });
+                          }
+                        });
+                        modal2.open();
+                      })
+                    }
+                  });
+                  modal.open();
+                }else {
+                  new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'warning'});
+                }
+              }).fail(function(){
+                new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'danger'});
+                console.log("Fail Sever Error");
+              });
+            })
+
+          }
+        });
+        modal.open();
+      })
       $("#mastersatuan").on('click',function(event) {
         event.preventDefault();
         tabel_satuan = table(["No","Nama Satuan",""],[],"mastersatuan_table");
