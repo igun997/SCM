@@ -48,6 +48,12 @@ Route::group(['middleware' => ['produksi']], function () {
   Route::get('/api/produksi/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("produksi.api.master_komposisi_hapus");
   Route::get('/api/kode_produksi',"ApiControl@kode_produksi")->name("produksi.api.kode_produksi");
 
+  Route::get('/api/produksi/produksi_listproduk',"ApiControl@produksi_listproduk")->name("produksi.api.produksi_listproduk");
+  Route::get('/api/produksi/produksi_read',"ApiControl@produksi_read")->name("produksi.api.produksi_read");
+  Route::post('/api/produksi/produksi_insert',"ApiControl@produksi_insert")->name("produksi.api.produksi_insert");
+  Route::post('/api/produksi/produksi_update/{id?}',"ApiControl@produksi_update")->name("produksi.api.produksi_update");
+
+
 });
 // -- Direktur ---
 Route::group(['middleware' => ['direktur']], function () {

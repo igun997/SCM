@@ -2172,4 +2172,83 @@ class ApiControl extends Controller
       $pdf = PDF::loadView('invoice.pengadaanbb', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN BAHAN BAKU"])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
+
+    public function produksi_listproduk()
+    {
+      $data = [];
+      $data["data"] = [];
+      $d = MasterProduk::orderBy("stok","asc")->get();
+      foreach ($d as $key => $value) {
+        if ($value->master__komposisis->count() > 0) {
+          $ingred = [];
+          foreach ($value->master__komposisis as $k => $v) {
+            $cStok = $v->master_bb->stok;
+            $jml = $v->jumlah * $v->rasio;
+            $ingred[] = round($cStok/$jml);
+          }
+
+          $data["data"][] = [$value->id_produk,$value->nama_produk,$value->stok,$value->stok_minimum,min($ingred),$value->id_produk];
+        }
+      }
+      return response()->json($data);
+    }
+    public function produksi_read()
+    {
+      $data["data"] = [];
+      $d = Produksi::where(["jenis"=>"perencanaan"])->get();
+      foreach ($d as $key => $value) {
+        $harga = 0;
+        foreach ($value->produksi__details as $y => $e) {
+          $hargaSatuan = 0;
+          foreach ($e->master_produk->master__komposisis as $ky => $ve) {
+            $r = $ve->rasio;
+            $h = $ve->master_bb->harga;
+            $hargaSatuan = $hargaSatuan + ($r*$h);
+          }
+          $harga = $harga + ($e->jumlah*$hargaSatuan);
+        }
+        $data["data"][] = [$value->id_produksi,ucfirst($value->jenis),konfirmasi($value->konfirmasi_perencanaan),"Rp ".number_format($harga),$value->produksi__details->count(),status_produksi($value->status_produksi),$value->id_produksi];
+      }
+      return response()->json($data);
+    }
+    public function produksi_update(Request $req,$id)
+    {
+      $a = Produksi::where(["id_produksi"=>$id]);
+      if ($a->count() > 0) {
+        $row = $a->first();
+        $a->update($req->all());
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function produksi_insert(Request $req)
+    {
+      $data =  $req->all();
+      if (Produksi::whereIn("status_produksi",[0])->count() > 0) {
+        return response()->json(["status"=>0,"msg"=>"Harap Selesaikan / Batalkan Terlebih Dahulu Produksi Sebelumnya"]);
+      }
+      $data["jenis"] = "perencanaan";
+      $ins = Produksi::create($data);
+      if ($ins) {
+        $id = $data["id_produksi"];
+        $item = [];
+        foreach ($req->item as $k => $v) {
+          $arr = ((array) $req->jumlah_produksi);
+          foreach ($arr as $key => $value) {
+            if ($key == $v) {
+              $item[] = ["id_produk"=>$v,"id_produksi"=>$id,"jumlah"=>$value];
+            }
+          }
+        }
+        $i = ProduksiDetail::insert($item);
+        if ($i) {
+          return response()->json(["status"=>1,"debug"=>$arr,"msg"=>"Sukses Input Data Produksi"]);
+        }else {
+          return response()->json(["status"=>0,"msg"=>"Gagal Input Data Produksi"]);
+        }
+      }else {
+        return response()->json(["status"=>0,"msg"=>"Sukses Input Data Produksi"]);
+      }
+    }
 }

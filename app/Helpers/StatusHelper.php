@@ -94,9 +94,12 @@ function konfirmasi($id)
      return "Belum Diverifikasi";
    }elseif ($id == 1) {
      return "Sudah Diverifikasi";
+   }elseif ($id == 2) {
+     return "Ditolak";
    }else {
      return "Tidak Diketahui";
    }
+
  }
   function status_pengguna($id)
  {

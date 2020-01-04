@@ -994,13 +994,13 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       instance = masterproduk.open();
     });
     $("#produksi").on("click", function(event) {
-      produksi_html = table(["Kode","Jenis","Konf. Perencanaan","Konf. Direktur","Konf. Gudang","Status Produksi",""],[],"produksi_table");
+      produksi_html = table(["Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi",""],[],"produksi_table");
       console.log(produksi_table);
       var produksi_table = null;
       var produksi = new jBox('Modal', {
         title: 'Data Produksi',
         overlay: false,
-        width: '800px',
+        width: '100%',
         responsiveWidth:true,
         height: '600px',
         createOnInit: true,
@@ -1020,19 +1020,262 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
         },
         onCreated:function(rs){
           content = this.content;
+          var btn = function(id,konf_perencanaan){
+            var item = [];
+            item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+            if (konf_perencanaan == "Belum Diverifikasi") {
+              item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan</a>');
+            }else if (konf_perencanaan == "Sudah Diverifikasi") {
+              item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Produksi</a>');
+            }
+            return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+          };
           console.log(content);
           produksi_table = content.find("#produksi_table").DataTable({
             dom: 'Bfrtip',
+            ajax:"{{route("produksi.api.produksi_read")}}",
             buttons: [
                 {
                     className: "btn btn-success",
                     text: 'Tambah Produksi',
                     action: function ( e, dt, node, config ) {
-                      
+                      var formAdd = [
+                          '<form method=post onsubmit="return false" id=padd>',
+                          '<div class=row>',
+                          '<div class=col-md-12>',
+                          '<div class=form-group>',
+                          '<label>Kode Produksi</label>',
+                          '<input class="form-control" name="id_produksi" id=id_produksi readonly>',
+                          '</div>',
+                          '<div class=form-group>',
+                          '<label>Alasan Perencanaan</label>',
+                          '<textarea class=form-control name=alasan_perencanaan></textarea>',
+                          '</div>',
+                          '<div class=form-group>',
+                          '<label>Catatan Produksi</label>',
+                          '<textarea class=form-control name=catatan_produksi></textarea>',
+                          '</div>',
+                          '<div class=form-group>',
+                          '<button type="submit" class="btn btn-primary">Simpan Data Perencanaan Produksi</button>',
+                          '</div>',
+                          '</div>',
+                          '<div class=col-md-12>',
+                          '<div class=table-resposive>',
+                          table(["Kode","Nama Produk","Stok","Stok Minimum","Jumlah Produksi",""],[],"produklist"),
+                          '</div>',
+                          '</div>',
+                          '</div>',
+                          '</form>',
+                      ]
+                      var model = new jBox('Modal', {
+                        title: 'Data Produksi',
+                        overlay: false,
+                        width: '900px',
+                        responsiveWidth:true,
+                        height: '600px',
+                        createOnInit: true,
+                        content: formAdd.join(""),
+                        draggable: false,
+                        adjustPosition: true,
+                        adjustTracker: true,
+                        repositionOnOpen: false,
+                        offset: {
+                          x: 0,
+                          y: 0
+                        },
+                        repositionOnContent: false,
+                        onCloseComplete:function(){
+                          console.log("Destruct Table");
+                          produksi_table.ajax.reload();
+                        },
+                        onCreated:async function(rs){
+                          k = this.content;
+                          k.find("#produklist").DataTable({
+                            ajax:"{{route("produksi.api.produksi_listproduk")}}",
+                            createdRow:function(r,d,i){
+                              var btn = '<div class="custom-controls-stacked"><label class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input listcheck"  data-id="'+d[5]+'" ><span class="custom-control-label">'+d[5]+'</span></label></div>';
+                              var inputjumlah = "<input class='form-control' name='jumlah_produksi["+d[0]+"]' max='"+d[4]+"' min=1 required type='number' disabled/><p>Maksimal Produksi : <span class='badge badge-danger'>"+d[4]+"</span></p>";
+                              if (parseFloat(d[2]) <= parseFloat(d[3])) {
+                                var btn = '<div class="custom-controls-stacked"><label class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input listcheck"  data-id="'+d[5]+'" checked><span class="custom-control-label">'+d[5]+'</span></label></div>';
+                                var inputjumlah = "<input class='form-control' name='jumlah_produksi["+d[0]+"]' max='"+d[4]+"' min=1 required type='number' /><p>Maksimal Produksi : <span class='badge badge-danger'>"+d[4]+"</span></p>";
+                              }
+                              $("td",r).eq(0).html(btn);
+                              $("td",r).eq(5).html("<button class='btn btn-primary detail' data-id='"+d[5]+"' type='button'><li class='fa fa-search'></li></button>");
+                              $("td",r).eq(4).html(inputjumlah);
+                            }
+                          })
+                          kode = await $.get("{{route("produksi.api.kode_produksi")}}").then();
+                          k.find("#id_produksi").val(kode.kode);
+                          k.find("#produklist").on("click", ".detail", function(event) {
+                            id = $(this).data("id");
+                            $.get("{{route("produksi.api.master_produk_read")}}/"+id,function(rs){
+                              frm = [
+                                [
+                                  {
+                                    label:"Nama Produk",
+                                    type:"text",
+                                    name:"nama_produk",
+                                    value:rs.nama_produk
+                                  },{
+                                    label:"Stok Minimum",
+                                    type:"text",
+                                    name:"stok_minimum",
+                                    value:rs.stok_minimum
+                                  },{
+                                    label:"Deskripsi",
+                                    type:"textarea",
+                                    name:"deskripsi",
+                                    value:rs.deskripsi
+                                  },{
+                                    label:"Harga Produksi / Modal",
+                                    type:"text",
+                                    name:"harga_produksi",
+                                    value:rs.harga_produksi
+                                  },{
+                                    label:"Harga Distribusi / Jual",
+                                    type:"text",
+                                    name:"harga_distribusi",
+                                    value:rs.harga_distribusi
+                                  },{
+                                    label:"Satuan",
+                                    type:"select2",
+                                    name:"id_satuan",
+                                    id:"id_satuan",
+                                  }
+                                ]
+                              ];
+                              formSatuan = builder(frm,null,"update",true,12);
+                              set = new jBox('Modal', {
+                                title: 'Detail Produk',
+                                overlay: false,
+                                width: '500px',
+                                responsiveWidth:true,
+                                height: 'auto',
+                                createOnInit: true,
+                                content: formSatuan,
+                                draggable: false,
+                                adjustPosition: true,
+                                adjustTracker: true,
+                                repositionOnOpen: false,
+                                offset: {
+                                  x: 0,
+                                  y: 0
+                                },
+                                repositionOnContent: false,
+                                onCloseComplete:function(){
+                                  console.log("Reloading Tabel");
+                                },
+                                onCreated:function(){
+                                  console.log("Initialize");
+                                  html = this.content;
+                                  selectIt = null;
+                                  $.get("{{route("produksi.api.master_satuan_read")}}/all",function(rsa){
+                                    var namanya = "Tidak Diketahui";
+                                    for (var i = 0; i < rsa.length; i++) {
+                                      if(rsa[i].value == rs.id_satuan){
+                                        var namanya = rsa[i].text;
+                                        break;
+                                      }
+                                    }
+                                    selectbuilder(rsa,html.find("#id_satuan"),[{value:rs.id_satuan,text:namanya}])
+                                  });
+                                  html.find("input").attr("disabled",true);
+                                  html.find("select").attr("disabled",true);
+                                  html.find("textarea").attr("disabled",true);
+                                }
+                              });
+                              set.open();
+                            });
+                          });
+                          k.find("#padd").on("submit", function(event) {
+                            Swal.fire({
+                              title: 'Apakah Anda Yakin ? ',
+                              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Tersimpan",
+                              type: 'warning',
+                              showCancelButton: true,
+                              confirmButtonColor: '#3085d6',
+                              cancelButtonColor: '#d33',
+                              confirmButtonText: 'Ya'
+                            }).then( async (result) => {
+                              if (result.value) {
+                                console.log("Submit");
+                                dform = $(this).serializeArray();
+                                console.log(dform);
+                                var cb = k.find("#produklist .listcheck");
+                                var i = 0;
+                                $.each(cb, function(index, val) {
+                                  nobj = $(val);
+                                  is = nobj.is(":checked");
+                                  if (is) {
+                                    i++;
+                                    console.log("Checked");
+                                    id = nobj.data("id");
+                                    dform.push({name:"item[]",value:id});
+                                  }
+                                });
+                                if (i > 0) {
+                                  console.log(dform);
+                                  res = await $.post("{{route("produksi.api.produksi_insert")}}",dform).then();
+                                  if (res.status == 1) {
+                                    new jBox('Notice', {content: 'Sukses Simpan Data Produksi',showCountdown:true, color: 'green'});
+                                    model.close()
+                                  }else {
+                                    new jBox('Notice', {content: res.msg,showCountdown:true, color: 'red'});
+                                  }
+                                }else {
+                                  new jBox('Notice', {content: 'Tolong Pilih Minimal 1 Produk Untuk di Produksi',showCountdown:true, color: 'red'});
+                                }
+                              }
+                            });
+                          })
+                          $("#produklist").on("click", ".listcheck", function(event) {
+                            id = $(this).data("id");
+                            if ($(this).is(":checked")) {
+                              $("input[name='jumlah_produksi["+id+"]']").val("");
+                              $("input[name='jumlah_produksi["+id+"]']").attr("disabled",false);
+                            }else {
+                              $("input[name='jumlah_produksi["+id+"]']").val("");
+                              $("input[name='jumlah_produksi["+id+"]']").attr("disabled",true);
+                            }
+                          })
+                        }
+                      });
+                      model.open();
+
                     }
                   }
-            ]
+            ],
+            createdRow:function(r,d,i){
+              $("td",r).eq(6).html(btn(d[6],d[2]));
+            }
           });
+          $("#produksi_table").on("click", ".detail", function(event) {
+            id = $(this).data("id");
+            console.log(id);
+          });
+          $("#produksi_table").on("click", ".batalkan", function(event) {
+            id = $(this).data("id");
+            // produksi.api.produksi_update
+            Swal.fire({
+              title: 'Apakah Anda Yakin ? ',
+              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Tersimpan",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya'
+            }).then( async (result) => {
+              if (result.value) {
+                res = await $.post("{{route("produksi.api.produksi_update")}}/"+id,{konfirmasi_perencanaan:2,status_produksi:2}).then();
+                if (res.status == 1) {
+                  new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                }else {
+                  new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                }
+                produksi_table.ajax.reload();
+              }
+            });
+          })
         }
       });
       instance = produksi.open();
