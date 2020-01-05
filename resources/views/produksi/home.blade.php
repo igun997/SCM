@@ -1382,9 +1382,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       instance = produksi.open();
 
     })
-    $("#produksikontrol").on("click", function(event) {
-      console.log("Produksi Kontrol");
-    })
+  
   });
 });
 </script>

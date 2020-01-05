@@ -137,6 +137,12 @@ function konfirmasi($id)
      return "Produksi Gagal";
    }elseif ($id == 3) {
      return "Produksi Selesai";
+   }elseif ($id == 4) {
+     return "Produksi Ditolak Direktur";
+   }elseif ($id == 5) {
+     return "Produksi Diterima Bag. Gudang";
+   }elseif ($id == 6) {
+     return "Produksi Disetujui Direktur";
    }else {
      return "Tidak Diketahui";
    }

@@ -2202,7 +2202,7 @@ class ApiControl extends Controller
     {
       if ($id == null) {
         $data["data"] = [];
-        $d = Produksi::where(["jenis"=>"perencanaan"])->get();
+        $d = Produksi::all();
         foreach ($d as $key => $value) {
         $harga = 0;
         foreach ($value->produksi__details as $y => $e) {

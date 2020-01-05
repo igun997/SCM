@@ -124,7 +124,6 @@
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fa fa-industry "></i> Produksi</a>
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="javascript:void(0)" id="produksi" class="dropdown-item ">Produksi</a>
-              <a href="javascript:void(0)" id="produksikontrol" class="dropdown-item ">Kontrol Produksi</a>
             </div>
           </li>
 
