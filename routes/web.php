@@ -207,7 +207,7 @@ Route::group(['middleware' => ['gudang']], function () {
   Route::get('/gudang',"GudangControl@index")->name('private.gudang.home');
   Route::get('/api/gudang/produksi_read/{id?}',"ApiControl@produksi_read")->name("gudang.api.produksi_read");
   Route::post('/api/gudang/produksi_insert',"ApiControl@produksi_insert")->name("gudang.api.produksi_insert");
-  Route::post('/api/gudang/produksi_update/{id?}',"ApiControl@produksi_update")->name("gudang.api.produksi_update");
+  Route::post('/api/gudang/produksi_update/{id?}/{in?}',"ApiControl@produksi_update")->name("gudang.api.produksi_update");
   //Satuan
   Route::get('/api/gudang/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("gudang.api.master_satuan_read");
   Route::post('/api/gudang/master_satuan_insert',"ApiControl@master_satuan_insert")->name("gudang.api.master_satuan_insert");

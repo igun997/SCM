@@ -2234,12 +2234,20 @@ class ApiControl extends Controller
     }
       return response()->json($data);
     }
-    public function produksi_update(Request $req,$id)
+    public function produksi_update(Request $req,$id,$in = null)
     {
       $a = Produksi::where(["id_produksi"=>$id]);
       if ($a->count() > 0) {
         $row = $a->first();
         $a->update($req->all());
+        if ($in > 0) {
+          $persen = (double) $in;
+          foreach ($row->produksi__details as $key => $value) {
+            $set = MasterProduk::where(["id_produk"=>$value->id_produk]);
+            $row2 = $set->first();
+            $set->update(["stok"=>($row2->stok+$value->jumlah),"harga_distribusi"=>(($row2->harga_produksi*($persen/100))+$row2->harga_produksi)]);
+          }
+        }
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
