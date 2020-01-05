@@ -188,7 +188,7 @@
       });
       console.log("Home Excute . . . .");
       $("#produksimonitoring").on("click", function(event) {
-        produksi_html = table(["Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi",""],[],"produksi_table");
+        produksi_html = table(["No","Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi","Tanggal Produksi",""],[],"produksi_table");
         console.log(produksi_table);
         var produksi_table = null;
         var produksi = new jBox('Modal', {
@@ -227,7 +227,7 @@
             produksi_table = content.find("#produksi_table").DataTable({
               ajax:"{{route("private.api.produksi_read")}}",
               createdRow:function(r,d,i){
-                $("td",r).eq(6).html(btn(d[6],d[2]));
+                $("td",r).eq(8).html(btn(d[8],d[3],d[6]));
               }
             });
             $("#produksi_table").on("click", ".detail", async function(event) {

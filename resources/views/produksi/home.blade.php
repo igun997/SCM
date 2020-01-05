@@ -994,7 +994,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       instance = masterproduk.open();
     });
     $("#produksi").on("click", function(event) {
-      produksi_html = table(["Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi",""],[],"produksi_table");
+      produksi_html = table(["No","Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi","Tanggal Produksi",""],[],"produksi_table");
       console.log(produksi_table);
       var produksi_table = null;
       var produksi = new jBox('Modal', {
@@ -1020,13 +1020,18 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
         },
         onCreated:function(rs){
           content = this.content;
-          var btn = function(id,konf_perencanaan){
+          var btn = function(id,konf_perencanaan,status_produksi){
             var item = [];
             item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
             if (konf_perencanaan == "Belum Diverifikasi") {
-              item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan</a>');
-            }else if (konf_perencanaan == "Sudah Diverifikasi") {
+              item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan Produksi</a>');
+            }else if (konf_perencanaan == "Sudah Diverifikasi" && status_produksi == "Menyiapkan Bahan Baku") {
               item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Produksi</a>');
+            }else if (status_produksi == "Sedang Diproses") {
+              item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan Produksi</a>');
+              item.push('<a class="dropdown-item selesai" href="javascript:void(0)" data-id="'+id+'">Produksi Selesai</a>');
+            }else if (status_produksi == "Produksi Diterima Bag. Gudang") {
+              item.push('<a class="dropdown-item finallisasi" href="javascript:void(0)" data-id="'+id+'">Tutup Transaksi</a>');
             }
             return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
           };
@@ -1246,7 +1251,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                   }
             ],
             createdRow:function(r,d,i){
-              $("td",r).eq(6).html(btn(d[6],d[2]));
+              $("td",r).eq(8).html(btn(d[8],d[3],d[6]));
             }
           });
           $("#produksi_table").on("click", ".detail", async function(event) {
@@ -1359,7 +1364,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
             // produksi.api.produksi_update
             Swal.fire({
               title: 'Apakah Anda Yakin ? ',
-              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Tersimpan",
+              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Dibatalkan",
               type: 'warning',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
@@ -1376,13 +1381,87 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                 produksi_table.ajax.reload();
               }
             });
-          })
+          });
+          $("#produksi_table").on("click", ".selesai", function(event) {
+            id = $(this).data("id");
+            console.log(id);
+            // produksi.api.produksi_update
+            Swal.fire({
+              title: 'Apakah Anda Yakin ? ',
+              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Diselesaikan",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya'
+            }).then( async (result) => {
+              if (result.value) {
+                res = await $.post("{{route("produksi.api.produksi_update")}}/"+id,{status_produksi:7}).then();
+                if (res.status == 1) {
+                  new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                }else {
+                  new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                }
+                produksi_table.ajax.reload();
+              }
+            });
+          });
+          $("#produksi_table").on("click", ".finallisasi", function(event) {
+            id = $(this).data("id");
+            console.log(id);
+            // produksi.api.produksi_update
+            Swal.fire({
+              title: 'Apakah Anda Yakin ? ',
+              text: "Data Produksi Akan Di Selesaikan, Perubahan Tidak Bisa Dikembalikan",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya'
+            }).then( async (result) => {
+              if (result.value) {
+                res = await $.post("{{route("produksi.api.produksi_update")}}/"+id,{status_produksi:3,tgl_selesai_produksi:"{{date("Y-m-d")}}"}).then();
+                if (res.status == 1) {
+                  new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                }else {
+                  new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                }
+                produksi_table.ajax.reload();
+              }
+            });
+          });
+
+
+          $("#produksi_table").on("click", ".proses", function(event) {
+            id = $(this).data("id");
+            console.log(id);
+            // produksi.api.produksi_update
+            Swal.fire({
+              title: 'Apakah Anda Yakin ? ',
+              text: "Data Perencanaan Produksi Tidak Akan Bisa Diubah Setelah Diproses",
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ya'
+            }).then( async (result) => {
+              if (result.value) {
+                res = await $.post("{{route("produksi.api.produksi_update")}}/"+id,{status_produksi:1,change_bahan:1}).then();
+                if (res.status == 1) {
+                  new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                }else {
+                  new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                }
+                produksi_table.ajax.reload();
+              }
+            });
+          });
         }
       });
       instance = produksi.open();
 
     })
-  
+
   });
 });
 </script>

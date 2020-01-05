@@ -66,11 +66,11 @@
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-download"></i>Penerimaan Pengadaan</a>
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-download"></i>Penerimaan Barang</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" id="pbahanbaku" class="dropdown-item ">Bahan Baku</a>
-              <a href="" id="pproduk" class="dropdown-item ">Produk</a>
-              <a href="#" class="dropdown-item " id="produksimonitoring">Produksi</a>
+              <a href="" id="pbahanbaku" class="dropdown-item ">Pengadaan Bahan Baku</a>
+              <a href="" id="pproduk" class="dropdown-item ">Pengadaan Produk</a>
+              <a href="#" class="dropdown-item " id="produksimonitoring">Produksi Barang</a>
             </div>
           </li>
           @elseif(session()->get("level") == "pemasaran")

@@ -143,6 +143,8 @@ function konfirmasi($id)
      return "Produksi Diterima Bag. Gudang";
    }elseif ($id == 6) {
      return "Produksi Disetujui Direktur";
+   }elseif ($id == 7) {
+     return "Menunggu Konfirmasi Gudang";
    }else {
      return "Tidak Diketahui";
    }

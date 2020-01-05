@@ -2202,7 +2202,7 @@ class ApiControl extends Controller
     {
       if ($id == null) {
         $data["data"] = [];
-        $d = Produksi::all();
+        $d = Produksi::orderBy("tgl_register","desc")->get();
         foreach ($d as $key => $value) {
         $harga = 0;
         foreach ($value->produksi__details as $y => $e) {
@@ -2214,7 +2214,7 @@ class ApiControl extends Controller
           }
           $harga = $harga + ($e->jumlah*$hargaSatuan);
         }
-        $data["data"][] = [$value->id_produksi,ucfirst($value->jenis),konfirmasi($value->konfirmasi_perencanaan),"Rp ".number_format($harga),$value->produksi__details->count(),status_produksi($value->status_produksi),$value->id_produksi];
+        $data["data"][] = [($key+1),$value->id_produksi,ucfirst($value->jenis),konfirmasi($value->konfirmasi_perencanaan),"Rp ".number_format($harga),$value->produksi__details->count(),status_produksi($value->status_produksi),date("d-m-Y",strtotime($value->tgl_register)),$value->id_produksi];
       }
     }else {
       $data = Produksi::where(["id_produksi"=>$id])->first();
@@ -2236,10 +2236,38 @@ class ApiControl extends Controller
     }
     public function produksi_update(Request $req,$id,$in = null)
     {
+      $datas = $req->all();
+      $c = null;
+      if (isset($datas["change_bahan"])) {
+        $c = $datas["change_bahan"];
+      }
+      unset($datas["change_bahan"]);
       $a = Produksi::where(["id_produksi"=>$id]);
       if ($a->count() > 0) {
         $row = $a->first();
-        $a->update($req->all());
+
+        if ($c == 1) {
+          $min = [];
+          foreach ($row->produksi__details as $key => $value) {
+            foreach ($value->master_produk->master__komposisis as $k => $v) {
+              $set = MasterBb::where(["id_bb"=>$v->id_bb]);
+              $row2 = $set->first();
+              $min[] = ($row2->stok-$value->jumlah);
+            }
+          }
+          $min = min($min);
+          if ($min < 0) {
+            return response()->json(["status"=>0,"msg"=>"Bahan Untuk Produksi Kurang"]);
+          }
+          foreach ($row->produksi__details as $key => $value) {
+            foreach ($value->master_produk->master__komposisis as $k => $v) {
+              $set = MasterBb::where(["id_bb"=>$v->id_bb]);
+              $row2 = $set->first();
+              $mins = ($row2->stok-$value->jumlah);
+              $set->update(["stok"=>$mins]);
+            }
+          }
+        }
         if ($in > 0) {
           $persen = (double) $in;
           foreach ($row->produksi__details as $key => $value) {
@@ -2248,6 +2276,7 @@ class ApiControl extends Controller
             $set->update(["stok"=>($row2->stok+$value->jumlah),"harga_distribusi"=>(($row2->harga_produksi*($persen/100))+$row2->harga_produksi)]);
           }
         }
+        $a->update($datas);
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
