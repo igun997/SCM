@@ -52,6 +52,7 @@ class GeraiOrder extends Eloquent
 		'dijemput' => 'bool',
 		'gerai_driver_id' => 'int',
 		'jarak' => 'int',
+		'offline' => 'bool',
 		'totalharga' => 'float',
 		'gerai_driver_id_antar' => 'int',
 		"progress"=>"array"
@@ -64,6 +65,7 @@ class GeraiOrder extends Eloquent
 	protected $fillable = [
 		'gerai_pelanggan_id',
 		'progress',
+		'offline',
 		'pemilik_id',
 		'status_order',
 		'dijemput',

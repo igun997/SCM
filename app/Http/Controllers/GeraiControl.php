@@ -31,7 +31,7 @@ class GeraiControl extends Controller
       $createUser = GeraiPelanggan::create($data);
       if ($createUser) {
         $id = $createUser->id;
-        $set = ["gerai_pelanggan_id"=>$id,"pemilik_id"=>session()->get("id_pengguna"),"status_order"=>2,"catatan"=>$req->catatan,"progress"=>[["tgl"=>date("d-m-Y"),"status"=>"Barang Diterima Di Gerai"]],"totalharga"=>$data["totalharga"]];
+        $set = ["gerai_pelanggan_id"=>$id,"pemilik_id"=>session()->get("id_pengguna"),"status_order"=>2,"catatan"=>$req->catatan,"progress"=>[["tgl"=>date("d-m-Y"),"status"=>"Barang Diterima Di Gerai"]],"totalharga"=>$data["totalharga"],"offline"=>1];
         $order = GeraiOrder::create($set);
         if ($order) {
           $id = $order->id;
