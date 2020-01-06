@@ -85,6 +85,7 @@
                  <th>Total Kotor</th>
                  <th>Keuntungan Pemilik</th>
                  <th>Keuntungan Pusat</th>
+                 <th>Cetak</th>
                </thead>
              <tbody>
                @foreach($data as $k => $v)
@@ -96,6 +97,9 @@
                  <td>{{number_format($v->totalkotor)}}</td>
                  <td>{{number_format($v->pemilik)}}</td>
                  <td>{{number_format($v->pusat)}}</td>
+                 <td>
+                   <a href="{{route("mentor.franchise.bagihasil_print",$v->id)}}"  class="btn btn-primary">Cetak Kwitansi</a>
+                 </td>
                </tr>
                @endforeach
              </tbody>

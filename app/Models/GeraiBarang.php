@@ -34,6 +34,7 @@ class GeraiBarang extends Eloquent
 	];
 
 	protected $fillable = [
+		'id_produk',
 		'nama_barang',
 		'deskripsi',
 		'pemilik_id',

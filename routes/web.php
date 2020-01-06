@@ -297,6 +297,8 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::get('/mentor/kontrol/{id?}',"MentorControl@kontrol")->name('mentor.kontrol.done');
   Route::get('/mentor/franchise',"MentorControl@franchise")->name('mentor.franchise');
   Route::get('/mentor/franchise/barang/{id}',"MentorControl@franchise_barang")->name('mentor.franchise.barang');
+  // bagihasil_print
+  Route::get('/mentor/franchise/bagihasil_print/{id}',"MentorControl@bagihasil_print")->name('mentor.franchise.bagihasil_print');
   Route::get('/mentor/franchise/setlokasi/{id}',"MentorControl@franchise_setlokasi")->name('mentor.franchise.setlokasi');
   Route::post('/mentor/api/franchise/setlokasi/{id}',"MentorControl@franchise_setlokasiaksi")->name('mentor.franchise.api.setlokasi');
   Route::get('/mentor/franchise/barang/{id}/add',"MentorControl@franchise_barangadd")->name('mentor.franchise.barangadd');

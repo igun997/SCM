@@ -15,8 +15,9 @@ class CreateGeraiBarangTable extends Migration {
 		Schema::create('gerai_barang', function(Blueprint $table)
 		{
 			$table->integer('id', true);
+			$table->string('id_produk', 60)->index('id_produk');
 			$table->string('nama_barang', 100);
-			$table->text('deskripsi', 65535);
+			$table->text('deskripsi', 65535)->nullable();
 			$table->string('pemilik_id', 60)->index('pd');
 			$table->string('mentor_id', 60)->index('md');
 			$table->timestamp('dibuat')->default(DB::raw('CURRENT_TIMESTAMP'));

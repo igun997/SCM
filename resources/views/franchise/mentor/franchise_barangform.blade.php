@@ -21,12 +21,13 @@
               <form action="" method="post">
                 @csrf
                 <div class="form-group">
-                  <label>Nama Barang</label>
-                  <input type="text" class="form-control" name="nama_barang" value="">
-                </div>
-                <div class="form-group">
-                  <label>Deskripsi</label>
-                  <textarea name="deskripsi" class="form-control" rows="8" cols="80"></textarea>
+                  <label>Pilih Barang</label>
+                  <select class="form-control" name="id_produk">
+                    <option>== Pilih ==</option>
+                    @foreach($list as $k => $v)
+                    <option value="{{$v->id_produk}}">[{{$v->id_produk}}] {{$v->nama_produk}} ({{$v->stok}})</option>
+                    @endforeach
+                  </select>
                 </div>
                 <div class="form-group">
                   <button type="submit" class="btn btn-success">Simpan Data</button>

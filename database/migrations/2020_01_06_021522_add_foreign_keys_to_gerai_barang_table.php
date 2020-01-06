@@ -16,6 +16,7 @@ class AddForeignKeysToGeraiBarangTable extends Migration {
 		{
 			$table->foreign('mentor_id', 'gerai_barang_ibfk_1')->references('id_pengguna')->on('pengguna')->onUpdate('CASCADE')->onDelete('CASCADE');
 			$table->foreign('pemilik_id', 'gerai_barang_ibfk_2')->references('id_pengguna')->on('pengguna')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('id_produk', 'gerai_barang_ibfk_3')->references('id_produk')->on('master__produk')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 
@@ -31,6 +32,7 @@ class AddForeignKeysToGeraiBarangTable extends Migration {
 		{
 			$table->dropForeign('gerai_barang_ibfk_1');
 			$table->dropForeign('gerai_barang_ibfk_2');
+			$table->dropForeign('gerai_barang_ibfk_3');
 		});
 	}
 

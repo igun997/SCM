@@ -276,9 +276,9 @@ class AndroidAPI extends Controller
           unset($data["gerai_driver_id"]);
           $data["jarak_antar"] = round($km);
           $data["totalharga"] = $harga;
-          $data["ongkir_antar"] = 5000;
+          $data["ongkir_antar"] = 2500;
           if ($data["jarak_antar"] > 0) {
-            $data["ongkir_antar"] = ($data["jarak_antar"]*5000);
+            $data["ongkir_antar"] = ($data["jarak_antar"]*2500);
           }
           $data["status_order"] = 5;
           $cek->update($data);
@@ -295,9 +295,9 @@ class AndroidAPI extends Controller
           $data["dLat"] = $sLat;
           $data["dLng"] = $sLng;
           $data["jarak"] = round($km);
-          $data["ongkir_jemput"] = 5000;
+          $data["ongkir_jemput"] = 2500;
           if ($data["jarak"] > 0) {
-            $data["ongkir_jemput"] = ($data["jarak"]*5000);
+            $data["ongkir_jemput"] = ($data["jarak"]*2500);
           }
           $data["totalharga"] = $harga;
           $data["status_order"] = 1;

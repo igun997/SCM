@@ -74,8 +74,10 @@
 <script src="{{url("assets2/plugins/ss/canvas2image.js")}}" charset="utf-8"></script>
 <script src="{{url("assets2/plugins/ss/html2canvas.min.js")}}" charset="utf-8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.4/bootbox.min.js" integrity="sha256-uX1dPz3LieQG3DzdBTKHF4e1XzZyeeHTexV6lppnaAc=" crossorigin="anonymous"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js" integrity="sha256-gJWdmuCRBovJMD9D/TVdo4TIK8u5Sti11764sZT1DhI=" crossorigin="anonymous"></script>
 <script type="text/javascript">
   $(document).ready(function() {
+    var doc = new jsPDF();
     console.log("Well Done");
     $("#dtable").DataTable({
 
@@ -174,16 +176,35 @@
               bInfo:false
             });
             dialog.find("#print").on("click", function(event) {
-              printArea = dialog.find("#printArea").get(0);
-              console.log(printArea);
-              html2canvas(printArea).then(function(canvas) {
-                var canvasWidth = canvas.width;
-                var canvasHeight = canvas.height;
-                var img = Canvas2Image.convertToImage(canvas, canvasWidth, canvasHeight);
-                let type = "png";
-                let f = "slip";
-                Canvas2Image.saveAsImage(canvas, canvasWidth, canvasHeight, type, f);
+              // printArea = dialog.find("#printArea").get(0);
+              // console.log(printArea);
+              // html2canvas(printArea).then(function(canvas) {
+              //   var canvasWidth = canvas.width;
+              //   var canvasHeight = canvas.height;
+              //   var img = Canvas2Image.convertToImage(canvas, canvasWidth, canvasHeight);
+              //   let type = "png";
+              //   let f = "slip";
+              //   Canvas2Image.saveAsImage(canvas, canvasWidth, canvasHeight, type, f);
+              // });
+              doc.text(33, 20, 'Struk Pencucian Sepatu');
+              doc.text(20, 30, '-----------------------------------------------');
+              doc.text(20, 40, 'Nama Pelanggan : '+r.data.nama_pelanggan);
+              doc.text(20, 50, 'Tanggal : '+r.data.dibuat);
+              doc.text(20, 60, '-----------------------------------------------');
+              step = 10;
+              init = 70;
+              $.each(r.data.gerai_order_details, function(index, val) {
+                // seq.push([(index+1),"["+(val.gerai_layanan.jenis).toUpperCase()+"] "+val.gerai_layanan.nama,val.qty,(val.gerai_layanan.harga*val.qty)])
+                doc.text(20, init , "["+(val.gerai_layanan.jenis).toUpperCase()+"] "+val.gerai_layanan.nama+' x'+val.qty+" Rp."+(val.gerai_layanan.harga*val.qty));
+                init = init + step;
               });
+              init = init + step;
+              doc.text(20, init, '-----------------------------------------------');
+              init = init + step;
+              doc.text(20, init, 'Total Harga : Rp.'+r.data.totalharga);
+
+              // Save the PDF
+              doc.save('struk.pdf');
             })
           }
         }).fail(function(){

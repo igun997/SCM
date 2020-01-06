@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
+use PDF;
 use \Carbon\Carbon;
 class MentorControl extends Controller
 {
   public function index()
   {
     return view("franchise.mentor.home")->with(["title"=>"Dashboard Mentor"]);
+  }
+  public function bagihasil_print($id)
+  {
+      $invoice = GeraiBagihasil::where(["id"=>$id])->first();
+      $pemilik = Pengguna::where(["id_pengguna"=>$invoice->pemilik_id])->first();
+      // return response()->json(["d"=>$pemilik]);
+      $pdf = PDF::loadView('invoice.bagi', ["invoice"=>$invoice,"pemilik"=>$pemilik,"title"=>"KWITANSI BAGI HASIL"])->setPaper('a4', 'landscape');
+      return $pdf->stream();
   }
   public function franchise_setlokasiaksi(Request $req,$id)
   {
@@ -239,25 +248,39 @@ class MentorControl extends Controller
   }
   public function franchise_barangmasuk(Request $req,$id = null)
   {
+    $rs = GeraiBarang::where(["id"=>$id])->first();
+    $row = MasterProduk::where(["id_produk"=>$rs->id_produk]);
     if (isset($_POST["qty"])) {
       $data = $req->all();
+      $rsa = $row->first();
+      if ($rsa->stok < $req->qty) {
+        return back();
+      }
+      $c = ($rsa->stok - $req->qty);
+      $row->update(["stok"=>$c]);
       $data["gerai_barang_id"] = $id;
       $data["jenis"] = "masuk";
       $ins = GeraiBarangDetail::create($data);
       return back();
     }
     $data = GeraiBarang::where(["id"=>$id])->first();
-    return view("franchise.mentor.franchise_barangmasuk")->with(["title"=>"Tambah Barang Masuk","data"=>$data]);
+    return view("franchise.mentor.franchise_barangmasuk")->with(["title"=>"Tambah Barang Masuk","data"=>$data,"recent_stok"=>$row->first()->stok]);
   }
   public function franchise_barangadd(Request $req,$id = null)
   {
-    if (isset($_POST["nama_barang"])) {
-      $data = $req->all();
+
+    $listBarang = MasterProduk::where("stok",">=","stok_minimum")->get();
+    if (isset($_POST["id_produk"])) {
+      $id_p = $req->id_produk;
+      $r = MasterProduk::where(["id_produk"=>$id_p])->first();
+      $data["nama_barang"] = $r->nama_produk;
+      $data["id_produk"] = $id_p;
+      $data["deskripsi"] = $r->deskripsi;
       $data["pemilik_id"] = $id;
       $data["mentor_id"] = session()->get("id_pengguna");
       $ins = GeraiBarang::create($data);
       return redirect(route("mentor.franchise.barang",$id));
     }
-    return view("franchise.mentor.franchise_barangform")->with(["title"=>"Tambah Barang"]);
+    return view("franchise.mentor.franchise_barangform")->with(["title"=>"Tambah Barang","list"=>$listBarang]);
   }
 }
