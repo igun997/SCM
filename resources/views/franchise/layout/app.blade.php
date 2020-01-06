@@ -19,7 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{url("assets2/css/adminlte.min.css")}}">
   <link href="{{url("assets2/plugins/select2/css/select2.min.css")}}" rel="stylesheet" />
   <link href="{{url("assets2/plugins/select2-bootstrap4-theme/select2-bootstrap4-theme.min.css")}}" rel="stylesheet" />
-  <link rel="stylesheet" href="{{url("assets2/plugins/bsdatetime/css/bootstrap-datetimepicker.min.css")}}" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
 
   <!-- Google Font: Source Sans Pro -->
   <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
@@ -117,7 +117,7 @@ $.ajaxSetup({
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js" integrity="sha256-s87nschhfp/x1/4+QUtIa99el2ot5IMQLrumROuHZbc=" crossorigin="anonymous"></script>
 <script src="{{url("assets2/plugins/select2/js/select2.min.js")}}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
-<script src="{{url("assets2/plugins/bsdatetime/js/bootstrap-datetimepicker.min.js")}}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript">
 
 </script>

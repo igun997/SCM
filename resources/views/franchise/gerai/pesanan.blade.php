@@ -228,7 +228,7 @@
                       ]
                     dialog.find('.bootbox-body').html(tempLate.join(""));
               });
-            
+
             })
             dialog.find("#print").on("click", function(event) {
               // printArea = dialog.find("#printArea").get(0);
@@ -241,10 +241,10 @@
               //   let f = "slip";
               //   Canvas2Image.saveAsImage(canvas, canvasWidth, canvasHeight, type, f);
               // });
-              doc.text(33, 20, 'Struk Pencucian Sepatu');
+              doc.text(33, 20, 'Struk Pencucian WENOWCLEAN');
               doc.text(20, 30, '-----------------------------------------------');
               doc.text(20, 40, 'Nama Pelanggan : '+r.data.nama_pelanggan);
-              doc.text(20, 50, 'Tanggal : '+r.data.dibuat);
+              doc.text(20, 50, 'Tanggal Order : '+r.data.dibuat);
               doc.text(20, 60, '-----------------------------------------------');
               step = 10;
               init = 70;
