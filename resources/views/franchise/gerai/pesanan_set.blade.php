@@ -40,11 +40,11 @@
                 <label>No HP</label>
                 <input type="text" class="form-control" name="no_hp"   value="">
               </div>
-              <div class="form-group">
+              <div class="form-group" style="display:none">
                 <label>Email</label>
                 <input type="text" readonly class="form-control" name="email"   value="{{$randomize}}@wenow.id">
               </div>
-              <div class="form-group">
+              <div class="form-group" style="display:none">
                 <label>Password</label>
                 <input type="text" readonly class="form-control" name="password"   value="{{$randomize}}">
               </div>
