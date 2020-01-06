@@ -330,6 +330,7 @@ class AndroidAPI extends Controller
         foreach ($v->gerai_order_details as $ks => $vs) {
           $vs->gerai_layanan;
         }
+        $v->pengguna;
         $v->list_layanan = $v->gerai_order_details;
         $v->jarakTempuh = ($v->jarak == null)?"Belum Ditentukan":$v->jarak." KM";
         $v->harga = number_format($v->totalharga);
