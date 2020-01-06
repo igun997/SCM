@@ -27,6 +27,7 @@ Route::post('/api/android/login',"AndroidAPI@pelanggan_login");
 Route::post('/api/android/register',"AndroidAPI@pelanggan_register");
 Route::post("/api/android/updateakun/{id?}","AndroidAPI@updateakun");
 Route::get('/api/android/penggunalist',"AndroidAPI@penggunalist");
+Route::get('/api/android/pelanggan/{id?}',"AndroidAPI@pelanggan")->name("pelanggan.detail");
 Route::get('/api/android/layananlist/{id}',"AndroidAPI@layananlist");
 Route::post('/api/android/cekharga',"AndroidAPI@cekharga");
 Route::get('/api/android/listpesanan/{id}',"AndroidAPI@listpesanan");

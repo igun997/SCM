@@ -321,6 +321,16 @@ class AndroidAPI extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function pelanggan($id)
+    {
+      $c = GeraiPelanggan::where(["id"=>$id]);
+      if ($c->count() > 0) {
+        $d = $c->first();
+        return response()->json(["status"=>1,"data"=>$d]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
     public function driver_listpesanan($id)
     {
       $order = GeraiOrder::all();
