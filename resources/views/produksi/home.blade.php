@@ -1025,7 +1025,8 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
             item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
             if (konf_perencanaan == "Belum Diverifikasi") {
               item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan Produksi</a>');
-            }else if (konf_perencanaan == "Sudah Diverifikasi" && status_produksi == "Menyiapkan Bahan Baku") {
+            }else if (konf_perencanaan == "Sudah Diverifikasi" && status_produksi == "Produksi Disetujui Direktur") {
+              item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan Produksi</a>');
               item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Produksi</a>');
             }else if (status_produksi == "Sedang Diproses") {
               item.push('<a class="dropdown-item batalkan" href="javascript:void(0)" data-id="'+id+'">Batalkan Produksi</a>');
@@ -1450,7 +1451,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                 if (res.status == 1) {
                   new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
                 }else {
-                  new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                  new jBox('Notice', {content: res.msg,showCountdown:true, color: 'red'});
                 }
                 produksi_table.ajax.reload();
               }

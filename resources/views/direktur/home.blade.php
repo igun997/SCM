@@ -372,7 +372,7 @@
                 confirmButtonText: 'Ya'
               }).then( async (result) => {
                 if (result.value) {
-                  res = await $.post("{{route("private.api.produksi_update")}}/"+id,{konfirmasi_perencanaan:1,status_produksi:6,konfirmasi_direktur:1}).then();
+                  res = await $.post("{{route("private.api.produksi_update")}}/"+id,{konfirmasi_perencanaan:1,jenis:"implementasi",status_produksi:6,konfirmasi_direktur:1}).then();
                   if (res.status == 1) {
                     new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
                   }else {

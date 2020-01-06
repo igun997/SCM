@@ -2252,7 +2252,7 @@ class ApiControl extends Controller
             foreach ($value->master_produk->master__komposisis as $k => $v) {
               $set = MasterBb::where(["id_bb"=>$v->id_bb]);
               $row2 = $set->first();
-              $min[] = ($row2->stok-$value->jumlah);
+              $min[] = ($row2->stok-$value->jumlah*($v->jumlah*$v->rasio));
             }
           }
           $min = min($min);
@@ -2263,7 +2263,7 @@ class ApiControl extends Controller
             foreach ($value->master_produk->master__komposisis as $k => $v) {
               $set = MasterBb::where(["id_bb"=>$v->id_bb]);
               $row2 = $set->first();
-              $mins = ($row2->stok-$value->jumlah);
+              $mins = ($row2->stok-$value->jumlah*($v->jumlah*$v->rasio));
               $set->update(["stok"=>$mins]);
             }
           }
