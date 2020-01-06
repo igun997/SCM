@@ -35,6 +35,9 @@
                     <option value="tas">Tas</option>
                     <option value="sepatu">Sepatu</option>
                     <option value="helm">Helm</option>
+                    <option value="dompet">Dompet</option>
+                    <option value="topi">Topi</option>
+                    <option value="sabuk">Sabuk</option>
                   </select>
                 </div>
                 <div class="form-group">
