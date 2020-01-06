@@ -20,6 +20,7 @@ class CreateGeraiDriverTable extends Migration {
 			$table->string('username', 20);
 			$table->string('password', 100);
 			$table->integer('status')->default(0);
+			$table->string('no_hp', 15);
 			$table->string('pemilik_id', 60)->index('xa');
 			$table->timestamp('dibuat')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
