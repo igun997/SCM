@@ -37,7 +37,6 @@
                  <td>#{{str_pad($v->id,3,0,STR_PAD_LEFT)}}</td>
                  <td>
                    {{$v->gerai_pelanggan->nama}}
-                   <button class="btn btn-primary detail_pelanggan m-2" data-id="{{$v->gerai_pelanggan->id}}"><li class='fa fa-search'></li></button>
                  </td>
                  <td>{{$v->status_format($v->status_order)}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
@@ -86,51 +85,6 @@
 
     });
     $("#dtable").on("click", ".detail_pelanggan", function(event) {
-      id = $(this).data("id");
-      console.log(id);
-      console.log(id);
-      console.log("Detail");
-      var dialog = bootbox.dialog({
-          title: 'Detail Pesanan',
-          message: '<p align="center"><i class="fa fa-spin fa-spinner"></i> Loading...</p>'
-      });
-
-      dialog.init(async function(){
-            res  = await $.get("{{route("pelanggan.detail")}}/"+id).then();
-            dialog.find(".modal-title").html("Detail Pelanggan");
-            var tempLate = [
-              "<div class=row>",
-              "<div class=col-12>",
-              "<h4 align='center'>Detail Pelanggan</h4>",
-              "</div>",
-              "<div class=col-md-6>",
-              "<div class=form-group>",
-              "<label>Nama Konsumen</label>",
-              "<input class=form-control value='"+res.data.nama+"' disabled>",
-              "</div>",
-              "<div class=form-group>",
-              "<label>Jenis Kelamin</label>",
-              "<input class=form-control value='"+((res.data.jk == 0)?"Laki - Laki":"Perempuan")+"' disabled>",
-              "</div>",
-              "<div class=form-group>",
-              "<label>Alamat</label>",
-              "<textarea disabled class='form-control'>"+res.data.alamat+"</textarea>",
-              "</div>",
-              "</div>",
-              "<div class=col-md-6>",
-              "<div class=form-group>",
-              "<label>Email</label>",
-              "<input class=form-control value='"+res.data.email+"' disabled>",
-              "</div>",
-              "<div class=form-group>",
-              "<label>No HP</label>",
-              "<input class=form-control value='"+res.data.no_hp+"' disabled>",
-              "</div>",
-              "</div>",
-              "</div>",
-              ]
-            dialog.find('.bootbox-body').html(tempLate.join(""));
-      });
     })
     $("#dtable").on("click",".detail", function(event) {
       id = $(this).data("id");
@@ -140,7 +94,6 @@
           title: 'Detail Pesanan',
           message: '<p align="center"><i class="fa fa-spin fa-spinner"></i> Loading...</p>'
       });
-
       dialog.init(function(){
         $.get("{{route("gerai.pesanan.api.detail")}}/"+id,function(r){
           if (r.status) {
@@ -153,7 +106,12 @@
               "<div class=col-md-6>",
               "<div class=form-group>",
               "<label>Nama Konsumen</label>",
+              '<div class=input-group>',
+              '<div class="input-group-prepend">',
+              '<button class="btn btn-primary detail_pelanggan" data-id="'+r.data.gerai_pelanggan_id+'"><li class="fa fa-search"></li></button>',
+              '</div>',
               "<input class=form-control value='"+r.data.nama_pelanggan+"' disabled>",
+              '</div>',
               "</div>",
               "<div class=form-group>",
               "<label>Status Order</label>",
@@ -225,6 +183,53 @@
               paging:false,
               bInfo:false
             });
+            dialog.find(".detail_pelanggan").on("click",  function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              console.log(id);
+              console.log("Detail");
+              var dialog = bootbox.dialog({
+                  title: 'Detail Pesanan',
+                  message: '<p align="center"><i class="fa fa-spin fa-spinner"></i> Loading...</p>'
+              });
+              dialog.init(async function(){
+                    res  = await $.get("{{route("pelanggan.detail")}}/"+id).then();
+                    dialog.find(".modal-title").html("Detail Pelanggan");
+                    var tempLate = [
+                      "<div class=row>",
+                      "<div class=col-12>",
+                      "<h4 align='center'>Detail Pelanggan</h4>",
+                      "</div>",
+                      "<div class=col-md-6>",
+                      "<div class=form-group>",
+                      "<label>Nama Konsumen</label>",
+                      "<input class=form-control value='"+res.data.nama+"' disabled>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Jenis Kelamin</label>",
+                      "<input class=form-control value='"+((res.data.jk == 0)?"Laki - Laki":"Perempuan")+"' disabled>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>Alamat</label>",
+                      "<textarea disabled class='form-control'>"+res.data.alamat+"</textarea>",
+                      "</div>",
+                      "</div>",
+                      "<div class=col-md-6>",
+                      "<div class=form-group>",
+                      "<label>Email</label>",
+                      "<input class=form-control value='"+res.data.email+"' disabled>",
+                      "</div>",
+                      "<div class=form-group>",
+                      "<label>No HP</label>",
+                      "<input class=form-control value='"+res.data.no_hp+"' disabled>",
+                      "</div>",
+                      "</div>",
+                      "</div>",
+                      ]
+                    dialog.find('.bootbox-body').html(tempLate.join(""));
+              });
+            
+            })
             dialog.find("#print").on("click", function(event) {
               // printArea = dialog.find("#printArea").get(0);
               // console.log(printArea);
