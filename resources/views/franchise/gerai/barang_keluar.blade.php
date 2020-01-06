@@ -29,8 +29,12 @@
                 <textarea disabled class="form-control" rows="4" cols="80">{{$data->deskripsi}}</textarea>
               </div>
               <div class="form-group">
+                <label>Stok</label>
+                <input type="text" class="form-control" disabled value="{{$data->stok($data->id)}}">
+              </div>
+              <div class="form-group">
                 <label>Total Barang Keluar</label>
-                <input type="text" class="form-control" name="qty" value="">
+                <input type="number" class="form-control" name="qty" min="1" max="{{$data->stok($data->id)}}" value="" required>
               </div>
               <div class="form-group">
                 <button type="submit" class="btn btn-success">Simpan Data</button>

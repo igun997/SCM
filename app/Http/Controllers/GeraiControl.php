@@ -207,6 +207,15 @@ class GeraiControl extends Controller
         return back();
       }
       $data = GeraiBarang::where(["id"=>$id])->first();
+      $stok = 0;
+      foreach ($data->gerai_barang_details as $key => $value) {
+        if ($value->jenis == "masuk") {
+          $stok = $stok + $value->qty;
+        }else {
+          $stok = $stok - $value->qty;
+        }
+      }
+      $data->stok = $stok;
       return view("franchise.gerai.barang_keluar")->with(["title"=>"Tambah Barang Keluar","data"=>$data]);
     }
 }

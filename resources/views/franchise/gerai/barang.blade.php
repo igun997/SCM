@@ -37,7 +37,7 @@
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
                    <a href="{{route("gerai.barang.transaksi",$v->id)}}" class="btn btn-danger">
-                     Barang Keluar
+                     Transaksi
                    </a>
                  </td>
                </tr>
