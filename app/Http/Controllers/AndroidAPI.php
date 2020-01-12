@@ -358,7 +358,7 @@ class AndroidAPI extends Controller
       $data->kode = str_pad($data->id,5,0,STR_PAD_LEFT);
       $s = "";
       foreach ($data->gerai_order_details as $key => $value) {
-        $s = $s."<p>".($key+1)." -[".strtoupper($value->gerai_layanan->jenis)."] ".$value->gerai_layanan->nama." x ".$value->qty."</p>";
+        $s = $s."<p>".($key+1)." - [".strtoupper($value->gerai_layanan->jenis)."] ".$value->gerai_layanan->nama." x ".$value->qty."</p>";
       }
       $data->list_layanan = $s;
       foreach ($data->gerai_order_details as $key => $value) {
