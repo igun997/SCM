@@ -45,12 +45,12 @@
                  <td>
                    @foreach($v->gerai_order_details as $obj)
                    <p>
-                     {{$obj->gerai_layanan->nama}} x  {{$obj->qty}}
+                     [{{strtoupper($obj->gerai_layanan->jenis)}}] {{$obj->gerai_layanan->nama}} x  {{$obj->qty}}
                    </p>
                    @endforeach
                  </td>
-                 <td>{{$v->totalharga}}</td>
-                 <td>{{$v->dibuat}}</td>
+                 <td>Rp. {{number_format($v->totalharga)}}</td>
+                 <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                </tr>
                @endforeach
              </tbody>
@@ -69,7 +69,18 @@
 
     console.log("Well Done");
     var oTable = $("#dtable").DataTable({
-
+      dom: 'Bfrtip',
+      buttons: [
+          {
+              extend: 'print',
+              customize: function ( win ) {
+                  $(win.document.body).find("h1").html("<h4 align='center'>Laporan Keuangan</h4>");
+                  $(win.document.body).find( 'table' )
+                      .addClass( 'compact' )
+                      .css( 'font-size', 'inherit' );
+              }
+          }
+      ]
     });
     $("#dari").datetimepicker({
         format:"YYYY-MM-DD"

@@ -48,8 +48,10 @@
                  <td>{{($k+1)}}</td>
                  <td>{{$v->gerai_pelanggan->nama}}</td>
                  <td>
-                   @foreach($v->gerai_order_details as $k => $vs)
-                   <p>{{$vs->gerai_layanan->nama}} x {{$vs->qty}}</p>
+                   @foreach($v->gerai_order_details as $obj)
+                   <p>
+                     [{{strtoupper($obj->gerai_layanan->jenis)}}] {{$obj->gerai_layanan->nama}} x  {{$obj->qty}}
+                   </p>
                    @endforeach
                  </td>
                  <td>{{$v->status_format($v->status_order)}}</td>
@@ -84,7 +86,18 @@
 
     console.log("Well Done");
     var oTable = $("#dtable").DataTable({
-
+      dom: 'Bfrtip',
+      buttons: [
+          {
+              extend: 'print',
+              customize: function ( win ) {
+                  $(win.document.body).find("h1").html("<h4 align='center'>Laporan Pesanan</h4>");
+                  $(win.document.body).find( 'table' )
+                      .addClass( 'compact' )
+                      .css( 'font-size', 'inherit' );
+              }
+          }
+      ]
     });
     $("#dari").datetimepicker({
         format:"YYYY-MM-DD"

@@ -75,7 +75,18 @@
 
     console.log("Well Done");
     var oTable = $("#dtable").DataTable({
-
+      dom: 'Bfrtip',
+      buttons: [
+          {
+              extend: 'print',
+              customize: function ( win ) {
+                  $(win.document.body).find("h1").html("<h4 align='center'>Laporan Barang</h4>");
+                  $(win.document.body).find( 'table' )
+                      .addClass( 'compact' )
+                      .css( 'font-size', 'inherit' );
+              }
+          }
+      ]
     });
     $("#dari").datetimepicker({
         format:"YYYY-MM-DD"

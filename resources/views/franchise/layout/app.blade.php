@@ -23,6 +23,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- Google Font: Source Sans Pro -->
   <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <link rel="stylesheet" href="//cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css">
   @yield("css")
 </head>
 <body class="hold-transition sidebar-mini">
@@ -118,6 +119,9 @@ $.ajaxSetup({
 <script src="{{url("assets2/plugins/select2/js/select2.min.js")}}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+<script src="//cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js " charset="utf-8"></script>
+<script src="//cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js" charset="utf-8"></script>
 <script type="text/javascript">
 
 </script>

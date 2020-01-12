@@ -40,13 +40,26 @@
                 <label>No HP</label>
                 <input type="text" class="form-control" name="no_hp"   value="">
               </div>
-              <div class="form-group" style="display:none">
+              <div class="form-group">
                 <label>Email</label>
                 <input type="text" readonly class="form-control" name="email"   value="{{$randomize}}@wenow.id">
               </div>
-              <div class="form-group" style="display:none">
+              <div class="form-group">
+                <label>Latitude</label>
+                <input type="text" readonly class="form-control" name="cLat" id="cLat">
+              </div>
+              <div class="form-group">
+                <label>Longitude</label>
+                <input type="text" readonly class="form-control" name="cLlng" id="cLng">
+              </div>
+              <div class="form-group">
                 <label>Password</label>
                 <input type="text" readonly class="form-control" name="password"   value="{{$randomize}}">
+              </div>
+              <div class="form-group">
+                <div id="maps" style="width:auto;height:200px">
+
+                </div>
               </div>
               <div class="form-group">
                 <label>Catatan Pemesanan</label>
@@ -90,6 +103,8 @@
 
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-input-spinner@1.13.3/src/bootstrap-input-spinner.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="//maps.google.com/maps/api/js?key=AIzaSyD1cM44pjtWnEej7CgCeCVtYx5D70ImTdQ"></script>
+<script src="{{url("assets2/js/gmaps.js")}}" charset="utf-8"></script>
 <script type="text/javascript">
   $(document).ready(function() {
      $("input[type='number']").inputSpinner()
@@ -122,6 +137,28 @@
        })
      })
   });
+
+    $(document).ready(function() {
+      var map = new GMaps({
+        div: '#maps',
+        lat: -6.903429,
+        lng: 107.5030708,
+        zoom:10
+      });
+      map.addMarker({
+          lat: "-6.903429",
+          lng: "107.5030708",
+          title: 'Lokasi Pelanggan',
+          draggable: true,
+          dragend: function(e) {
+            var latLng = e.latLng;
+            var lat = latLng.lat();
+            var lng = latLng.lng();
+            $("#cLat").val(lat);
+            $("#cLng").val(lng);
+          }
+      });
+    });
 
 </script>
 @endsection
