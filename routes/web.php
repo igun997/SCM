@@ -320,6 +320,7 @@ Route::group(['middleware' => ['mentor']], function () {
   Route::post('/mentor/franchise/layanan/{id}/add',"MentorControl@franchise_layananadd")->name('mentor.franchise.layananadd');
   Route::get('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
   Route::post('/mentor/franchise/layanan/{id}/edit/{ids}',"MentorControl@franchise_layananedit")->name('mentor.franchise.layananedit');
+  Route::get('/mentor/api/chart/{year?}',"MentorControl@chart")->name('mentor.chart');
 
   Route::get('/mentor/bagihasil',"MentorControl@bagihasil")->name('mentor.bagihasil');
   Route::get('/mentor/bagihasil/{id}/list',"MentorControl@bagihasil_list")->name('mentor.bagihasil.list');

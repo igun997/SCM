@@ -7,11 +7,55 @@ use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
 use PDF;
 use \Carbon\Carbon;
+use \Carbon\CarbonPeriod;
 class MentorControl extends Controller
 {
   public function index()
   {
     return view("franchise.mentor.home")->with(["title"=>"Dashboard Mentor"]);
+  }
+
+  public function chart($year)
+  {
+    $data = [];
+    $all = Pengguna::where(["level"=>"gerai"])->get();
+    $pengguna = [];
+    $pengguna_nama = [];
+    foreach ($all as $key => $value) {
+      $pengguna[] =  $value->id_pengguna;
+      $pengguna_nama[$value->id_pengguna] = $value->nama_pengguna;
+    }
+    $a = array_unique($pengguna);
+    foreach ($a as $key => $value) {
+      $select = GeraiOrder::where(["status_order"=>6,"pemilik_id"=>$value])->whereBetween("dibuat",[$year."-01-01",$year."-12-31"]);
+      $trx = 0;
+      $kotor = 0;
+
+      $periode = [];
+      $stack = [];
+      $period = CarbonPeriod::create($year.'-01-01', $year.'-12-31');
+      foreach ($period as $dt) {
+          $periode[] =  $dt->format("Y-m");
+          $stack[$dt->format("Y-m")] = 0;
+      }
+      foreach ($periode as $k => $v) {
+        foreach ($select->get() as $y => $e) {
+          if (date("Y-m",strtotime($e->dibuat)) == $v) {
+            $stack[$v] = $stack[$v] + $e->totalharga;
+
+          }
+        }
+      }
+      $color = random_color();
+      $nornalis = [];
+      foreach ($stack as $ky => $ue) {
+        $nornalis[] = $ue;
+      }
+      $data[] = ["label"=>$pengguna_nama[$value],"backgroundColor"=>"#".$color,"borderColor"=>"#".$color,"borderWidth"=>1,"data"=>$nornalis];
+    }
+
+    return response()->json($data);
+
   }
   public function bagihasil_print($id)
   {
