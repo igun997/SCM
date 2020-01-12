@@ -50,7 +50,7 @@
               </div>
               <div class="form-group">
                 <label>Longitude</label>
-                <input type="text" readonly class="form-control" name="cLlng" id="cLng">
+                <input type="text" readonly class="form-control" name="cLng" id="cLng">
               </div>
               <div class="form-group">
                 <label>Password</label>
