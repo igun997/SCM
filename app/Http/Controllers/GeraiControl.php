@@ -205,6 +205,13 @@ class GeraiControl extends Controller
         $data["jenis"] = "keluar";
         $data["konf_pemilik"] = 1;
         $data["tgl_konf"] = date("Y-m-d");
+        $masuk = GeraiBarangDetail::where(["gerai_barang_id"=>$id,"jenis"=>"masuk"])->sum("qty");
+        $keluar = GeraiBarangDetail::where(["gerai_barang_id"=>$id,"jenis"=>"keluar"])->sum("qty");
+        if ($data["jenis"] == "keluar") {
+          if (($masuk - $keluar) < 0) {
+            return back();
+          }
+        }
         $ins = GeraiBarangDetail::create($data);
         return back();
       }

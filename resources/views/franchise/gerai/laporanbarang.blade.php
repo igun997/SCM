@@ -36,7 +36,6 @@
                 <th>Nama Barang</th>
                 <th>Jenis </th>
                 <th>Total</th>
-                <th>Total Akhir</th>
                 <th>Dibuat</th>
               </thead>
               <tbody>
@@ -53,7 +52,6 @@
                         {{$qty = ($vs->qty*-1)}}
                         @endif
                       </td>
-                      <td>0</td>
                       <td>{{$vs->dibuat}}</td>
                     </tr>
                     @endforeach

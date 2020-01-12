@@ -119,7 +119,7 @@ class GeraiOrder extends Eloquent
 		if ($id == 0) {
 			return "Menunggu Driver";
 		}elseif ($id == 1) {
-			return "Driver Antar Pesanan";
+			return "Driver Jemput Pesanan";
 		}elseif ($id == 2) {
 			return "Pesanan Diterima Gerai";
 		}elseif ($id == 3) {
@@ -130,6 +130,8 @@ class GeraiOrder extends Eloquent
 			return "Sedang Di Antar Ke Tempat";
 		}elseif ($id == 6) {
 			return "Pesanan Selesai";
+		}elseif ($id == 7) {
+			return "Diambil Sendiri";
 		}
 	}
 	public function button($id)

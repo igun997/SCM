@@ -106,7 +106,7 @@ class AndroidAPI extends Controller
         if ($status == 1) {
           $c->update(["dijemput"=>$status,"status_order"=>5,"cLat_antar"=>$data["lat"],"cLng_antar"=>$data["lng"],"alamat_antar"=>$data["alamat_antar"]]);
         }else {
-          $c->update(["dijemput"=>$status]);
+          $c->update(["dijemput"=>$status,"status_order"=>7]);
         }
         return response(["status"=>1]);
       }else {
