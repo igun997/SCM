@@ -28,6 +28,8 @@ class GeraiControl extends Controller
       $qty = $req->qty;
       unset($data["qty"]);
       $data["status"] = 1;
+      $data["lat"] = $data["cLat"];
+      $data["lng"] = $data["cLng"];
       $createUser = GeraiPelanggan::create($data);
       if ($createUser) {
         $id = $createUser->id;
