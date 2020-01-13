@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
 use PDF;
+use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
@@ -2296,6 +2297,11 @@ class ApiControl extends Controller
       }else {
         return response()->json(["status"=>0]);
       }
+    }
+    public function notif_common(Request $req)
+    {
+      $a = event(new SCMNotif('Ojon Ganti',"produksi","google.com"));
+      return ["status"=>1];
     }
     public function produksi_insert(Request $req)
     {

@@ -20,6 +20,7 @@ paths: {
 'smartcart':'assets/plugins/cartjs/dist/js/jquery.smartCart.min',
 'datepicker':'//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min',
 'jqform':'assets/plugins/jqueryform/jq.form',
+'Pusher':'//js.pusher.com/5.0/pusher.min'
 },
 shim: {
 'bootstrap': ['jquery'],

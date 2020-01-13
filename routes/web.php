@@ -11,6 +11,8 @@
 |
 */
 //Test Deply
+Route::get('/bell',"ApiControl@notif_common")->name("notif_common");
+
 //Normal Route
 Route::get('/', function(){
   $data["title"] = "SCM Wenow";

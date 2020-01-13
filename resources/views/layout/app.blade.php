@@ -404,7 +404,29 @@
       ];
       return cookingform.join("");
     }
-  require(['jquery'], function ($) {
+  require(['jquery','Pusher'], function ($,Pusher) {
+    console.log(Pusher);
+    $("#parent_bell").on('click', function(event) {
+      event.preventDefault();
+      $("#notif_class").attr('class', 'nav-read');
+    });
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = false;
+
+    var pusher = new Pusher('801e58d55a5c9f23752b', {
+      cluster: 'ap1',
+      forceTLS: true
+    });
+    current = "{{session()->get("level")}}";
+    var channel = pusher.subscribe('bell');
+    channel.bind('notif', function(data)  {
+      console.log(data);
+      if (current == data.type) {
+        $("#notif_class").attr('class', 'nav-unread');
+        template = '<a href="'+data.link+'" class="dropdown-item d-flex"><div>'+data.message+'</div></a>';
+        $("#notif_item").append(template);
+      }
+    });
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -429,6 +451,8 @@
       }
       return x1 + x2;
   }
+
   </script>
+
   @stack("script")
 </html>
