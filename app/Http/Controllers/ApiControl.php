@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
 use PDF;
+use \Carbon\CarbonPeriod;
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
@@ -1874,9 +1875,23 @@ class ApiControl extends Controller
       if ($req->has("file")) {
         $file_data = $req->file;
         $image = $file_data;  // your base64 encoded
-        $image = str_replace('data:image/png;base64,', '', $image);
+        $length = strlen($image);
+        $pos  = strpos($image, ';');
+        $type = explode(':', substr($image, 0, $pos))[1];
+        $type = (explode("/",$type))[1];
+        if ($type == "jpeg") {
+          $image = str_replace('data:image/jpeg;base64,', '', $image);
+        }elseif ($type == "png") {
+          $image = str_replace('data:image/png;base64,', '', $image);
+        }elseif ($type == "gif") {
+          $image = str_replace('data:image/gif;base64,', '', $image);
+        }elseif ($type == "jpg") {
+          $image = str_replace('data:image/jpg;base64,', '', $image);
+        }else {
+          return ["status"=>0];
+        }
         $image = str_replace(' ', '+', $image);
-        $imageName = str_random(10).'.'.'png';
+        $imageName = str_random(10).'.'.$type;
         $put = \File::put(public_path(). '/upload/' . $imageName, base64_decode($image));
         if ($put) {
           // return ["status"=>1];
@@ -2309,6 +2324,61 @@ class ApiControl extends Controller
         }
       }else {
         return response()->json(["status"=>0,"msg"=>"Sukses Input Data Produksi"]);
+      }
+    }
+    public function stat(Request $req)
+    {
+      $loopDate = function($to,$from){
+        $period = CarbonPeriod::create($from, $to);
+        $data = [];
+        foreach ($period as $date) {
+            $data[] = $date->format('Y-m-d');
+        }
+        return $data;
+      };
+      if ($req->has("pemasaran_harian")) {
+          $now = date("Y-m-d");
+          $day7 = date("Y-m-d",strtotime("-7 days",strtotime($now)));
+          $date = $loopDate($now,$day7);
+          $array = [];
+          $data = [];
+          $data[] = "Penjualan";
+          $tgl = [];
+          $tgl[] = "x";
+          foreach ($date as $key => $value) {
+            $tgl[] = $value;
+            $temp = [];
+            $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",$value);
+            $row = $order->first();
+            if ($order->count() > 0) {
+              $total = 0;
+              foreach ($row->pemesanan__details as $k => $v) {
+                $total = $total + ($v->jumlah*$v->harga);
+              }
+              $data[] = $total;
+            }else {
+              $data[] = 0;
+            }
+          }
+          $array[] = $data;
+          $array[] = $tgl;
+          return $array;
+      }elseif ($req->has("stat")) {
+        $pb = PengadaanBb::count();
+        $pb_s = PengadaanBb::where(["status_pengadaan"=>7])->count();
+        $pp = PengadaanProduk::count();
+        $pp_s = PengadaanProduk::where(["status_pengadaan"=>7])->count();
+
+        $prod = Produksi::count();
+        $prod_s = Produksi::where(["status_produksi"=>3])->count();
+
+        $pe = Pemesanan::count();
+        $pe_s = Pemesanan::where(["status_pesanan"=>4])->count();
+        $data = [];
+        $data["pengadaan"] = [($pb+$pp),($pb_s+$pp_s)];
+        $data["produksi"] = [($prod),($prod_s)];
+        $data["pemasaran"] = [($pe),($pe_s)];
+        return $data;
       }
     }
 }

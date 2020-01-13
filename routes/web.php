@@ -26,6 +26,7 @@ Route::post('/api/public/login',"ApiControl@login")->name("public.api.login");
 Route::get('/gen/invoice/pemesanan/{id?}',"ApiControl@invoicePemesanan")->name("gen.invoice.pemesanan");
 Route::get('/gen/invoice/pengadaan/{id?}',"ApiControl@invoicePengadaaan")->name("gen.invoice.pengadaan");
 Route::get('/gen/invoice/pengadaanbb/{id?}',"ApiControl@invoicePengadaaanbb")->name("gen.invoice.pengadaanbb");
+Route::post('/stat',"ApiControl@stat")->name("chart");
 //Private API
 //All Access
 

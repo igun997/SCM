@@ -61,21 +61,6 @@
         <h3 class="card-title">Aktivitas Produksi</h3>
       </div>
       <div id="chart-development-activity" style="height: 10rem"></div>
-      <div class="table-responsive">
-        <table class="table card-table table-striped table-vcenter">
-          <thead>
-            <tr>
-              <th colspan="2">Kode Produksi</th>
-              <th>Status</th>
-              <th>Tanggal</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-
-          </tbody>
-        </table>
-      </div>
     </div>
 
   </div>
@@ -84,11 +69,11 @@
         <div class="card p-3">
           <div class="d-flex align-items-center">
             <span class="stamp stamp-md bg-blue mr-3">
-              <i class="fe fe-dollar-sign"></i>
+              <i class="fa fa-product-hunt"></i>
             </span>
             <div>
-              <h4 class="m-0"><a href="javascript:void(0)">132 <small>Penjualan</small></a></h4>
-              <small class="text-muted">12 Menunggu Pembayaran</small>
+              <h4 class="m-0"><a href="javascript:void(0)" id="st_pengadaan">0 </a> <small>Pengadaan</small></h4>
+              <small class="text-muted" id="st_pengadaan_s">0 Selesai</small>
             </div>
           </div>
         </div>
@@ -98,8 +83,8 @@
               <i class="fe fe-shopping-cart"></i>
             </span>
             <div>
-              <h4 class="m-0"><a href="javascript:void(0)">78 <small>Pemesanan</small></a></h4>
-              <small class="text-muted">32 Diselesaikan</small>
+              <h4 class="m-0"><a href="javascript:void(0)" id="st_penjualan">0 </a> <small>Penjualan</small></h4>
+              <small class="text-muted" id="st_penjualan_s">0 Selesai</small>
             </div>
           </div>
         </div>
@@ -109,8 +94,8 @@
           <i class="fe fe-copy"></i>
         </span>
         <div>
-          <h4 class="m-0"><a href="javascript:void(0)">132 <small>Produksi</small></a></h4>
-          <small class="text-muted">16 Selesai</small>
+          <h4 class="m-0"><a href="javascript:void(0)" id="st_produksi">0 </a> <small>Produksi</small></h4>
+          <small class="text-muted" id="st_produksi_s">0 Selesai</small>
         </div>
       </div>
     </div>
@@ -187,6 +172,16 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       }
     });
     console.log("Home Excute . . . .");
+    async function stat() {
+      res = await $.post("{{route("chart")}}",{stat:true}).then();
+      $("#st_pengadaan").html(res.pengadaan[0]);
+      $("#st_pengadaan_s").html(res.pengadaan[1]+" Selesai");
+      $("#st_produksi").html(res.produksi[0]);
+      $("#st_produksi_s").html(res.produksi[1]+" Selesai");
+      $("#st_penjualan").html(res.pemasaran[0]);
+      $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
+    }
+    stat();
     $("#masterbb").on('click',function(event) {
       event.preventDefault();
       tabel_bahanbaku = table(["Kode","Nama","Stok","Stok Minimum","Harga","Tanggal Register",""],[],"masterbb_table");

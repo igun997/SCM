@@ -58,24 +58,9 @@
   <div class="col-lg-6">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Aktivitas Pemasaran</h3>
+        <h3 class="card-title">Aktivitas Pemasaran Harian</h3>
       </div>
       <div id="chart-development-activity" style="height: 10rem"></div>
-      <div class="table-responsive">
-        <table class="table card-table table-striped table-vcenter">
-          <thead>
-            <tr>
-              <th colspan="2">Kode Pengadaan</th>
-              <th>Status</th>
-              <th>Tanggal</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-
-          </tbody>
-        </table>
-      </div>
     </div>
 
   </div>
@@ -84,11 +69,11 @@
         <div class="card p-3">
           <div class="d-flex align-items-center">
             <span class="stamp stamp-md bg-blue mr-3">
-              <i class="fe fe-dollar-sign"></i>
+              <i class="fa fa-product-hunt"></i>
             </span>
             <div>
-              <h4 class="m-0"><a href="javascript:void(0)">132 <small>Penjualan</small></a></h4>
-              <small class="text-muted">12 Menunggu Pembayaran</small>
+              <h4 class="m-0"><a href="javascript:void(0)" id="st_pengadaan">0 </a> <small>Pengadaan</small></h4>
+              <small class="text-muted" id="st_pengadaan_s">0 Selesai</small>
             </div>
           </div>
         </div>
@@ -98,8 +83,8 @@
               <i class="fe fe-shopping-cart"></i>
             </span>
             <div>
-              <h4 class="m-0"><a href="javascript:void(0)">78 <small>Pemesanan</small></a></h4>
-              <small class="text-muted">32 Diselesaikan</small>
+              <h4 class="m-0"><a href="javascript:void(0)" id="st_penjualan">0 </a> <small>Penjualan</small></h4>
+              <small class="text-muted" id="st_penjualan_s">0 Selesai</small>
             </div>
           </div>
         </div>
@@ -109,8 +94,8 @@
           <i class="fe fe-copy"></i>
         </span>
         <div>
-          <h4 class="m-0"><a href="javascript:void(0)">132 <small>Produksi</small></a></h4>
-          <small class="text-muted">16 Selesai</small>
+          <h4 class="m-0"><a href="javascript:void(0)" id="st_produksi">0 </a> <small>Produksi</small></h4>
+          <small class="text-muted" id="st_produksi_s">0 Selesai</small>
         </div>
       </div>
     </div>
@@ -130,69 +115,46 @@
               return $('input', td).prop('checked') ? '1' : '0';
           } );
       }
-      var chart = c3.generate({
-        bindto: '#chart-development-activity', // id of chart wrapper
-        data: {
-          columns: [
-              // each columns data
-            ['data1', 0, 5, 1, 2, 7, 5, 6, 8, 24, 7, 12, 5, 6, 3, 2, 2, 6, 30, 10, 10, 15, 14, 47, 65, 55]
-          ],
-          type: 'area', // default type of chart
-          groups: [
-            [ 'data1', 'data2', 'data3']
-          ],
-          colors: {
-            'data1': tabler.colors["blue"]
+      async function chart() {
+        obj = "#chart-development-activity";
+        res = await $.post("{{route("chart")}}",{pemasaran_harian:true}).then();
+        var chart = c3.generate({
+          bindto: obj,
+          data: {
+              x:"x",
+              columns:res,
+              type: 'bar'
           },
-          names: {
-              // name of each serie
-            'data1': 'Pemasaran'
-          }
-        },
-        axis: {
-          y: {
-            padding: {
-              bottom: 0,
-            },
-            show: false,
-              tick: {
-              outer: false
-            }
+          bar: {
+              width: {
+                  ratio: 0.5
+              }
           },
-          x: {
-            padding: {
-              left: 0,
-              right: 0
-            },
-            show: false
-          }
-        },
-        legend: {
-          position: 'inset',
-          padding: 0,
-          inset: {
-                      anchor: 'top-left',
-            x: 20,
-            y: 8,
-            step: 10
-          }
-        },
-        tooltip: {
-          format: {
-            title: function (x) {
-              return '';
-            }
-          }
-        },
-        padding: {
-          bottom: 0,
-          left: -1,
-          right: -1
-        },
-        point: {
-          show: false
-        }
+          axis: {
+                  x: {
+                      type: 'timeseries',
+                      tick: {
+                          format: '%d-%m-%Y'
+                      }
+                  }
+              }
       });
+      }
+      async function stat() {
+        res = await $.post("{{route("chart")}}",{stat:true}).then();
+        $("#st_pengadaan").html(res.pengadaan[0]);
+        $("#st_pengadaan_s").html(res.pengadaan[1]+" Selesai");
+        $("#st_produksi").html(res.produksi[0]);
+        $("#st_produksi_s").html(res.produksi[1]+" Selesai");
+        $("#st_penjualan").html(res.pemasaran[0]);
+        $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
+      }
+      stat();
+      chart();
+      setInterval(function () {
+        chart();
+        stat();
+      }, 5000);
       console.log("Home Excute . . . .");
       $("#masterproduk").on('click',function(event) {
         event.preventDefault();
