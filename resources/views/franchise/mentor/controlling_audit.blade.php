@@ -30,14 +30,14 @@
                   </select>
                   <a href="#" class="btn btn-primary m-2" id="lb" target="_blank">Laporan Barang</a>
                   <a href="#" class="btn btn-primary m-2" id="lk" target="_blank">Laporan Keuangan</a>
-                  <a href="#" class="btn btn-primary m-2" id="lp" target="_blank">Laporan Pelayanan</a>
+                  <a href="#" class="btn btn-primary m-2" id="lp" target="_blank">Laporan Pesanan</a>
                 </div>
                 <div class="form-group">
                   <label>Catatan Keuangan</label>
                   <textarea name="catatan_keuangan" class='form-control' rows="8" cols="80"></textarea>
                 </div>
                 <div class="form-group">
-                  <label>Catatan Pelayanan</label>
+                  <label>Catatan Pesanan</label>
                   <textarea name="catatan_pelayanan" class='form-control' rows="8" cols="80"></textarea>
                 </div>
                 <div class="form-group">
@@ -63,7 +63,7 @@
                     <th>No</th>
                     <th>Nama Gerai</th>
                     <th>C. Keuangan</th>
-                    <th>C. Pelanggan</th>
+                    <th>C. Pesanan</th>
                     <th>C. Barang</th>
                     <th>C. Evaluasi</th>
                     <th>Status Kontrol</th>
