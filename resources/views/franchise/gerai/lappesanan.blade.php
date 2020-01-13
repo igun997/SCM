@@ -35,7 +35,7 @@
                <th>Nama Pelanggan</th>
                <th>Layanan</th>
                <th>Status Order</th>
-               <th>Dijemput</th>
+               <th>DiAntar</th>
                <th>Driver Penjemputan</th>
                <th>Driver Pengantaran</th>
                <th>Jarak</th>
