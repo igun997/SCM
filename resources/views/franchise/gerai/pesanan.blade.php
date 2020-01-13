@@ -57,7 +57,7 @@
                    <a href="{{route("gerai.layanan_selesaikanorder",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan Order</a>
                    @elseif($v->status_order == 4 && $v->dijemput == 0 )
                    <a href="{{route("gerai.layanan_selesaikanorder",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan Order</a>
-                   elseif($v->status_order == 7)
+                   @elseif($v->status_order == 7)
                    <a href="{{route("gerai.layanan_selesaikanorder",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan Order</a>
                    @endif
 
