@@ -20,7 +20,7 @@
             <thead>
               <th>No</th>
               <th>C. Keuangan</th>
-              <th>C. Pelanggan</th>
+              <th>C. Pesanan</th>
               <th>C. Barang</th>
               <th>C. Evaluasi</th>
               <th>Status Kontrol</th>
