@@ -194,6 +194,182 @@
         }
       });
       console.log("Home Excute . . . .");
+      $("#produksimonitoring").on("click", function(event) {
+        produksi_html = table(["No","Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi","Tanggal Produksi",""],[],"produksi_table");
+        console.log(produksi_table);
+        var produksi_table = null;
+        var produksi = new jBox('Modal', {
+          title: 'Data Produksi',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: '600px',
+          createOnInit: true,
+          content: produksi_html,
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+            produksi_table.destroy();
+          },
+          onCreated:function(rs){
+            content = this.content;
+            var btn = function(id,konf_perencanaan,status_produksi){
+              var item = [];
+              item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+              if (status_produksi == "Menunggu Konfirmasi Gudang") {
+                item.push('<a class="dropdown-item terima" href="javascript:void(0)" data-id="'+id+'">Konfirmasi Penerimaan Barang</a>');
+              }
+              return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+            };
+            console.log(content);
+            produksi_table = content.find("#produksi_table").DataTable({
+              ajax:"{{route("gudang.api.produksi_read")}}",
+              createdRow:function(r,d,i){
+                $("td",r).eq(8).html(btn(d[8],d[3],d[6]));
+              }
+            });
+            $("#produksi_table").on("click", ".detail", async function(event) {
+              id = $(this).data("id");
+              res = await $.get("{{route("gudang.api.produksi_read")}}/"+id).then();
+              var produksi_detail = [
+                "<div class=row>",
+                "<div class=col-6>",
+                "<div class=form-group>",
+                "<label>Kode Produksi</label>",
+                "<input class=form-control value='"+id+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Jenis</label>",
+                "<input class=form-control value='"+(res.jenis).toUpperCase()+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Konfirmasi Perencanaan</label>",
+                "<input class=form-control value='"+(res.konfirmasi_perencanaan_text)+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Konfirmasi Direktur</label>",
+                "<input class=form-control value='"+(res.konfirmasi_direktur_text)+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Konfirmasi Gudang (Penerimaan)</label>",
+                "<input class=form-control value='"+(res.konfirmasi_gudang_text)+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Status Produksi</label>",
+                "<input class=form-control value='"+(res.status_produksi_text)+"' disabled/>",
+                "</div>",
+                "</div>",
+                "<div class=col-6>",
+                "<div class=form-group>",
+                "<label>Catatan Perencanaan Produksi</label>",
+                "<textarea disabled class=form-control>"+((res.catatan_perencanaan == null)?"":res.catatan_perencanaan)+"</textarea>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Catatan Direktur</label>",
+                "<textarea disabled class=form-control>"+((res.catatan_direktur == null)?"":res.catatan_direktur)+"</textarea>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Catatan Bag. Gudang</label>",
+                "<textarea disabled class=form-control>"+((res.catatan_gudang == null)?"":res.catatan_gudang)+"</textarea>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Tanggal Produksi</label>",
+                "<input class=form-control value='"+(res.tgl_register_text)+"' disabled/>",
+                "</div>",
+                "<div class=form-group>",
+                "<label>Tanggal Selesai Produksi</label>",
+                "<input class=form-control value='"+((res.tgl_selesai_produksi == null)?"":res.tgl_selesai_produksi)+"' disabled/>",
+                "</div>",
+                "</div>",
+                "<div class=col-12>",
+                "<div class=table-responsive>",
+                table(["Kode Produk","Nama Produk","Jumlah Produksi","Biaya Produksi"],[],"list_produksi"),
+                "</div>",
+                "</div>",
+                "</div>",
+              ];
+              console.log(id);
+              m = new jBox('Modal', {
+                title: 'Detail Produksi',
+                overlay: false,
+                width: '50%',
+                responsiveWidth:true,
+                height: '600px',
+                createOnInit: true,
+                content: produksi_detail.join(""),
+                draggable: false,
+                adjustPosition: true,
+                adjustTracker: true,
+                repositionOnOpen: false,
+                offset: {
+                  x: 0,
+                  y: 0
+                },
+                repositionOnContent: false,
+                onCloseComplete:function(){
+                  console.log("Destruct Table");
+                  produksi_table.ajax.reload();
+                },
+                onCreated:function(rs){
+                  kt = this.content;
+                  dt = [];
+                  total = 0;
+                  $.each(res.produksi__details,function(i,el) {
+
+                  });
+                  $.each(res.produksi__details,function(i,el) {
+                    ttotal = 0;
+                    total = 0;
+                    $.each(el.master_produk.master__komposisis, function(index, val) {
+                      ttotal = ttotal + ((val.harga_bahan * val.jumlah)*val.rasio);
+                    });
+                    total = (ttotal*el.jumlah);
+                    dt.push([el.master_produk.id_produk,el.master_produk.nama_produk,el.jumlah,number_format(total)]);
+                  });
+                  kt.find("#list_produksi").attr("width","100%");
+                  kt.find("#list_produksi").DataTable({
+                    data:dt
+                  })
+                }});
+                m.open();
+            });
+            $("#produksi_table").on("click", ".terima", function(event) {
+              id = $(this).data("id");
+              // gudang.api.produksi_update
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Silahkan Isi Harga Distribusi (Harga Produksi + [N] % ) Dalam Bentuk Persen",
+                type: 'warning',
+                input:"number",
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then( async (result) => {
+                if (result.value) {
+                  res = await $.post("{{route("gudang.api.produksi_update")}}/"+id+"/"+result.value,{status_produksi:5,konfirmasi_gudang:1,tgl_kon_gudang:"{{date("Y-m-d")}}"}).then();
+                  if (res.status == 1) {
+                    new jBox('Notice', {content: "Sukses Update Status",showCountdown:true, color: 'green'});
+                  }else {
+                    new jBox('Notice', {content: "Gagal Update Status",showCountdown:true, color: 'red'});
+                  }
+                  produksi_table.ajax.reload();
+                }
+              });
+            });
+          }
+        });
+        instance = produksi.open();
+
+      })
       $("#mastersatuan").on('click',function(event) {
         event.preventDefault();
         tabel_satuan = table(["No","Nama Satuan",""],[],"mastersatuan_table");

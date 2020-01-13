@@ -49,7 +49,7 @@ Route::group(['middleware' => ['produksi']], function () {
   Route::get('/api/kode_produksi',"ApiControl@kode_produksi")->name("produksi.api.kode_produksi");
 
   Route::get('/api/produksi/produksi_listproduk',"ApiControl@produksi_listproduk")->name("produksi.api.produksi_listproduk");
-  Route::get('/api/produksi/produksi_read',"ApiControl@produksi_read")->name("produksi.api.produksi_read");
+  Route::get('/api/produksi/produksi_read/{id?}',"ApiControl@produksi_read")->name("produksi.api.produksi_read");
   Route::post('/api/produksi/produksi_insert',"ApiControl@produksi_insert")->name("produksi.api.produksi_insert");
   Route::post('/api/produksi/produksi_update/{id?}',"ApiControl@produksi_update")->name("produksi.api.produksi_update");
 
@@ -60,6 +60,9 @@ Route::group(['middleware' => ['direktur']], function () {
   //NormalRoute
   Route::get('/direktur',"DirekturControl@index")->name('private.direktur.home');
   // API
+  Route::get('/api/direktur/produksi_read/{id?}',"ApiControl@produksi_read")->name("private.api.produksi_read");
+  Route::post('/api/direktur/produksi_insert',"ApiControl@produksi_insert")->name("private.api.produksi_insert");
+  Route::post('/api/direktur/produksi_update/{id?}',"ApiControl@produksi_update")->name("private.api.produksi_update");
   //Pengaturan
   Route::get('/api/direktur/pengaturan/{id?}',"ApiControl@pengaturan_read")->name("private.api.pengaturan");
   Route::post('/api/direktur/pengaturan/add',"ApiControl@pengaturan_add")->name("private.api.pengaturan_add");
@@ -137,6 +140,9 @@ Route::group(['middleware' => ['direktur']], function () {
 });
 Route::group(['middleware' => ['pengadaan']], function () {
   Route::get('/pengadaan',"PengadaanControl@index")->name('private.pengadaan.home');
+
+
+
   //Satuan
   Route::get('/api/pengadaan/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("pengadaan.api.master_satuan_read");
   Route::post('/api/pengadaan/master_satuan_insert',"ApiControl@master_satuan_insert")->name("pengadaan.api.master_satuan_insert");
@@ -199,6 +205,9 @@ Route::group(['middleware' => ['pengadaan']], function () {
 });
 Route::group(['middleware' => ['gudang']], function () {
   Route::get('/gudang',"GudangControl@index")->name('private.gudang.home');
+  Route::get('/api/gudang/produksi_read/{id?}',"ApiControl@produksi_read")->name("gudang.api.produksi_read");
+  Route::post('/api/gudang/produksi_insert',"ApiControl@produksi_insert")->name("gudang.api.produksi_insert");
+  Route::post('/api/gudang/produksi_update/{id?}/{in?}',"ApiControl@produksi_update")->name("gudang.api.produksi_update");
   //Satuan
   Route::get('/api/gudang/master_satuan_read/{id?}',"ApiControl@master_satuan_read")->name("gudang.api.master_satuan_read");
   Route::post('/api/gudang/master_satuan_insert',"ApiControl@master_satuan_insert")->name("gudang.api.master_satuan_insert");

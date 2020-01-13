@@ -25,7 +25,7 @@
               <a href="#" class="dropdown-item " id="mpesanan">Pemesanan Produk</a>
               <a href="#" class="dropdown-item " id="mpengadaan">Pengadaan</a>
               <a href="#" class="dropdown-item " id="shippingdirektur">Pengiriman</a>
-              <a href="#" class="dropdown-item ">Produksi</a>
+              <a href="#" class="dropdown-item " id="produksimonitoring">Produksi</a>
             </div>
           </li>
           <li class="nav-item">
@@ -62,13 +62,15 @@
               <a href="" id="mastersuplier" class="dropdown-item ">Suplier</a>
               <a href="" id="masterbb" class="dropdown-item ">Bahan Baku</a>
               <a href="" id="masterproduk" class="dropdown-item ">Produk</a>
+
             </div>
           </li>
           <li class="nav-item dropdown">
-            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-download"></i>Penerimaan Pengadaan</a>
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-download"></i>Penerimaan Barang</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" id="pbahanbaku" class="dropdown-item ">Bahan Baku</a>
-              <a href="" id="pproduk" class="dropdown-item ">Produk</a>
+              <a href="" id="pbahanbaku" class="dropdown-item ">Pengadaan Bahan Baku</a>
+              <a href="" id="pproduk" class="dropdown-item ">Pengadaan Produk</a>
+              <a href="#" class="dropdown-item " id="produksimonitoring">Produksi Barang</a>
             </div>
           </li>
           @elseif(session()->get("level") == "pemasaran")
@@ -122,7 +124,6 @@
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fa fa-industry "></i> Produksi</a>
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="javascript:void(0)" id="produksi" class="dropdown-item ">Produksi</a>
-              <a href="javascript:void(0)" id="produksikontrol" class="dropdown-item ">Kontrol Produksi</a>
             </div>
           </li>
 

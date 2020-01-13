@@ -1660,21 +1660,24 @@ class ApiControl extends Controller
           $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>3,"catatan_direktur"=>$catatan]);
         }
         if ($up) {
-          $obj = $cek->first();
-          $list = $obj->pengadaan__bb_retur_details;
+
           $fail = [];
-          foreach ($list as $key => $value) {
-            $vs = $value->pengadaan_bb_detail;
-            $find = MasterBb::where(["id_bb"=>$vs->id_bb]);
-            $r = $find->first();
-            if ($find->count() > 0) {
-              $now = ($r->stok - $value->total_retur);
-              $up = $find->update(["stok"=>$now]);
-              if (!$up) {
-                $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Stok Barang Tidak Terupdate"];
+          if ($status == 1) {
+            $obj = $cek->first();
+            $list = $obj->pengadaan__bb_retur_details;
+            foreach ($list as $key => $value) {
+              $vs = $value->pengadaan_bb_detail;
+              $find = MasterBb::where(["id_bb"=>$vs->id_bb]);
+              $r = $find->first();
+              if ($find->count() > 0) {
+                $now = ($r->stok - $value->total_retur);
+                $up = $find->update(["stok"=>$now]);
+                if (!$up) {
+                  $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Stok Barang Tidak Terupdate"];
+                }
+              }else {
+                $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
               }
-            }else {
-              $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
           return response()->json(["status"=>1,"data"=>$fail]);
@@ -1701,21 +1704,24 @@ class ApiControl extends Controller
           $up = $cek->update(["konfirmasi_direktur"=>1,"status_retur"=>3,"catatan_direktur"=>$catatan]);
         }
         if ($up) {
-          $obj = $cek->first();
-          $list = $obj->pengadaan__produk_retur_details;
           $fail = [];
-          foreach ($list as $key => $value) {
-            $vs = $value->pengadaan_produk_detail;
-            $find = MasterProduk::where(["id_produk"=>$vs->id_produk]);
-            $r = $find->first();
-            if ($find->count() > 0) {
-              $now = ($r->stok - $value->total_retur);
-              $up = $find->update(["stok"=>$now]);
-              if (!$up) {
-                $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Stok Barang Tidak Terupdate"];
+          if ($status == 1) {
+            $obj = $cek->first();
+            $list = $obj->pengadaan__produk_retur_details;
+            $fail = [];
+            foreach ($list as $key => $value) {
+              $vs = $value->pengadaan_produk_detail;
+              $find = MasterProduk::where(["id_produk"=>$vs->id_produk]);
+              $r = $find->first();
+              if ($find->count() > 0) {
+                $now = ($r->stok - $value->total_retur);
+                $up = $find->update(["stok"=>$now]);
+                if (!$up) {
+                  $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Stok Barang Tidak Terupdate"];
+                }
+              }else {
+                $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Barang Tidak Ditemukan"];
               }
-            }else {
-              $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
           return response()->json(["status"=>1,"data"=>$fail]);
@@ -2192,31 +2198,85 @@ class ApiControl extends Controller
       }
       return response()->json($data);
     }
-    public function produksi_read()
+    public function produksi_read($id = null)
     {
-      $data["data"] = [];
-      $d = Produksi::where(["jenis"=>"perencanaan"])->get();
-      foreach ($d as $key => $value) {
+      if ($id == null) {
+        $data["data"] = [];
+        $d = Produksi::orderBy("tgl_register","desc")->get();
+        foreach ($d as $key => $value) {
         $harga = 0;
         foreach ($value->produksi__details as $y => $e) {
           $hargaSatuan = 0;
           foreach ($e->master_produk->master__komposisis as $ky => $ve) {
             $r = $ve->rasio;
-            $h = $ve->master_bb->harga;
-            $hargaSatuan = $hargaSatuan + ($r*$h);
+            $h = $ve->harga_bahan;
+            $hargaSatuan = $hargaSatuan + (($r*$h)*$ve->jumlah);
           }
           $harga = $harga + ($e->jumlah*$hargaSatuan);
         }
-        $data["data"][] = [$value->id_produksi,ucfirst($value->jenis),konfirmasi($value->konfirmasi_perencanaan),"Rp ".number_format($harga),$value->produksi__details->count(),status_produksi($value->status_produksi),$value->id_produksi];
+        $data["data"][] = [($key+1),$value->id_produksi,ucfirst($value->jenis),konfirmasi($value->konfirmasi_perencanaan),"Rp ".number_format($harga),$value->produksi__details->count(),status_produksi($value->status_produksi),date("d-m-Y",strtotime($value->tgl_register)),$value->id_produksi];
       }
+    }else {
+      $data = Produksi::where(["id_produksi"=>$id])->first();
+      $data->produksi__details;
+      $data->konfirmasi_perencanaan_text = konfirmasi($data->konfirmasi_perencanaan);
+      $data->konfirmasi_direktur_text = konfirmasi($data->konfirmasi_direktur);
+      $data->konfirmasi_gudang_text = konfirmasi($data->konfirmasi_gudang);
+      $data->status_produksi_text = status_produksi($data->status_produksi);
+      $data->tgl_register_text = date("d-m-Y",strtotime($data->tgl_register));
+      foreach ($data->produksi__details as $key => $value) {
+        $value->master_produk;
+        foreach ($value->master_produk->master__komposisis as $k => $v) {
+          $v->master_bb;
+        }
+      }
+
+    }
       return response()->json($data);
     }
-    public function produksi_update(Request $req,$id)
+    public function produksi_update(Request $req,$id,$in = null)
     {
+      $datas = $req->all();
+      $c = null;
+      if (isset($datas["change_bahan"])) {
+        $c = $datas["change_bahan"];
+      }
+      unset($datas["change_bahan"]);
       $a = Produksi::where(["id_produksi"=>$id]);
       if ($a->count() > 0) {
         $row = $a->first();
-        $a->update($req->all());
+
+        if ($c == 1) {
+          $min = [];
+          foreach ($row->produksi__details as $key => $value) {
+            foreach ($value->master_produk->master__komposisis as $k => $v) {
+              $set = MasterBb::where(["id_bb"=>$v->id_bb]);
+              $row2 = $set->first();
+              $min[] = ($row2->stok-$value->jumlah*($v->jumlah*$v->rasio));
+            }
+          }
+          $min = min($min);
+          if ($min < 0) {
+            return response()->json(["status"=>0,"msg"=>"Bahan Untuk Produksi Kurang"]);
+          }
+          foreach ($row->produksi__details as $key => $value) {
+            foreach ($value->master_produk->master__komposisis as $k => $v) {
+              $set = MasterBb::where(["id_bb"=>$v->id_bb]);
+              $row2 = $set->first();
+              $mins = ($row2->stok-$value->jumlah*($v->jumlah*$v->rasio));
+              $set->update(["stok"=>$mins]);
+            }
+          }
+        }
+        if ($in > 0) {
+          $persen = (double) $in;
+          foreach ($row->produksi__details as $key => $value) {
+            $set = MasterProduk::where(["id_produk"=>$value->id_produk]);
+            $row2 = $set->first();
+            $set->update(["stok"=>($row2->stok+$value->jumlah),"harga_distribusi"=>(($row2->harga_produksi*($persen/100))+$row2->harga_produksi)]);
+          }
+        }
+        $a->update($datas);
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
