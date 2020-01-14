@@ -101,7 +101,7 @@
               <tr>
                 <th colspan="4" align="center">Jatra Novianto</th>
                 <td colspan="2"></td>
-                <th colspan="3" align="center">{{session()->get("nama")}}</th>
+                <th colspan="4" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>
         </table>
