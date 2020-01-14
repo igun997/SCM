@@ -129,7 +129,7 @@
       async function chart() {
         obj1 = "#chart-development-activity";
         res = await $.post("{{route("chart")}}",{pemasaran_harian:true}).then();
-        var chart = c3.generate({
+        var chart2 = c3.generate({
           bindto: obj1,
           data: {
               x:"x",
@@ -161,7 +161,7 @@
       async function peramalan() {
         obj2 = "#peramalan";
         res = await $.post("{{route("chart")}}",{peramalan:true}).then();
-        var chart = c3.generate({
+        var chart1 = c3.generate({
           bindto: obj2,
           data: {
               x:"x",
