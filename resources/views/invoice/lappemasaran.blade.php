@@ -63,6 +63,7 @@
                 <th>PPN</th>
                 <th>Total Produk</th>
                 <th>Total Harga</th>
+                <th>Total + Pajak</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
@@ -76,6 +77,7 @@
                 <td>{{konfirmasi($value->status_pembayaran)}}</td>
                 <td>Rp. {{number_format(($value->pajak*($value->totalharga($value->id_pemesanan))))}}</td>
                 <td>{{number_format($value->pemesanan__details->count())}}</td>
+                <td>Rp. {{number_format((($value->totalharga($value->id_pemesanan))))}}</td>
                 <td>Rp. {{number_format(((($value->pajak*($value->totalharga($value->id_pemesanan))))+($value->totalharga($value->id_pemesanan))))}}</td>
                 <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
               </tr>
@@ -85,21 +87,21 @@
               <tr>
                 <th colspan="3" align="center">Ketua Divisi WENOW</th>
                 <td colspan="3"></td>
-                <th colspan="3" align="center">Bag. Pemasaran</th>
+                <th colspan="4" align="center">Bag. Pemasaran</th>
               </tr>
               <tr>
                 <td colspan="3" style="height:100px">
 
                 </td>
                 <td colspan="3"></td>
-                <td colspan="3"  style="height:100px">
+                <td colspan="4"  style="height:100px">
 
                 </td>
               </tr>
               <tr>
                 <th colspan="3" align="center">Jatra Novianto</th>
                 <td colspan="3"></td>
-                <th colspan="3" align="center">{{session()->get("nama")}}</th>
+                <th colspan="4" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>
         </table>
