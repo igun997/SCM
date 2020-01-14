@@ -43,6 +43,18 @@ class PenggunaTableSeeder extends Seeder
             ),
             2 => 
             array (
+                'id_pengguna' => 'PG130120-005',
+                'nama_pengguna' => 'Produksi',
+                'no_kontak' => '87687876543',
+                'alamat' => 'produksi@wenow.id',
+                'level' => 'produksi',
+                'status' => 1,
+                'email' => 'produksi@wenow.id',
+                'password' => 'produksi@wenow.id',
+                'tgl_register' => '2020-01-13 16:37:44',
+            ),
+            3 => 
+            array (
                 'id_pengguna' => 'PG240919-003',
                 'nama_pengguna' => 'Gudang',
                 'no_kontak' => '081214267697',
@@ -53,7 +65,7 @@ class PenggunaTableSeeder extends Seeder
                 'password' => 'gudang@wenow.id',
                 'tgl_register' => '2019-09-24 19:32:12',
             ),
-            3 => 
+            4 => 
             array (
                 'id_pengguna' => 'PG271019-001',
                 'nama_pengguna' => 'Direktur',
