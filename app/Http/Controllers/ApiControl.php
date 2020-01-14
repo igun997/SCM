@@ -55,6 +55,22 @@ class ApiControl extends Controller
       $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
+    public function laporanpengiriman(Request $req)
+    {
+      $pemasaran = Pengiriman::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      // return $pengadaan->get();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lappengiriman', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
+    public function laporanpemasaran(Request $req)
+    {
+      $pemasaran = Pemesanan::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      // return $pengadaan->get();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lappemasaran', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
     //Direktur
     public function pengaturan_read($id = "")
     {

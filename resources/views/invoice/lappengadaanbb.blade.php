@@ -86,7 +86,7 @@
               <tr>
                 <th colspan="3" align="center">Ketua Divisi WENOW</th>
                 <td colspan="3"></td>
-                <th colspan="3" align="center">Bag. Gudang</th>
+                <th colspan="3" align="center">Bag. Pengadaan</th>
               </tr>
               <tr>
                 <td colspan="3" style="height:100px">

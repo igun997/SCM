@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Produksi</title>
+    <title>Laporan Pengiriman</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         body{
@@ -47,7 +47,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 align="center">Laporan Produksi</h1>
+        <h1 align="center">Laporan Pengiriman</h1>
         <h3  align="center">
           Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
         </h3>
@@ -56,14 +56,14 @@
             <thead>
               <tr>
                 <th>No</th>
-                <th>Kode Produksi</th>
-                <th>Jenis</th>
+                <th>Kode Pengiriman</th>
+                <th>Tgl. Pengiriman</th>
+                <th>Tgl. Tiba</th>
+                <th>No Polisi</th>
+                <th>Nama Pengemudi</th>
+                <th>No Kontak</th>
+                <th>Total Muatan</th>
                 <th>Status</th>
-                <th>Konf. Direktur</th>
-                <th>Konf. Gudang</th>
-                <th>Biaya Produksi</th>
-                <th>Tanggal Diterima</th>
-                <th>Tanggal Selesai</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
@@ -71,14 +71,14 @@
               @foreach($data->get() as $key => $value)
               <tr>
                 <td>{{($key+1)}}</td>
-                <td>{{$value->id_produksi}}</td>
-                <td>{{ucfirst($value->jenis)}}</td>
-                <td>{{status_produksi($value->status_produksi)}}</td>
-                <td>{{konfirmasi($value->konfirmasi_direktur)}}</td>
-                <td>{{konfirmasi($value->konfirmasi_gudang)}}</td>
-                <td>Rp. {{number_format($value->biaya_produksi($value->id_produksi))}}</td>
-                <td>{{(($value->tgl_kon_gudang == null)?"-":date("d-m-Y",strtotime($value->tgl_kon_gudang)))}}</td>
-                <td>{{(($value->tgl_selesai_produksi == null)?"-":date("d-m-Y",strtotime($value->tgl_selesai_produksi)))}}</td>
+                <td>{{$value->id_pengiriman}}</td>
+                <td>{{(($value->tgl_pengiriman == null)?"-":date("d-m-Y",strtotime($value->tgl_pengiriman)))}}</td>
+                <td>{{(($value->tgl_kembali == null)?"-":date("d-m-Y",strtotime($value->tgl_kembali)))}}</td>
+                <td>{{strtoupper($value->master_transportasi->no_polisi)}}</td>
+                <td>{{$value->nama_pengemudi}}</td>
+                <td>{{$value->kontak_pengemudi}}</td>
+                <td>{{$value->pengiriman__details->count()}}</td>
+                <td>{{status_pengiriman($value->status_pengiriman)}}</td>
                 <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
               </tr>
               @endforeach
@@ -87,7 +87,7 @@
               <tr>
                 <th colspan="4" align="center">Ketua Divisi WENOW</th>
                 <td colspan="2"></td>
-                <th colspan="4" align="center">Bag. Produksi</th>
+                <th colspan="4" align="center">Bag. Pemasaran</th>
               </tr>
               <tr>
                 <td colspan="4" style="height:100px">
@@ -101,7 +101,7 @@
               <tr>
                 <th colspan="4" align="center">Jatra Novianto</th>
                 <td colspan="2"></td>
-                <th colspan="4" align="center">Septi Mahardian</th>
+                <th colspan="4" align="center">Egie Sugiyanto</th>
               </tr>
             </tfoot>
         </table>

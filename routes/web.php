@@ -34,6 +34,8 @@ Route::post('/stat',"ApiControl@stat")->name("chart");
 Route::get('/gen/laporanbb',"ApiControl@laporanbb")->name("laporan.pengadaan.bb");
 Route::get('/gen/laporanproduk',"ApiControl@laporanproduk")->name("laporan.pengadaan.produk");
 Route::get('/gen/laporanproduksi',"ApiControl@laporanproduksi")->name("laporan.produksi");
+Route::get('/gen/laporanpengiriman',"ApiControl@laporanpengiriman")->name("laporan.pemasaran.pengiriman");
+Route::get('/gen/laporanpemasaran',"ApiControl@laporanpemasaran")->name("laporan.pemasaran.pemasaran");
 
 Route::group(['middleware' => ['produksi']], function () {
   Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');

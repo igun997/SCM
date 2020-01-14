@@ -105,7 +105,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart','jqform'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart,ajaxForm) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart','jqform','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart,ajaxForm,datepicker) {
     $(document).ready(function(){
       //Chart
       // Init NewPlugin
@@ -162,6 +162,128 @@
         chart();
         stat();
       }, 5000);
+      $("#lppmproduk").on('click', function(event) {
+        event.preventDefault();
+        console.log("Exec");
+        console.log("Laporan Produk");
+        var form = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=form-group>",
+          "<label>Tanggal Dari</label>",
+          "<input class='form-control date' id='dari' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Tanggal Sampai</label>",
+          "<input class='form-control date' id='sampai' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        modal = new jBox('Modal', {
+                    title: 'Laporan Pemasaran',
+                    overlay: false,
+                    width: '400px',
+                    responsiveWidth:true,
+                    height: '300px',
+                    createOnInit: true,
+                    content: form.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      g = this.content;
+                      g.find(".date").datepicker({
+
+                      });
+                      g.find("#get").on('click', function(event) {
+                        event.preventDefault();
+                        dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                        console.log(dform);
+                        window.open(
+                          '{{route("laporan.pemasaran.pemasaran")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                          '_blank'
+                        );
+                      });
+                    }
+              });
+          modal.open();
+      });
+      $("#lppmpengiriman").on('click', function(event) {
+        event.preventDefault();
+        console.log("Exec");
+        console.log("Exec");
+        console.log("Laporan Produk");
+        var form = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=form-group>",
+          "<label>Tanggal Dari</label>",
+          "<input class='form-control date' id='dari' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Tanggal Sampai</label>",
+          "<input class='form-control date' id='sampai' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        modal = new jBox('Modal', {
+                    title: 'Laporan Pengiriman',
+                    overlay: false,
+                    width: '400px',
+                    responsiveWidth:true,
+                    height: '300px',
+                    createOnInit: true,
+                    content: form.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      g = this.content;
+                      g.find(".date").datepicker({
+
+                      });
+                      g.find("#get").on('click', function(event) {
+                        event.preventDefault();
+                        dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                        console.log(dform);
+                        window.open(
+                          '{{route("laporan.pemasaran.pengiriman")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                          '_blank'
+                        );
+                      });
+                    }
+              });
+          modal.open();
+
+      });
       console.log("Home Excute . . . .");
       $("#masterproduk").on('click',function(event) {
         event.preventDefault();

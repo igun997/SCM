@@ -64,7 +64,20 @@ class Pemesanan extends Eloquent
 	{
 		return $this->hasMany(\App\Models\PemesananDetail::class, 'id_pemesanan');
 	}
-
+	public function totalharga($id)
+	{
+		$obj = \App\Models\PemesananDetail::where(["id_pemesanan"=>$id]);
+		if ($obj->count() > 0) {
+			$total = 9;
+			$row = $obj;
+			foreach ($row->get() as $key => $value) {
+				$total = $total + ($value->jumlah*$value->harga);
+			}
+			return $total;
+		}else {
+			return 0;
+		}
+	}
 	public function pengiriman__details()
 	{
 		return $this->hasMany(\App\Models\PengirimanDetail::class, 'id_pemesanan');
