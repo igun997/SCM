@@ -188,6 +188,126 @@
         $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
       }
       stat();
+      $("#lapproduk").on('click', function(event) {
+        event.preventDefault();
+        console.log("Laporan Produk");
+        var form = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=form-group>",
+          "<label>Tanggal Dari</label>",
+          "<input class='form-control date' id='dari' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Tanggal Sampai</label>",
+          "<input class='form-control date' id='sampai' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        modal = new jBox('Modal', {
+                    title: 'Laporan Pengadaan Produk',
+                    overlay: false,
+                    width: '400px',
+                    responsiveWidth:true,
+                    height: '300px',
+                    createOnInit: true,
+                    content: form.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      g = this.content;
+                      g.find(".date").datepicker({
+
+                      });
+                      g.find("#get").on('click', function(event) {
+                        event.preventDefault();
+                        dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                        console.log(dform);
+                        window.open(
+                          '{{route("laporan.pengadaan.produk")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                          '_blank'
+                        );
+                      });
+                    }
+              });
+          modal.open();
+
+      });
+      $("#lapbb").on('click', function(event) {
+        event.preventDefault();
+        console.log("Laporan Pengadaan");
+        var form = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=form-group>",
+          "<label>Tanggal Dari</label>",
+          "<input class='form-control date' id='dari' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Tanggal Sampai</label>",
+          "<input class='form-control date' id='sampai' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        modal = new jBox('Modal', {
+                    title: 'Laporan Pengadaan Bahan Baku',
+                    overlay: false,
+                    width: '400px',
+                    responsiveWidth:true,
+                    height: '300px',
+                    createOnInit: true,
+                    content: form.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      g = this.content;
+                      g.find(".date").datepicker({
+
+                      });
+                      g.find("#get").on('click', function(event) {
+                        event.preventDefault();
+                        dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                        console.log(dform);
+                        window.open(
+                          '{{route("laporan.pengadaan.bb")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                          '_blank'
+                        );
+                      });
+                    }
+              });
+          modal.open();
+
+      });
       console.log("Home Excute . . . .");
       $("#mastersatuan").on('click',function(event) {
         event.preventDefault();

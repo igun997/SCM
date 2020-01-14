@@ -171,6 +171,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
         show: false
       }
     });
+
     console.log("Home Excute . . . .");
     async function stat() {
       res = await $.post("{{route("chart")}}",{stat:true}).then();
@@ -182,6 +183,10 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
     }
     stat();
+    $("#lapproduksi").on('click',  function(event) {
+      event.preventDefault();
+      console.log("lapproduksi");
+    });
     $("#masterbb").on('click',function(event) {
       event.preventDefault();
       tabel_bahanbaku = table(["Kode","Nama","Stok","Stok Minimum","Harga","Tanggal Register",""],[],"masterbb_table");

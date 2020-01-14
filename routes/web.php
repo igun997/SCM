@@ -11,7 +11,7 @@
 |
 */
 //Test Deply
-Route::get('/bell',"ApiControl@notif_common")->name("notif_common");
+Route::get('/test',"ApiControl@test");
 
 //Normal Route
 Route::get('/', function(){
@@ -31,6 +31,8 @@ Route::get('/gen/invoice/pengadaanbb/{id?}',"ApiControl@invoicePengadaaanbb")->n
 Route::post('/stat',"ApiControl@stat")->name("chart");
 //Private API
 //All Access
+Route::get('/gen/laporanbb',"ApiControl@laporanbb")->name("laporan.pengadaan.bb");
+Route::get('/gen/laporanproduk',"ApiControl@laporanproduk")->name("laporan.pengadaan.produk");
 
 Route::group(['middleware' => ['produksi']], function () {
   Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');

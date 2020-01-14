@@ -142,11 +142,9 @@
           </li>
 
           <li class="nav-item dropdown">
-            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan Produksi</a>
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" id="lapselesai" class="dropdown-item ">Selesai Produksi</a>
-              <a href="" id="lapproses" class="dropdown-item ">Sedang Di Produksi</a>
-              <a href="" id="lapproses" class="dropdown-item ">Gagal Di Produksi</a>
+              <a href="" id="lapproduksi" class="dropdown-item ">Produksi</a>
             </div>
           </li>
           @endif

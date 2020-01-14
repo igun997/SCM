@@ -28,7 +28,26 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
-
+    public function test()
+    {
+      return view("invoice.lappengadaanbb");
+    }
+    public function laporanproduk(Request $req)
+    {
+      $pengadaan = PengadaanProduk::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      // return $pengadaan->get();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lappengadaanproduk', ["data"=>$pengadaan])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
+    public function laporanbb(Request $req)
+    {
+      $pengadaan = PengadaanBb::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      // return $pengadaan->get();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
     //Direktur
     public function pengaturan_read($id = "")
     {
