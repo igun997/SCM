@@ -38,6 +38,9 @@ Route::get('/gen/laporanpengiriman',"ApiControl@laporanpengiriman")->name("lapor
 Route::get('/gen/laporanpemasaran',"ApiControl@laporanpemasaran")->name("laporan.pemasaran.pemasaran");
 Route::get('/gen/laporanpbbs',"ApiControl@laporanpbbs")->name("laporan.gudang.bb");
 Route::get('/gen/laporanp',"ApiControl@laporanpp")->name("laporan.gudang.produk");
+Route::get('/gen/listproduk',"ApiControl@listproduk")->name("listproduk");
+Route::get('/gen/peramalan/{jenis?}',"ApiControl@peramalan")->name("peramalan");
+Route::post('/gen/saveperalaman',"ApiControl@prakira_insert")->name("prakira_insert");
 
 Route::group(['middleware' => ['produksi']], function () {
   Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');

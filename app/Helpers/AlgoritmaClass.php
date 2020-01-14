@@ -18,6 +18,10 @@ class ES
   {
     return round($ft + $this->a * ($dt - $ft));
   }
+  public function constanta()
+  {
+    return $this->a;
+  }
 
 }
 /**

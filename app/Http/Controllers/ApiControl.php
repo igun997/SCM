@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi};
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
@@ -31,6 +31,82 @@ class ApiControl extends Controller
     public function test()
     {
       return view("invoice.lappengadaanbb");
+    }
+    public function listproduk()
+    {
+      return MasterProduk::all();
+    }
+    public function peramalan(Request $req,$jenis)
+    {
+      $es = new \ES();
+      $sma = new \SMA();
+      $now = strtotime($req->periode);
+      $period = CarbonPeriod::create(date("Y-m-d",strtotime("-".$req->latih." month",$now)),date("Y-m-d",strtotime("-1 month",$now)));
+      $data = [];
+      foreach ($period as $date) {
+          $a =  $date->format('Y-m');
+          $data[] = $a;
+      }
+      $data = array_unique($data);
+      $temp = $data;
+      krsort($temp);
+      $data = [];
+      foreach ($temp as $key => $value) {
+          $data[] = $value;
+      }
+
+      if ($jenis == "produksi") {
+        $id = $req->id;
+        $fail = [];
+        $recent = 0;
+        foreach ($data as $key => $value) {
+          $produksi = PeramalanProduksi::whereMonth("tgl_dibuat",date("m",strtotime($value)))->whereYear("tgl_dibuat",date("Y",strtotime($value)))->where(["id_produk"=>$id]);
+          if ($produksi->count() < 1) {
+            $fail[] = ["date"=>date("Y-m-01",strtotime($value))];
+          }else {
+            if ($key == 0) {
+              $recent = $produksi->first()->prakira;
+            }
+          }
+        }
+        if (count($fail) > 0) {
+          return ["status"=>2,"data"=>$fail];
+        }
+        $n = count($data);
+        $es = new \ES($n);
+
+        $produk = MasterProduk::where(["id_produk"=>$id]);
+        $real = 0;
+        foreach ($produk->get() as $key => $value) {
+          if ($value->pemesanan__details->count() > 0) {
+            $temp = 0;
+            foreach ($value->pemesanan__details as $k => $v) {
+              if ((strtotime(date("Y-m-01",strtotime($v->pemesanan->tgl_register))) <= $now && strtotime("-1 month",$now) >= strtotime(date("Y-m-01",strtotime($v->pemesanan->tgl_register)))) && ($v->pemesanan->status_pesanan == 5)) {
+                $temp = $temp + $v->jumlah;
+              }
+            }
+            $real = $temp;
+          }
+        }
+        $hasil = $es->singleCalc($recent,$real);
+        return ["status"=>1,"jumlah"=>$hasil];
+      }elseif ($jenis == "pengadaan") {
+        // code...
+      }elseif ($jenis == "pemasaran") {
+        // code...
+      }else {
+        return ["status"=>0];
+      }
+    }
+    public function prakira_insert(Request $req)
+    {
+      $data = $req->all();
+      $ins = PeramalanProduksi::create($data);
+      if ($ins) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
     }
     public function laporanpbbs(Request $req)
     {
