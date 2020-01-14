@@ -55,14 +55,25 @@
       </div>
     </div>
   </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Perkiraan Keuntungan Periode {{date("M Y",strtotime("+1 month",time()))}}</h3>
+      </div>
+      <div class="card-body">
+        <div id="peramalan" style="height: 20rem"></div>
+      </div>
+    </div>
+  </div>
   <div class="col-lg-6">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Aktivitas Pemasaran Harian</h3>
       </div>
-      <div id="chart-development-activity" style="height: 10rem"></div>
+      <div class="card-body">
+        <div id="chart-development-activity" style="height: 10rem"></div>
+      </div>
     </div>
-
   </div>
   <div class="col-md-6">
     <div class="row">
@@ -145,7 +156,42 @@
                       }
                   }
               }
-      });
+        });
+      }
+      async function peramalan() {
+        obj = "#peramalan";
+        res = await $.post("{{route("chart")}}",{peramalan:true}).then();
+        var chart = c3.generate({
+          bindto: obj,
+          data: {
+              x:"x",
+              columns:res,
+              type: 'bar',
+              types:{
+                Perkiraan:"line"
+              }
+          },
+          bar: {
+              width: {
+                  ratio: 0.5
+              }
+          },
+          axis: {
+                  x: {
+                      type: 'timeseries',
+                      tick: {
+                          format: '%d-%m-%Y'
+                      }
+                  }
+              },
+          tooltip: {
+                  format: {
+                      value: function(value) {
+                          return "Rp. "+d3.format(",.2f")(value)
+                      }
+                  }
+              }
+        });
       }
       async function stat() {
         res = await $.post("{{route("chart")}}",{stat:true}).then();
@@ -156,11 +202,12 @@
         $("#st_penjualan").html(res.pemasaran[0]);
         $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
       }
-      stat();
-      chart();
+      // stat();
+      // chart();
+      peramalan();
       setInterval(function () {
-        chart();
-        stat();
+        // chart();
+        // stat();
       }, 5000);
       $("#lppmproduk").on('click', function(event) {
         event.preventDefault();

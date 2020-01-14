@@ -2516,6 +2516,14 @@ class ApiControl extends Controller
         }
         return $data;
       };
+      $loopDateM = function($to,$from){
+        $period = CarbonPeriod::create($from, $to);
+        $data = [];
+        foreach ($period as $date) {
+            $data[] = $date->format('Y-m-01');
+        }
+        return $data;
+      };
       if ($req->has("pemasaran_harian")) {
           $now = date("Y-m-d");
           $day7 = date("Y-m-d",strtotime("-14 days",strtotime($now)));
@@ -2571,6 +2579,42 @@ class ApiControl extends Controller
         $data["produksi"] = [($prod),($prod_s)];
         $data["pemasaran"] = [($pe),($pe_s)];
         return $data;
+      }elseif ($req->has("peramalan")) {
+        $now = date("Y-m-d",strtotime("+1 month",strtotime(date("Y-m-d"))));
+        $day7 = date("Y-m-d",strtotime("-12 month",strtotime($now)));
+        $date = array_unique($loopDateM($now,$day7));
+        $array = [];
+        $data = [];
+        $tgl = [];
+        $bersih = [];
+        $data[] = "Pendapatan";
+        $bersih[] = "Perkiraan";
+        $tgl[] = "x";
+        $perkiraan = [];
+        foreach ($date as $key => $value) {
+          $tgl[] = $value;
+          $temp = [];
+          $total = 0;
+          $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          foreach ($order->get() as $key => $value) {
+            $t = 0;
+            foreach ($value->pemesanan__details as $k => $v) {
+              $t = $t + ($v->jumlah*$v->harga);
+            }
+            $total = ($total + (($t*$value->pajak)+$t));
+          }
+          $data[] = $total;
+          $perkiraan[] = $total;
+          $bersih[] = 0;
+        }
+        $sma = new \SMA();
+        $sma->setData($perkiraan);
+        $sma->setPeriode(count($perkiraan));
+        $bersih[(count($bersih) - 1)] = $sma->calc();
+        $array[] = $data;
+        $array[] = $tgl;
+        $array[] = $bersih;
+        return $array;
       }
     }
 }

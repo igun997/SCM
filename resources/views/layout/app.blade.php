@@ -46,7 +46,8 @@
     <link href="//cdn.datatables.net/buttons/1.5.6/css/buttons.bootstrap4.min.css" rel="stylesheet" />
     <script src="{{url("assets/js/dashboard.js")}}"></script>
     <!-- c3.js Charts Plugin -->
-    <link href="{{url("assets/plugins/charts-c3/plugin.css")}}" rel="stylesheet" />
+    <!-- <link href="{{url("assets/plugins/charts-c3/plugin.css")}}" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/c3/0.7.12/c3.min.css">
     <script src="{{url("assets/plugins/charts-c3/plugin.js")}}"></script>
     <!-- Google Maps Plugin -->
     <link href="{{url("assets/plugins/maps-google/plugin.css")}}" rel="stylesheet" />
