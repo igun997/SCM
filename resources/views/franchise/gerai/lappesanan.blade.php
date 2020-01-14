@@ -35,10 +35,9 @@
                <th>Nama Pelanggan</th>
                <th>Layanan</th>
                <th>Status Order</th>
-               <th>DiAntar</th>
+               <th>Diantar</th>
                <th>Driver Penjemputan</th>
                <th>Driver Pengantaran</th>
-               <th>Jarak</th>
                <th>Total Harga</th>
                <th>Dibuat</th>
              </thead>
@@ -66,7 +65,6 @@
                    {{$v->gerai_driver_antar->nama}}
                    @endif
                  </td>
-                 <td>{{number_format($v->jarak)}} KM</td>
                  <td>Rp. {{number_format(($v->totalharga)+($v->jarak*5000))}}</td>
                  <td>{{date("Y-m-d",strtotime($v->dibuat))}}</td>
                </tr>
