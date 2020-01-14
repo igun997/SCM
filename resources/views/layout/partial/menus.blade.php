@@ -84,7 +84,8 @@
           <li class="nav-item dropdown">
             <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan</a>
             <div class="dropdown-menu dropdown-menu-arrow">
-              <a href="" id="lapbarang" class="dropdown-item ">Data Barang</a>
+              <a href="" id="lapbb" class="dropdown-item ">Bahan Baku</a>
+              <a href="" id="lapproduk" class="dropdown-item ">Produk</a>
             </div>
           </li>
           @elseif(session()->get("level") == "pemasaran")

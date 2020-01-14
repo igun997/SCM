@@ -91,4 +91,46 @@ class MasterProduk extends Eloquent
 	{
 		return $this->hasMany(\App\Models\ProduksiDetail::class, 'id_produk');
 	}
+	public function total_masuk($id,$from,$to)
+	{
+		$obj = \App\Models\PengadaanProduk::whereBetween("tgl_register",[$from,$to]);
+		$obj1 = \App\Models\Produksi::whereBetween("tgl_register",[$from,$to]);
+		$total = 0;
+		foreach ($obj->get() as $key => $value) {
+			foreach ($value->pengadaan__produk_details as $k => $v) {
+				if ($v->id_produk == $id) {
+					$total = $total + $v->jumlah;
+				}
+			}
+		}
+		$total_prod = 0;
+		if ($obj1->count() > 0) {
+			foreach ($obj1->get() as $key => $value) {
+				foreach ($value->produksi__details as $k => $v) {
+					if ($v->id_produk == $id) {
+						$total_prod = $total_prod + $v->jumlah;
+					}
+				}
+			}
+		}
+		return ($total+$total_prod);
+	}
+	public function total_keluar($id,$from,$to)
+	{
+		$obj = \App\Models\Pemesanan::whereBetween("tgl_register",[$from,$to])->get();
+		if ($obj->count() > 0) {
+			$total = 0;
+			foreach ($obj as $key => $value) {
+				foreach ($value->pemesanan__details as $k => $v) {
+					if ($v->id_produk == $id) {
+						$total = $total + $v->jumlah;
+					}
+				}
+			}
+			return $total;
+		}else {
+			return 0;
+		}
+	}
+
 }

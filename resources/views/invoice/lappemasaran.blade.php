@@ -99,7 +99,7 @@
               <tr>
                 <th colspan="3" align="center">Jatra Novianto</th>
                 <td colspan="3"></td>
-                <th colspan="3" align="center">Egie Sugiyanto</th>
+                <th colspan="3" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>
         </table>

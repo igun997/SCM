@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Pengiriman</title>
+    <title>Laporan Bahan Baku</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         body{
@@ -47,7 +47,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 align="center">Laporan Pengiriman</h1>
+        <h1 align="center">Laporan Bahan Baku</h1>
         <h3  align="center">
           Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
         </h3>
@@ -56,51 +56,49 @@
             <thead>
               <tr>
                 <th>No</th>
-                <th>Kode Pengiriman</th>
-                <th>Tgl. Pengiriman</th>
-                <th>Tgl. Tiba</th>
-                <th>No Polisi</th>
-                <th>Nama Pengemudi</th>
-                <th>No Kontak</th>
-                <th>Total Muatan</th>
-                <th>Status</th>
+                <th>Kode Bahan Baku</th>
+                <th>Nama Bahan Baku</th>
+                <th>Stok</th>
+                <th>Stok Minimum</th>
+                <th>Harga</th>
+                <th>Total Masuk</th>
+                <th>Total Keluar</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
             <tbody>
-              @foreach($data->get() as $key => $value)
+              @foreach($data as $key => $value)
               <tr>
                 <td>{{($key+1)}}</td>
-                <td>{{$value->id_pengiriman}}</td>
-                <td>{{(($value->tgl_pengiriman == null)?"-":date("d-m-Y",strtotime($value->tgl_pengiriman)))}}</td>
-                <td>{{(($value->tgl_kembali == null)?"-":date("d-m-Y",strtotime($value->tgl_kembali)))}}</td>
-                <td>{{strtoupper($value->master_transportasi->no_polisi)}}</td>
-                <td>{{$value->nama_pengemudi}}</td>
-                <td>{{$value->kontak_pengemudi}}</td>
-                <td>{{$value->pengiriman__details->count()}}</td>
-                <td>{{status_pengiriman($value->status_pengiriman)}}</td>
+                <td>{{$value->id_bb}}</td>
+                <td>{{$value->nama}}</td>
+                <td>{{number_format($value->stok)}} {{$value->master_satuan->nama_satuan}}</td>
+                <td>{{number_format($value->stok_minimum)}} {{$value->master_satuan->nama_satuan}}</td>
+                <td>Rp. {{number_format($value->harga)}}</td>
+                <td>{{number_format($value->total_masuk($value->id_bb,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
+                <td>{{number_format($value->total_keluar($value->id_bb,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
                 <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
               </tr>
               @endforeach
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="4" align="center">Ketua Divisi WENOW</th>
-                <td colspan="2"></td>
-                <th colspan="4" align="center">Bag. Pemasaran</th>
+                <th colspan="3" align="center">Ketua Divisi WENOW</th>
+                <td colspan="3"></td>
+                <th colspan="3" align="center">Bag. Gudang</th>
               </tr>
               <tr>
-                <td colspan="4" style="height:100px">
+                <td colspan="3" style="height:400px">
 
                 </td>
-                <td colspan="2"></td>
-                <td colspan="4"  style="height:100px">
+                <td colspan="3"></td>
+                <td colspan="3"  style="height:400px">
 
                 </td>
               </tr>
               <tr>
-                <th colspan="4" align="center">Jatra Novianto</th>
-                <td colspan="2"></td>
+                <th colspan="3" align="center">Jatra Novianto</th>
+                <td colspan="3"></td>
                 <th colspan="3" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>

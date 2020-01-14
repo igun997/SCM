@@ -66,7 +66,56 @@ class MasterBb extends Eloquent
 	{
 		return $this->hasMany(\App\Models\MasterKomposisi::class, 'id_bb');
 	}
-
+	public function total_masuk($id,$from,$to)
+	{
+		$obj = \App\Models\PengadaanBb::whereBetween("tgl_register",[$from,$to])->get();
+		if ($obj->count() > 0) {
+			$total = 0;
+			foreach ($obj as $key => $value) {
+				foreach ($value->pengadaan__bb_details as $k => $v) {
+					if ($v->id_bb == $id) {
+						$total = $total + $v->jumlah;
+					}
+				}
+			}
+			return $total;
+		}else {
+			return 0;
+		}
+	}
+	public function total_keluar($id,$from,$to)
+	{
+		$obj = \App\Models\MasterKomposisi::where(["id_bb"=>$id]);
+		$listBarang = [];
+		$rasio = [];
+		foreach ($obj->get() as $key => $value) {
+			$listBarang[] = $value->master_produk->id_produk;
+		}
+		$listBarang = array_unique($listBarang);
+		$obj1 = \App\Models\Produksi::whereBetween("tgl_register",[$from,$to]);
+		if ($obj->count() > 0) {
+			if ($obj1->count() > 0) {
+				$total = 0;
+				foreach ($obj1->get() as $key => $value) {
+					foreach ($value->produksi__details as $k => $v) {
+						if (in_array($v->id_produk,$listBarang)) {
+							$s = \App\Models\MasterKomposisi::where(["id_produk"=>$v->id_produk,"id_bb"=>$id])->get();
+							$implement = 0;
+							foreach ($s as $ky => $e) {
+								$implement = $implement + ($e->rasio*$e->jumlah);
+							}
+							$total = $total + ($implement*$v->jumlah);
+						}
+					}
+				}
+				return $total;
+			}else {
+				return 0;
+			}
+		}else {
+			return 0;
+		}
+	}
 	public function pengadaan__bb_details()
 	{
 		return $this->hasMany(\App\Models\PengadaanBbDetail::class, 'id_bb');

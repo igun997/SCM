@@ -32,6 +32,20 @@ class ApiControl extends Controller
     {
       return view("invoice.lappengadaanbb");
     }
+    public function laporanpbbs(Request $req)
+    {
+      $a = MasterBb::all();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'portait');
+      return $pdf->stream();
+    }
+    public function laporanpp(Request $req)
+    {
+      $a = MasterProduk::all();
+      $data = [];
+      $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      return $pdf->stream();
+    }
     public function laporanproduksi(Request $req)
     {
       $a = Produksi::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
