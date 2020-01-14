@@ -127,10 +127,10 @@
           } );
       }
       async function chart() {
-        obj = "#chart-development-activity";
+        obj1 = "#chart-development-activity";
         res = await $.post("{{route("chart")}}",{pemasaran_harian:true}).then();
         var chart = c3.generate({
-          bindto: obj,
+          bindto: obj1,
           data: {
               x:"x",
               columns:res,
@@ -159,10 +159,10 @@
         });
       }
       async function peramalan() {
-        obj = "#peramalan";
+        obj2 = "#peramalan";
         res = await $.post("{{route("chart")}}",{peramalan:true}).then();
         var chart = c3.generate({
-          bindto: obj,
+          bindto: obj2,
           data: {
               x:"x",
               columns:res,
