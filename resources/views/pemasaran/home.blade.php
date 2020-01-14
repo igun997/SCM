@@ -204,6 +204,7 @@
       }
       stat();
       chart();
+      peramalan();
       setInterval(function () {
         peramalan();
         chart();
