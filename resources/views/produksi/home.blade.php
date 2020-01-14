@@ -105,7 +105,7 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2) {
+require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker) {
   $(document).ready(function(){
     //Chart
     var chart = c3.generate({
@@ -186,6 +186,63 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
     $("#lapproduksi").on('click',  function(event) {
       event.preventDefault();
       console.log("lapproduksi");
+      console.log("Laporan Pengadaan");
+      var form = [
+        "<div class=row>",
+        "<div class=col-md-12>",
+        "<div class=form-group>",
+        "<label>Tanggal Dari</label>",
+        "<input class='form-control date' id='dari' type='text' />",
+        "</div>",
+        "<div class=form-group>",
+        "<label>Tanggal Sampai</label>",
+        "<input class='form-control date' id='sampai' type='text' />",
+        "</div>",
+        "<div class=form-group>",
+        "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+        "</div>",
+        "</div>",
+        "</div>",
+      ]
+      modal = new jBox('Modal', {
+                  title: 'Laporan Produksi',
+                  overlay: false,
+                  width: '400px',
+                  responsiveWidth:true,
+                  height: '300px',
+                  createOnInit: true,
+                  content: form.join(""),
+                  draggable: false,
+                  adjustPosition: true,
+                  adjustTracker: true,
+                  repositionOnOpen: false,
+                  offset: {
+                    x: 0,
+                    y: 0
+                  },
+                  repositionOnContent: false,
+                  onCloseComplete:function(){
+                    console.log("Destruct Table");
+
+                  },
+                  onCreated:function(x){
+                    g = this.content;
+                    g.find(".date").datepicker({
+
+                    });
+                    g.find("#get").on('click', function(event) {
+                      event.preventDefault();
+                      dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                      console.log(dform);
+                      window.open(
+                        '{{route("laporan.produksi")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                        '_blank'
+                      );
+                    });
+                  }
+            });
+        modal.open();
+
     });
     $("#masterbb").on('click',function(event) {
       event.preventDefault();

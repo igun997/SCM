@@ -74,4 +74,22 @@ class Produksi extends Eloquent
 	{
 		return $this->hasMany(\App\Models\ProduksiDetail::class, 'id_produksi');
 	}
+	public function biaya_produksi($id)
+	{
+		$obj = \App\Models\ProduksiDetail::where(["id_produksi"=>$id]);
+		if ($obj->count() > 0) {
+			$total = 0;
+			foreach ($obj->get() as $k => $v) {
+				$step1 = $v->master_produk->master__komposisis;
+				$satuan = 0;
+				foreach ($step1 as $key => $value) {
+					$satuan = $satuan + (($value->jumlah * $value->rasio)*$value->harga_bahan);
+				}
+				$total = $total + ($v->jumlah*$satuan);
+			}
+			return $total;
+		}else {
+			return 0;
+		}
+	}
 }

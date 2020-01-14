@@ -33,6 +33,7 @@ Route::post('/stat',"ApiControl@stat")->name("chart");
 //All Access
 Route::get('/gen/laporanbb',"ApiControl@laporanbb")->name("laporan.pengadaan.bb");
 Route::get('/gen/laporanproduk',"ApiControl@laporanproduk")->name("laporan.pengadaan.produk");
+Route::get('/gen/laporanproduksi',"ApiControl@laporanproduksi")->name("laporan.produksi");
 
 Route::group(['middleware' => ['produksi']], function () {
   Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');

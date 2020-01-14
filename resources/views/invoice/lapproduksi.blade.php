@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Pengadaan Bahan Baku</title>
+    <title>Laporan Produksi</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
         body{
@@ -47,23 +47,23 @@
 </head>
 <body>
     <div class="container">
-      <h1 align="center">Laporan Pengadaan Bahan Baku</h1>
-      <h3  align="center">
-        Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
-      </h3>
-      <br>
+        <h1 align="center">Laporan Produksi</h1>
+        <h3  align="center">
+          Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
+        </h3>
+        <br>
         <table>
-
             <thead>
               <tr>
                 <th>No</th>
-                <th>Kode Pengadaan</th>
-                <th>Suplier</th>
+                <th>Kode Produksi</th>
+                <th>Jenis</th>
                 <th>Status</th>
                 <th>Konf. Direktur</th>
                 <th>Konf. Gudang</th>
-                <th>Biaya Pengadaan</th>
+                <th>Biaya Produksi</th>
                 <th>Tanggal Diterima</th>
+                <th>Tanggal Selesai</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
@@ -71,36 +71,37 @@
               @foreach($data->get() as $key => $value)
               <tr>
                 <td>{{($key+1)}}</td>
-                <td>{{$value->id_pengadaan_bb}}</td>
-                <td>{{$value->master_suplier->nama_suplier}}</td>
-                <td>{{status_pengadaan($value->status_pengadaan)}}</td>
+                <td>{{$value->id_produksi}}</td>
+                <td>{{ucfirst($value->jenis)}}</td>
+                <td>{{status_produksi($value->status_produksi)}}</td>
                 <td>{{konfirmasi($value->konfirmasi_direktur)}}</td>
                 <td>{{konfirmasi($value->konfirmasi_gudang)}}</td>
-                <td>Rp. {{number_format(\App\Models\PengadaanBbDetail::where(["id_pengadaan_bb"=>$value->id_pengadaan_bb])->select(\DB::raw("SUM(jumlah*harga) as total"))->first()->total)}}</td>
-                <td>{{(($value->tgl_diterima == null)?"-":date("d-m-Y",strtotime($value->tgl_diterima)))}}</td>
+                <td>Rp. {{number_format($value->biaya_produksi($value->id_produksi))}}</td>
+                <td>{{(($value->tgl_kon_gudang == null)?"-":date("d-m-Y",strtotime($value->tgl_kon_gudang)))}}</td>
+                <td>{{(($value->tgl_selesai_produksi == null)?"-":date("d-m-Y",strtotime($value->tgl_selesai_produksi)))}}</td>
                 <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
               </tr>
               @endforeach
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="3" align="center">Ketua Divisi WENOW</th>
-                <td colspan="3"></td>
-                <th colspan="3" align="center">Bag. Gudang</th>
+                <th colspan="4" align="center">Ketua Divisi WENOW</th>
+                <td colspan="2"></td>
+                <th colspan="4" align="center">Bag. Gudang</th>
               </tr>
               <tr>
-                <td colspan="3" style="height:100px">
+                <td colspan="4" style="height:100px">
 
                 </td>
-                <td colspan="3"></td>
-                <td colspan="3"  style="height:100px">
+                <td colspan="2"></td>
+                <td colspan="4"  style="height:100px">
 
                 </td>
               </tr>
               <tr>
-                <th colspan="3" align="center">Jatra Novianto</th>
-                <td colspan="3"></td>
-                <th colspan="3" align="center">Agus Herdian</th>
+                <th colspan="4" align="center">Jatra Novianto</th>
+                <td colspan="2"></td>
+                <th colspan="4" align="center">Septi Mahardian</th>
               </tr>
             </tfoot>
         </table>

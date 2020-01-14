@@ -47,10 +47,12 @@
 </head>
 <body>
     <div class="container">
+      <h1 align="center">Laporan Pengadaan Produk</h1>
+      <h3  align="center">
+        Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
+      </h3>
+      <br>
         <table>
-            <caption>
-                Laporan Pengadaan Produk
-            </caption>
             <thead>
               <tr>
                 <th>No</th>
@@ -59,7 +61,7 @@
                 <th>Status</th>
                 <th>Konf. Direktur</th>
                 <th>Konf. Gudang</th>
-                <th>Total Pengadaan</th>
+                <th>Biaya Pengadaan</th>
                 <th>Tanggal Diterima</th>
                 <th>Tanggal Dibuat</th>
               </tr>
