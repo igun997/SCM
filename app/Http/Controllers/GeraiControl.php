@@ -45,6 +45,7 @@ class GeraiControl extends Controller
           }
           $yes = GeraiOrderDetail::insert($item);
           if ($yes) {
+            GeraiOrder::where(["id"=>$id])->update(["progress"=>json_encode([["tgl"=>date("d-m-Y"),"status"=>"Order Dibuat"]])]);
             return response()->json(["status"=>1]);
           }else {
             return response()->json(["status"=>0]);
