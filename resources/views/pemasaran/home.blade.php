@@ -180,7 +180,7 @@
                   x: {
                       type: 'timeseries',
                       tick: {
-                          format: '%d-%m-%Y'
+                          format: '%m-%Y'
                       }
                   }
               },
