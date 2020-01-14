@@ -263,6 +263,7 @@ class ApiControl extends Controller
     {
       $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>2,"konfirmasi_direktur"=>1,"tgl_perubahan"=>date("Y-m-d")]);
       if ($find) {
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Disetujui Oleh Direktur',"pengadaan",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -272,6 +273,7 @@ class ApiControl extends Controller
     {
       $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>1,"catatan_direktur"=>$catatan,"tgl_perubahan"=>date("Y-m-d")]);
       if ($find) {
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditolak Oleh Direktur',"pengadaan",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -282,6 +284,7 @@ class ApiControl extends Controller
     {
       $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>2,"konfirmasi_direktur"=>1,"tgl_perubahan"=>date("Y-m-d")]);
       if ($find) {
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Disetujui Oleh Direktur',"pengadaan",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -291,6 +294,7 @@ class ApiControl extends Controller
     {
       $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>1,"catatan_direktur"=>$catatan,"tgl_perubahan"=>date("Y-m-d")]);
       if ($find) {
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditolak Oleh Direktur',"pengadaan",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -760,6 +764,8 @@ class ApiControl extends Controller
     {
       $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>8]);
       if ($find) {
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibatalkan Oleh Bag. Pengadaan ',"direktur",$id));
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibatalkan Oleh Bag. Pengadaan ',"gudang",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -769,6 +775,8 @@ class ApiControl extends Controller
     {
       $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>8]);
       if ($find) {
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibatalkan Oleh Bag. Pengadaan ',"direktur",$id));
+        event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibatalkan Oleh Bag. Pengadaan ',"gudang",$id));
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
@@ -784,6 +792,8 @@ class ApiControl extends Controller
       }else {
         if (PengadaanBbRetur::where(["id_pengadaan_bb"=>$id])->count() == 0) {
           $find = PengadaanBb::findOrFail($id)->update(["status_pengadaan"=>7]);
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditutup Oleh Bag. Pengadaan ',"direktur",$id));
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditutup Oleh Bag. Pengadaan ',"gudang",$id));
           return response()->json(["status"=>1]);
         }
         return response()->json(["status"=>0]);
@@ -799,6 +809,8 @@ class ApiControl extends Controller
       }else {
         if (PengadaanProdukRetur::where(["id_pengadaan_produk"=>$id])->count() == 0) {
           $find = PengadaanProduk::findOrFail($id)->update(["status_pengadaan"=>7]);
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditutup Oleh Bag. Pengadaan ',"direktur",$id));
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Ditutup Oleh Bag. Pengadaan ',"gudang",$id));
           return response()->json(["status"=>1]);
         }
         return response()->json(["status"=>0]);
@@ -811,6 +823,7 @@ class ApiControl extends Controller
       if ($find->count() > 0) {
         $up = $find->update(["perkiraan_tiba"=>$a,"tgl_perubahan"=>date("Y-m-d"),"dibaca_gudang"=>0,"status_pengadaan"=>3]);
         if ($up) {
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Di Proses Dengan Estimasi Tiba Tanggal '.date("d-m-Y",strtotime($a)),"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Data Pengadaan Sukses Tersimpan"]);
         }else {
           return response()->json(["status"=>0,"msg"=>"Data Pengadaan Tidak Berubah"]);
@@ -826,6 +839,8 @@ class ApiControl extends Controller
       if ($find->count() > 0) {
         $up = $find->update(["perkiraan_tiba"=>$a,"tgl_perubahan"=>date("Y-m-d"),"dibaca_gudang"=>0,"status_pengadaan"=>3]);
         if ($up) {
+
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Di Proses Dengan Estimasi Tiba Tanggal '.date("d-m-Y",strtotime($a)),"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Data Pengadaan Sukses Tersimpan"]);
         }else {
           return response()->json(["status"=>0,"msg"=>"Data Pengadaan Tidak Berubah"]);
@@ -1107,6 +1122,8 @@ class ApiControl extends Controller
       if ($insPengadaan) {
         $insBahanBaku = PengadaanProdukDetail::insert($joinBahan);
         if ($insBahanBaku) {
+          $id = $req->id_pengadaan_produk;
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibuat',"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Pengadaan Produk Sukses Di Ajukan, Menunggu Persetujuan Direktur"]);
         }else {
           PengadaanProduk::find($req->id_pengadaan_produk)->delete();
@@ -1140,6 +1157,8 @@ class ApiControl extends Controller
       if ($insPengadaan) {
         $insBahanBaku = PengadaanBbDetail::insert($joinBahan);
         if ($insBahanBaku) {
+          $id = $req->id_pengadaan_bb;
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dibuat',"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Pengadaan Bahan Baku Sukses Di Ajukan, Menunggu Persetujuan Direktur"]);
         }else {
           PengadaanBb::find($req->id_pengadaan_bb)->delete();
@@ -1303,6 +1322,9 @@ class ApiControl extends Controller
               $fail[] = ["nama"=>$r->nama_produk,"id"=>$r->id_produk,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
+
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dikonfirmasi Bag. Gudang',"pengadaan",$id));
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dikonfirmasi Bag. Gudang',"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Konfirmasi Barang Berhasil","fail"=>$fail]);
         }else {
           return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Data Tidak Tersimpan"]);
@@ -1335,6 +1357,8 @@ class ApiControl extends Controller
               $fail[] = ["nama"=>$r->nama,"id"=>$r->id_bb,"msg"=>"Barang Tidak Ditemukan"];
             }
           }
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dikonfirmasi Bag. Gudang',"pengadaan",$id));
+          event(new SCMNotif('Pengadaan Kode '.$id.' Telah Dikonfirmasi Bag. Gudang',"direktur",$id));
           return response()->json(["status"=>1,"msg"=>"Konfirmasi Barang Berhasil","fail"=>$fail]);
         }else {
           return response()->json(["status"=>0,"msg"=>"Konfirmasi Gagal Data Tidak Tersimpan"]);
@@ -1574,6 +1598,8 @@ class ApiControl extends Controller
         }
         $createDetail = PengadaanBbReturDetail::insert($detail);
         if ($createDetail) {
+          event(new SCMNotif('Retur Dengan Kode '.$id.' Telah Dibuat',"pengadaan",$id));
+          event(new SCMNotif('Retur Dengan Kode '.$id.' Telah Dibuat',"direktur",$id));
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);
@@ -1596,6 +1622,8 @@ class ApiControl extends Controller
         }
         $createDetail = PengadaanProdukReturDetail::insert($detail);
         if ($createDetail) {
+          event(new SCMNotif('Retur Dengan Kode '.$id.' Telah Dibuat',"pengadaan",$id));
+          event(new SCMNotif('Retur Dengan Kode '.$id.' Telah Dibuat',"direktur",$id));
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);
@@ -1618,6 +1646,7 @@ class ApiControl extends Controller
           $up = $cek->update(["konfirmasi_direktur"=>1,"catatan_direktur"=>"Ditolak Oleh Bag. Pengadaan","konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
         }
         if ($up) {
+          event(new SCMNotif('Status Pengadaan Dengan Kode '.$id.' Telah Diubah',"direktur",$id));
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);
@@ -1638,6 +1667,7 @@ class ApiControl extends Controller
           $up = $cek->update(["konfirmasi_direktur"=>1,"catatan_direktur"=>"Ditolak Oleh Bag. Pengadaan","konfirmasi_pengadaan"=>1,"status_retur"=>1,"catatan_pengadaan"=>$catatan]);
         }
         if ($up) {
+          event(new SCMNotif('Status Pengadaan Dengan Kode '.$id.' Telah Diubah',"direktur",$id));
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);
@@ -1682,6 +1712,8 @@ class ApiControl extends Controller
               }
             }
           }
+
+          event(new SCMNotif('Status Retur Dengan Kode '.$id.' Telah Diubah',"pengadaan",$id));
           return response()->json(["status"=>1,"data"=>$fail]);
 
         }else {
@@ -1726,6 +1758,7 @@ class ApiControl extends Controller
               }
             }
           }
+          event(new SCMNotif('Status Retur Dengan Kode '.$id.' Telah Diubah',"pengadaan",$id));
           return response()->json(["status"=>1,"data"=>$fail]);
 
         }else {
@@ -1797,6 +1830,7 @@ class ApiControl extends Controller
           if (count($fail) > 0) {
             return ["status"=>0,"msg"=>"Error Ditemukan","data"=>$fail];
           }
+          event(new SCMNotif('Pesanan Baru Dengan Kode Pemesanan '.$lastid.' Telah Dibuat',"direktur",$id));
           return ["status"=>1,"data"=>[],"msg"=>"Sukses Melakukan Transaksi"];
         }else {
           Pemesanan::delete(["id_pemesanan"=>$lastid]);
@@ -1822,6 +1856,7 @@ class ApiControl extends Controller
       }
       $s = $this->__createTransaction(["id_pelanggan"=>$req->id_pelanggan,"catatan_pemesanan"=>$req->catatan_pemesanan,"pajak"=>$ppn],$compact);
       if ($s["status"] == 1) {
+
         return response()->json(["status"=>1,"msg"=>$s["msg"]]);
       }else {
         return response()->json(["status"=>0,"msg"=>$s["msg"],"data"=>$s["data"]]);
@@ -1899,6 +1934,7 @@ class ApiControl extends Controller
           $set = Pemesanan::where(["id_pemesanan"=>$id]);
           $up = $set->update(["bukti"=>$imageName,"status_pembayaran"=>1]);
           if ($up) {
+            event(new SCMNotif('Bukti Pengiriman Kode Pemesanan '.$id.' Telah Diupload',"direktur",$id));
             return ["status"=>1];
           }else {
             return ["status"=>0];
@@ -1912,6 +1948,7 @@ class ApiControl extends Controller
         if ($set->count() > 0) {
           $up = $set->update($data);
           if ($up) {
+            event(new SCMNotif('Status Pemesanan Dengan Kode '.$id.' Telah Berubah',"direktur",$id));
             return response()->json(["status"=>1]);
           }else {
             return response()->json(["status"=>0]);
@@ -1984,6 +2021,7 @@ class ApiControl extends Controller
         if ($set->count() > 0) {
           $up = $set->update($data);
           if ($up) {
+            event(new SCMNotif('Pemesanan Dengan Kode '.$id.' Telah Diubah',"pemasaran",$id));
             return response()->json(["status"=>1]);
           }else {
             return response()->json(["status"=>0]);
@@ -2065,6 +2103,7 @@ class ApiControl extends Controller
           $ins = PengirimanDetail::insert($batch);
           if ($ins) {
             MasterTransportasi::where(["id_transportasi"=>$req->id_transportasi])->update(["status_kendaraan"=>2]);
+            event(new SCMNotif('Pengiriman Dengan Kode '.$id.' Telah Dibuat',"direktur",$id));
             return response()->json(["status"=>1,"msg"=>"Pengiriman Sukses Di Simpan"]);
           }else {
             foreach ($req->item as $key => $value) {
@@ -2115,6 +2154,7 @@ class ApiControl extends Controller
             MasterTransportasi::where(["id_transportasi"=>$row->id_transportasi])->update(["status_kendaraan"=>0]);
             $set->update(["tgl_kembali"=>date("Y-m-d")]);
           }
+          event(new SCMNotif('Status Pengiriman Dengan Kode '.$id.' Telah Diubah',"direktur",$id));
           return response()->json(["status"=>1]);
         }else {
           return response()->json(["status"=>0]);
@@ -2291,17 +2331,18 @@ class ApiControl extends Controller
             $row2 = $set->first();
             $set->update(["stok"=>($row2->stok+$value->jumlah),"harga_distribusi"=>(($row2->harga_produksi*($persen/100))+$row2->harga_produksi)]);
           }
+
         }
+        event(new SCMNotif('Status Produksi Kode '.$id.' Telah Diubah',"direktur",$id));
         $a->update($datas);
         return response()->json(["status"=>1]);
       }else {
         return response()->json(["status"=>0]);
       }
     }
-    public function notif_common(Request $req)
+    public function notif_common()
     {
-      $a = event(new SCMNotif('Ojon Ganti',"produksi","google.com"));
-      return ["status"=>1];
+
     }
     public function produksi_insert(Request $req)
     {
@@ -2324,6 +2365,7 @@ class ApiControl extends Controller
         }
         $i = ProduksiDetail::insert($item);
         if ($i) {
+           event(new SCMNotif('Produksi Dengan Kode '.$id.' Telah Dibuat',"direktur",$id));
           return response()->json(["status"=>1,"debug"=>$arr,"msg"=>"Sukses Input Data Produksi"]);
         }else {
           return response()->json(["status"=>0,"msg"=>"Gagal Input Data Produksi"]);
@@ -2344,12 +2386,14 @@ class ApiControl extends Controller
       };
       if ($req->has("pemasaran_harian")) {
           $now = date("Y-m-d");
-          $day7 = date("Y-m-d",strtotime("-7 days",strtotime($now)));
+          $day7 = date("Y-m-d",strtotime("-14 days",strtotime($now)));
           $date = $loopDate($now,$day7);
           $array = [];
           $data = [];
-          $data[] = "Penjualan";
           $tgl = [];
+          $bersih = [];
+          $data[] = "Kotor";
+          $bersih[] = "Bersih";
           $tgl[] = "x";
           foreach ($date as $key => $value) {
             $tgl[] = $value;
@@ -2361,13 +2405,23 @@ class ApiControl extends Controller
               foreach ($row->pemesanan__details as $k => $v) {
                 $total = $total + ($v->jumlah*$v->harga);
               }
-              $data[] = $total;
+              $data[] = ($total+($total*$row->pajak));
             }else {
               $data[] = 0;
+            }
+            if ($order->count() > 0) {
+              $total = 0;
+              foreach ($row->pemesanan__details as $k => $v) {
+                $total = $total + (($v->jumlah*($v->harga-$v->master_produk->harga_produksi)));
+              }
+              $bersih[] = ($total+($total*$row->pajak));;
+            }else {
+              $bersih[] = 0;
             }
           }
           $array[] = $data;
           $array[] = $tgl;
+          $array[] = $bersih;
           return $array;
       }elseif ($req->has("stat")) {
         $pb = PengadaanBb::count();

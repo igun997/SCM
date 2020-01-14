@@ -422,6 +422,7 @@
     channel.bind('notif', function(data)  {
       console.log(data);
       if (current == data.type) {
+        new jBox('Notice', {content: 'Notifikasi Baru Diterima',showCountdown:true, color: 'blue'});
         $("#notif_class").attr('class', 'nav-unread');
         template = '<a href="'+data.link+'" class="dropdown-item d-flex"><div>'+data.message+'</div></a>';
         $("#notif_item").append(template);

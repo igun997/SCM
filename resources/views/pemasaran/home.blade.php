@@ -137,6 +137,13 @@
                           format: '%d-%m-%Y'
                       }
                   }
+              },
+          tooltip: {
+                  format: {
+                      value: function(value) {
+                          return "Rp. "+d3.format(",.2f")(value)
+                      }
+                  }
               }
       });
       }

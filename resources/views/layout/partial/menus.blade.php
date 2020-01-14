@@ -51,6 +51,14 @@
               <a href="" id="pproduk" class="dropdown-item ">Produk</a>
             </div>
           </li>
+
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="lapbb" class="dropdown-item ">Pengadaan Bahan Baku</a>
+              <a href="" id="lapproduk" class="dropdown-item ">Pengadaan Produk</a>
+            </div>
+          </li>
           @elseif(session()->get("level") == "gudang")
           <li class="nav-item">
             <a href="{{route("private.gudang.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
@@ -71,6 +79,12 @@
               <a href="" id="pbahanbaku" class="dropdown-item ">Pengadaan Bahan Baku</a>
               <a href="" id="pproduk" class="dropdown-item ">Pengadaan Produk</a>
               <a href="#" class="dropdown-item " id="produksimonitoring">Produksi Barang</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="lapbarang" class="dropdown-item ">Data Barang</a>
             </div>
           </li>
           @elseif(session()->get("level") == "pemasaran")
@@ -127,6 +141,14 @@
             </div>
           </li>
 
+          <li class="nav-item dropdown">
+            <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown"><i class="fe fe-file"></i>Laporan Produksi</a>
+            <div class="dropdown-menu dropdown-menu-arrow">
+              <a href="" id="lapselesai" class="dropdown-item ">Selesai Produksi</a>
+              <a href="" id="lapproses" class="dropdown-item ">Sedang Di Produksi</a>
+              <a href="" id="lapproses" class="dropdown-item ">Gagal Di Produksi</a>
+            </div>
+          </li>
           @endif
         </ul>
       </div>
