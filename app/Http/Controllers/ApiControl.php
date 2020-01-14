@@ -1886,7 +1886,7 @@ class ApiControl extends Controller
           if (count($fail) > 0) {
             return ["status"=>0,"msg"=>"Error Ditemukan","data"=>$fail];
           }
-          event(new SCMNotif('Pesanan Baru Dengan Kode Pemesanan '.$lastid.' Telah Dibuat',"direktur",$id));
+          event(new SCMNotif('Pesanan Baru Dengan Kode Pemesanan '.$lastid.' Telah Dibuat',"direktur",$lastid));
           return ["status"=>1,"data"=>[],"msg"=>"Sukses Melakukan Transaksi"];
         }else {
           Pemesanan::delete(["id_pemesanan"=>$lastid]);
