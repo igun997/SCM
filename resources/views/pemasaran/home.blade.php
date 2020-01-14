@@ -202,12 +202,12 @@
         $("#st_penjualan").html(res.pemasaran[0]);
         $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
       }
-      // stat();
-      // chart();
-      peramalan();
+      stat();
+      chart();
       setInterval(function () {
-        // chart();
-        // stat();
+        peramalan();
+        chart();
+        stat();
       }, 5000);
       $("#lppmproduk").on('click', function(event) {
         event.preventDefault();
