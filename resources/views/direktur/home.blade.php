@@ -105,9 +105,8 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2,dt) {
     $(document).ready(function(){
-      //Chart
       var chart = c3.generate({
         bindto: '#chart-development-activity', // id of chart wrapper
         data: {

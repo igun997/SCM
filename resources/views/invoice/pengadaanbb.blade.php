@@ -105,8 +105,6 @@
                   <td colspan="1">{{$invoice->catatan_direktur}}</td>
                   <td colspan="2">{{$invoice->catatan_gudang}}</td>
                 </tr>
-            </tbody>
-            <tfoot>
                 <tr>
                     <th colspan="3">Total</th>
                     <td>Rp {{ number_format($invoice->total_price) }}</td>
@@ -131,6 +129,42 @@
                     <th colspan="3">Konfirmasi Gudang</th>
                     <td>{{ konfirmasi($invoice->konfirmasi_gudang) }}</td>
                 </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                  <th colspan="2" align="center">Bag. Pengadaan</th>
+                  <th colspan="2" align="center">Bag. Gudang</th>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <center>
+                      <img src="{{session()->get("ttd")}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                  <td colspan="2">
+                    <center>
+                      <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                </tr>
+                <tr>
+                  <th colspan="2" align="center">{{session()->get("nama")}}</th>
+                  <th colspan="2" align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</th>
+                </tr>
+                <tr>
+                  <th colspan="4" align="center">Direktur</th>
+                </tr>
+                <tr>
+                  <td colspan="4">
+                    <center>
+                      <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                </tr>
+                <tr>
+                  <th colspan="4" align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</th>
+                </tr>
+
             </tfoot>
         </table>
         @if($invoice->pengadaan__bb_returs->count() > 0)
@@ -193,6 +227,40 @@
                     <th colspan="3">Konfirmasi Direktur</th>
                     <td>{{ konfirmasi($invoice->pengadaan__bb_returs->first()->konfirmasi_direktur) }}</td>
                 </tr>
+                <tr>
+                  <th colspan="2" align="center">Bag. Pengadaan</th>
+                  <th colspan="2" align="center">Bag. Gudang</th>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <center>
+                      <img src="{{session()->get("ttd")}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                  <td colspan="2">
+                    <center>
+                      <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                </tr>
+                <tr>
+                  <th colspan="2" align="center">{{session()->get("nama")}}</th>
+                  <th colspan="2" align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</th>
+                </tr>
+                <tr>
+                  <th colspan="4" align="center">Direktur</th>
+                </tr>
+                <tr>
+                  <td colspan="4">
+                    <center>
+                      <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                    </center>
+                  </td>
+                </tr>
+                <tr>
+                  <th colspan="4" align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</th>
+                </tr>
+
             </tfoot>
         </table>
         @endif

@@ -41,10 +41,12 @@ Route::get('/gen/laporanp',"ApiControl@laporanpp")->name("laporan.gudang.produk"
 Route::get('/gen/listproduk',"ApiControl@listproduk")->name("listproduk");
 Route::get('/gen/peramalan/{jenis?}',"ApiControl@peramalan")->name("peramalan");
 Route::post('/gen/saveperalaman',"ApiControl@prakira_insert")->name("prakira_insert");
+Route::post("/api/uploadTTD","ApiControl@uploadTTD")->name("upload_ttd");
 
 Route::group(['middleware' => ['produksi']], function () {
   Route::get('/produksi',"ProduksiControl@index")->name('produksi.home');
   Route::get('/api/produksi/master_bb_read/{id?}',"ApiControl@master_bb_read")->name("produksi.api.master_bb_read");
+  Route::get('/api/produksi/detailbiayaproduksi/{id?}',"ApiControl@detailbiayaproduksi")->name("produksi.api.detailbiayaproduksi");
   Route::post('/api/produksi/master_bb_insert',"ApiControl@master_bb_insert")->name("produksi.api.master_bb_insert");
   Route::post('/api/produksi/master_bb_update/{id?}',"ApiControl@master_bb_update")->name("produksi.api.master_bb_update");
 

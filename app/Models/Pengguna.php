@@ -54,6 +54,7 @@ class Pengguna extends Eloquent
 		'status',
 		'email',
 		'password',
+		'ttd',
 		'tgl_register'
 	];
 

@@ -1521,7 +1521,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
               "</div>",
               "<div class=col-12>",
               "<div class=table-responsive>",
-              table(["Kode Produk","Nama Produk","Jumlah Produksi","Biaya Produksi"],[],"list_produksi"),
+              table(["Kode Produk","Nama Produk","Jumlah Produksi","Biaya Produksi",""],[],"list_produksi"),
               "</div>",
               "</div>",
               "</div>",
@@ -1562,12 +1562,53 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                     ttotal = ttotal + ((val.harga_bahan * val.jumlah)*val.rasio);
                   });
                   total = (ttotal*el.jumlah);
-                  dt.push([el.master_produk.id_produk,el.master_produk.nama_produk,el.jumlah,number_format(total)]);
+                  dt.push([el.master_produk.id_produk,el.master_produk.nama_produk,el.jumlah,number_format(total),"<button class='btn btn-small btn-primary detail_produksi' data-id='"+el.id_pd+"'><li class='fa fa-search'></li></button>"]);
                 });
                 kt.find("#list_produksi").attr("width","100%");
                 kt.find("#list_produksi").DataTable({
                   data:dt
                 })
+                kt.find("#list_produksi").on('click', '.detail_produksi', function(event) {
+                  event.preventDefault();
+                  id = $(this).data("id");
+                  tb = [
+                    "<div class=row>",
+                    "<div class=col-md-12>",
+                    "<div class=table-responsive>",
+                    table(["Kode Bahan Baku","Nama Bahan","Harga Bahan","Rasio","Jumlah Bahan","Jml * Rasio","Harga Produksi Per Produk","Biaya Produksi"],[],"tb_detil"),
+                    "</div>",
+                    "</div>",
+                    "</div>",
+                  ]
+                  console.log(id);
+                  ms = new jBox('Modal', {
+                    title: 'Detail Penggunaan Bahan Baku',
+                    overlay: false,
+                    width: '50%',
+                    responsiveWidth:true,
+                    height: '600px',
+                    createOnInit: true,
+                    content: tb.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+                    },
+                    onCreated:function(rs){
+                      var s = this.content.find("#tb_detil").DataTable({
+                        ajax:"{{route("produksi.api.detailbiayaproduksi")}}/"+id
+                      })
+                    }
+                  });
+                  ms.open();
+                });
               }});
               m.open();
           });

@@ -1000,7 +1000,7 @@
         if (keyword != null) {
           url = "{{route("pemasaran.api.p_produk_read")}}/"+keyword;
         }
-        $.get(url,function(r){
+
         modal = new jBox('Modal', {
           title: 'Penjualan Produk',
           overlay: false,
@@ -1022,9 +1022,10 @@
             console.log("Destruct Table");
 
           },
-          onCreated:function(x){
+          onCreated: async function(x){
             k = this.content;
             k.find("#list").html("");
+              r = await $.get(url).then();
               if (r.status == 1) {
                 $.each(r.data,function(index, el) {
                   data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
@@ -1098,11 +1099,20 @@
                 event.preventDefault();
                 new jBox('Notice', {content: 'Transaksi Selesai',showCountdown:true, color: 'green'});
               });
-              k.find("#cari").on('change', function(event) {
+              k.find("#cari").on('change', async function(event) {
                 event.preventDefault();
                 keyword = $(this).val();
-                modal.close();
-                $("#pmproduk").trigger("click");
+                url = "{{route("pemasaran.api.p_produk_read")}}/"+keyword;
+                r = await $.get(url).then();
+                k.find("#list").html("");
+                if (r.status == 1) {
+                  $.each(r.data,function(index, el) {
+                    data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
+                    k.find("#list").append(data);
+                  });
+                }else{
+                  new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
+                }
               });
               k.find("#delfit").on('click', function(event) {
                 event.preventDefault();
@@ -1113,9 +1123,7 @@
           }
         });
         modal.open();
-      }).fail(function(r){
-        new jBox('Notice', {content: "Anda Terputus Dengan Server",showCountdown:true, color: 'red'});
-      });
+
       });
       $("#produklist").on("click", function(event) {
         var btn = function(id,status_pesanan,status_pembayaran){

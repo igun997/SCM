@@ -31,6 +31,10 @@
           <li class="nav-item">
             <a href="" id="pengaturan" class="nav-link"><i class="fe fe-settings"></i> Pengaturan Aplikasi</a>
           </li>
+          <li class="nav-item">
+            <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
+          </li>
+
           @elseif(session()->get("level") == "pengadaan")
           <li class="nav-item">
             <a href="{{route("private.pengadaan.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
@@ -58,6 +62,9 @@
               <a href="" id="lapbb" class="dropdown-item ">Pengadaan Bahan Baku</a>
               <a href="" id="lapproduk" class="dropdown-item ">Pengadaan Produk</a>
             </div>
+          </li>
+          <li class="nav-item">
+            <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
           </li>
           @elseif(session()->get("level") == "gudang")
           <li class="nav-item">
@@ -87,6 +94,10 @@
               <a href="" id="lapbb" class="dropdown-item ">Bahan Baku</a>
               <a href="" id="lapproduk" class="dropdown-item ">Produk</a>
             </div>
+          </li>
+
+          <li class="nav-item">
+            <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
           </li>
           @elseif(session()->get("level") == "pemasaran")
           <li class="nav-item">
@@ -125,6 +136,10 @@
               <a href="" id="lppmpengiriman" class="dropdown-item ">Pengiriman Produk</a>
             </div>
           </li>
+
+          <li class="nav-item">
+            <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
+          </li>
           @elseif(session()->get("level") == "produksi")
           <li class="nav-item">
             <a href="{{route("produksi.home")}}" class="nav-link"><i class="fe fe-home"></i> Beranda</a>
@@ -148,6 +163,10 @@
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="" id="lapproduksi" class="dropdown-item ">Produksi</a>
             </div>
+          </li>
+
+          <li class="nav-item">
+            <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
           </li>
           @endif
         </ul>

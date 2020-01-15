@@ -22,10 +22,40 @@ class ApiControl extends Controller
       $cek = Pengguna::where($data);
       if ($cek->count() > 0) {
         $row = $cek->first();
-        session(["level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna]);
+        session(["level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna,"ttd"=>$row->ttd]);
         return response()->json(["status"=>1,"path"=>url("$row->level")]);
       }else {
         return response()->json(["status"=>0]);
+      }
+    }
+    public function detailbiayaproduksi($id)
+    {
+      $a = ProduksiDetail::where(["id_pd"=>$id]);
+      if ($a->count() > 0) {
+        $row = $a->first();
+        $list_produk = $row->master_produk;
+        $list_komposisi = $list_produk->master__komposisis;
+        $list_bahan = [];
+        $list_bahan["data"] = [];
+        foreach ($list_komposisi as $key => $value) {
+          $harga_satuan =  $value->harga_bahan;
+          $jml = ($value->rasio*$value->jumlah);
+          $list_bahan["data"][] = [$value->master_bb->id_bb,$value->master_bb->nama,$value->harga_bahan,$value->rasio,$value->jumlah,$jml." ".$value->master_bb->master_satuan->nama_satuan,number_format(($harga_satuan*$jml)),number_format(($harga_satuan*$jml)*$row->jumlah)];
+        }
+        return response()->json($list_bahan);
+      }else {
+        $list_bahan["data"] = [];
+        return response()->json($list_bahan);
+      }
+    }
+    public function uploadTTD(Request $req)
+    {
+      $id = session()->get("id_pengguna");
+      $a = Pengguna::where(["id_pengguna"=>$id])->update(["ttd"=>$req->ttd]);
+      if ($a) {
+        return ["status"=>1];
+      }else {
+        return ["status"=>0];
       }
     }
     public function test()
@@ -112,21 +142,21 @@ class ApiControl extends Controller
     {
       $a = MasterBb::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'portait');
+      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'portait');
       return $pdf->stream();
     }
     public function laporanpp(Request $req)
     {
       $a = MasterProduk::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function laporanproduksi(Request $req)
     {
       $a = Produksi::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       $data = [];
-      $pdf = PDF::loadView('invoice.lapproduksi', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lapproduksi', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function laporanproduk(Request $req)
@@ -134,7 +164,7 @@ class ApiControl extends Controller
       $pengadaan = PengadaanProduk::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengadaanproduk', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengadaanproduk', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function laporanbb(Request $req)
@@ -142,7 +172,7 @@ class ApiControl extends Controller
       $pengadaan = PengadaanBb::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function laporanpengiriman(Request $req)
@@ -150,7 +180,7 @@ class ApiControl extends Controller
       $pemasaran = Pengiriman::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengiriman', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengiriman', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function laporanpemasaran(Request $req)
@@ -158,7 +188,7 @@ class ApiControl extends Controller
       $pemasaran = Pemesanan::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappemasaran', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.lappemasaran', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     //Direktur
@@ -1911,7 +1941,7 @@ class ApiControl extends Controller
         if ($d->count() > 0) {
           return response()->json(["status"=>1,"data"=>$d->get()]);
         }else {
-          return response()->json(["status"=>0,"msg"=>"Data Dengan Kode Barang ".$keyword." Tidak Ditemukan"]);
+          return response()->json(["status"=>0,"msg"=>"Data Dengan Kode Barang ".$id." Tidak Ditemukan"]);
         }
       }
     }
@@ -2335,7 +2365,7 @@ class ApiControl extends Controller
       }
         $invoice->pajak_total = ($invoice->pajak * $invoice->total);
         $invoice->total_price =  ($invoice->pajak_total + $invoice->total);
-      $pdf = PDF::loadView('invoice.pesanan', ["invoice"=>$invoice,"title"=>"INVOICE PEMESANAN"])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.pesanan', ["invoice"=>$invoice,"title"=>"INVOICE PEMESANAN"])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function invoicePengadaaan($id)
@@ -2349,7 +2379,7 @@ class ApiControl extends Controller
         $invoice->total = $invoice->total + ($value->harga*$value->jumlah);
       }
         $invoice->total_price =  $invoice->total;
-      $pdf = PDF::loadView('invoice.pengadaan', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN PRODUK"])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.pengadaan', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN PRODUK"])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
     public function invoicePengadaaanbb($id)
@@ -2363,8 +2393,9 @@ class ApiControl extends Controller
         $invoice->total = $invoice->total + ($value->harga*$value->jumlah);
       }
         $invoice->total_price =  $invoice->total;
-      $pdf = PDF::loadView('invoice.pengadaanbb', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN BAHAN BAKU"])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.pengadaanbb', ["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN BAHAN BAKU"])->setPaper('a3', 'portait');
       return $pdf->stream();
+      // return view("invoice.pengadaanbb",["invoice"=>$invoice,"title"=>"INVOICE PENGADAAN BAHAN BAKU"]);
     }
 
     public function produksi_listproduk()

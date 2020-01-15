@@ -405,7 +405,108 @@
       ];
       return cookingform.join("");
     }
-  require(['jquery','Pusher'], function ($,Pusher) {
+  require(['jquery','Pusher','sign'], function ($,Pusher,SignaturePad) {
+
+
+    $("#sign").on('click', function(event) {
+      event.preventDefault();
+      var s = [
+        "<div class=row>",
+        "<div class=col-md-12>",
+        "<canvas class='bg-gray' width='750px' height='350'>",
+        "</canvas>",
+        "</div>",
+        "<div class=col-md-12>",
+        "<button class='btn btn-large btn-primary m-2' id='set' type='button'>Simpan Tanda Tangan</button>",
+        "<button class='btn btn-large btn-primary m-2' id='reset' type='button'>Reset Tanda Tangan</button>",
+        "<input class='btn btn-large btn-primary m-2' type='file' id='frmData' />",
+        "</div>",
+        "</div>",
+      ]
+      ms = new jBox('Modal', {
+        title: 'E-Signature',
+        overlay: false,
+        width: '800px',
+        responsiveWidth:true,
+        height: '800px',
+        createOnInit: true,
+        content: s.join(""),
+        draggable: false,
+        adjustPosition: true,
+        adjustTracker: true,
+        repositionOnOpen: false,
+        offset: {
+          x: 0,
+          y: 0
+        },
+        repositionOnContent: false,
+        onCloseComplete:function(){
+
+        },
+        onCreated:function(rs){
+          j = this.content;
+          console.log("Canvas");
+          var canvas = document.querySelector("canvas");
+          console.log(canvas);
+          var signaturePad  = new SignaturePad(canvas,{
+            penColor: "#000"
+          });
+          signaturePad.fromDataURL("{{session()->get("ttd")}}");
+          j.find("#set").on('click', async function(event) {
+            event.preventDefault();
+            const data = signaturePad.toDataURL();
+            const b64toBlob = (b64Data, contentType='', sliceSize=512) => {
+              const byteCharacters = atob(b64Data);
+              const byteArrays = [];
+
+              for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                  byteNumbers[i] = slice.charCodeAt(i);
+                }
+
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+              }
+
+              const blob = new Blob(byteArrays, {type: contentType});
+              return blob;
+            }
+            res = await $.post('{{route("upload_ttd")}}',{ttd:data}).then();
+            if (res.status == 1) {
+              new jBox('Notice', {content: "Sukses Upload Tanda Tangan",showCountdown:true, color: 'green'});
+            }else {
+              new jBox('Notice', {content: "Gagal Upload Tanda Tangan",showCountdown:true, color: 'red'});
+            }
+          });
+          j.find("#reset").on('click', function(event) {
+            event.preventDefault()
+            signaturePad.clear();
+          });
+          j.find("#frmData").on('change',  function(event) {
+            event.preventDefault();
+            signaturePad.clear();
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+
+            async function Main(j,sig) {
+               const file = document.querySelector('#frmData').files[0];
+               d = await toBase64(file);
+               sig.fromDataURL(d);
+            }
+            Main(j,signaturePad);
+          });
+        }
+      });
+      ms.open();
+    });
+
     console.log(Pusher);
     $("#parent_bell").on('click', function(event) {
       event.preventDefault();
