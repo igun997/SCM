@@ -40,7 +40,7 @@ class ApiControl extends Controller
         foreach ($list_komposisi as $key => $value) {
           $harga_satuan =  $value->harga_bahan;
           $jml = (($value->rasio*$value->jumlah)*$row->jumlah);
-          $list_bahan["data"][] = [$value->master_bb->id_bb,$value->master_bb->nama,$value->harga_bahan,$value->rasio,$value->jumlah,$jml." ".$value->master_bb->master_satuan->nama_satuan,number_format(($harga_satuan*$jml)),number_format(($harga_satuan*$jml)*$row->jumlah)];
+          $list_bahan["data"][] = [$value->master_bb->id_bb,$value->master_bb->nama,$value->harga_bahan,$value->rasio,($value->jumlah*$row->jumlah),$jml." ".$value->master_bb->master_satuan->nama_satuan,number_format(($harga_satuan*$jml)),number_format(($harga_satuan*$jml)*$row->jumlah)];
         }
         return response()->json($list_bahan);
       }else {
