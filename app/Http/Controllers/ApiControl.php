@@ -143,6 +143,7 @@ class ApiControl extends Controller
       $a = MasterBb::all();
       $data = [];
       $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'portait');
+      // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
       return $pdf->stream();
     }
     public function laporanpp(Request $req)
@@ -2366,6 +2367,7 @@ class ApiControl extends Controller
         $invoice->pajak_total = ($invoice->pajak * $invoice->total);
         $invoice->total_price =  ($invoice->pajak_total + $invoice->total);
       $pdf = PDF::loadView('invoice.pesanan', ["invoice"=>$invoice,"title"=>"INVOICE PEMESANAN"])->setPaper('a3', 'landscape');
+      // return view("invoice.pesanan",["invoice"=>$invoice,"title"=>"INVOICE PEMESANAN"]);
       return $pdf->stream();
     }
     public function invoicePengadaaan($id)

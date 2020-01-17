@@ -47,6 +47,7 @@
 </head>
 <body>
     <div class="container">
+        @include("invoice.head")
         <table>
             <caption>
                 {{$title}}
@@ -213,20 +214,20 @@
                     <td>{{$row->catatan_retur}}</td>
                 </tr>
                 @endforeach
+                <tr>
+                  <th colspan="3">Status Retur</th>
+                  <td>{{ status_retur($invoice->pengadaan__bb_returs->first()->status_retur) }}</td>
+                </tr>
+                <tr>
+                  <th colspan="3">Konfirmasi Pengadaan</th>
+                  <td>{{ konfirmasi($invoice->pengadaan__bb_returs->first()->konfirmasi_pengadaan) }}</td>
+                </tr>
+                <tr>
+                  <th colspan="3">Konfirmasi Direktur</th>
+                  <td>{{ konfirmasi($invoice->pengadaan__bb_returs->first()->konfirmasi_direktur) }}</td>
+                </tr>
             </tbody>
             <tfoot>
-                <tr>
-                    <th colspan="3">Status Retur</th>
-                    <td>{{ status_retur($invoice->pengadaan__bb_returs->first()->status_retur) }}</td>
-                </tr>
-                <tr>
-                    <th colspan="3">Konfirmasi Pengadaan</th>
-                    <td>{{ konfirmasi($invoice->pengadaan__bb_returs->first()->konfirmasi_pengadaan) }}</td>
-                </tr>
-                <tr>
-                    <th colspan="3">Konfirmasi Direktur</th>
-                    <td>{{ konfirmasi($invoice->pengadaan__bb_returs->first()->konfirmasi_direktur) }}</td>
-                </tr>
                 <tr>
                   <th colspan="2" align="center">Bag. Pengadaan</th>
                   <th colspan="2" align="center">Bag. Gudang</th>

@@ -7,6 +7,10 @@
     <title>Laporan Bahan Baku</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
+        @page {
+          margin-top: 0px;
+          margin-bottom: 0px;
+        }
         body{
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             color:#333;
@@ -47,6 +51,7 @@
 </head>
 <body>
     <div class="container">
+      @include("invoice.head")
         <h1 align="center">Laporan Bahan Baku</h1>
         <h3  align="center">
           Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
@@ -84,21 +89,24 @@
             <tfoot>
               <tr>
                 <th colspan="3" align="center">Ketua Divisi WENOW</th>
-                <td colspan="3"></td>
+                <td colspan="3" rowspan="3"></td>
                 <th colspan="3" align="center">Bag. Gudang</th>
               </tr>
               <tr>
-                <td colspan="3" style="height:400px">
-
+                <td colspan="3" style="height:100px">
+                  <center>
+                    <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                  </center>
                 </td>
-                <td colspan="3"></td>
-                <td colspan="3"  style="height:400px">
 
+                <td colspan="3"  style="height:100px">
+                  <center>
+                    <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                  </center>
                 </td>
               </tr>
               <tr>
                 <th colspan="3" align="center">Jatra Novianto</th>
-                <td colspan="3"></td>
                 <th colspan="3" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>

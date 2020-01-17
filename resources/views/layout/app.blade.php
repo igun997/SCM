@@ -413,7 +413,7 @@
       var s = [
         "<div class=row>",
         "<div class=col-md-12>",
-        "<canvas class='bg-gray' width='750px' height='350'>",
+        "<canvas class='bg-gray' style='touch-action: none;' width='750px' height='350'>",
         "</canvas>",
         "</div>",
         "<div class=col-md-12>",

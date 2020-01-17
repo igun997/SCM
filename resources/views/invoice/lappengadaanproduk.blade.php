@@ -7,6 +7,10 @@
     <title>Laporan Pengadaan Produk</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
+    @page {
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
         body{
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             color:#333;
@@ -47,6 +51,7 @@
 </head>
 <body>
     <div class="container">
+      @include("invoice.head")
       <h1 align="center">Laporan Pengadaan Produk</h1>
       <h3  align="center">
         Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
@@ -89,11 +94,15 @@
               </tr>
               <tr>
                 <td colspan="3" style="height:100px">
-
+                  <center>
+                    <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                  </center>
                 </td>
                 <td colspan="3"></td>
                 <td colspan="3"  style="height:100px">
-
+                  <center>
+                    <img src="{{(\App\Models\Pengguna::where(['level'=>"pengadaan"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+                  </center>
                 </td>
               </tr>
               <tr>
