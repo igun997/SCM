@@ -14,6 +14,10 @@
             font-size:18px;
             margin:0;
         }
+        @page {
+          margin-top: 0px;
+          margin-bottom: 0px;
+        }
         .container{
             margin:0 auto;
             margin-top:35px;
