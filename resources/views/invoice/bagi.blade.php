@@ -14,11 +14,15 @@
             font-size:18px;
             margin:0;
         }
+        @page {
+          margin-top: 0px;
+          margin-bottom: 0px;
+        }
         .container{
             margin:0 auto;
             margin-top:35px;
             padding:40px;
-            width:750px;
+            width:auto;
             height:auto;
             background-color:#fff;
         }
@@ -30,7 +34,7 @@
             border:1px solid #333;
             border-collapse:collapse;
             margin:0 auto;
-            width:740px;
+            width:auto;
         }
         td, tr, th{
             padding:12px;
