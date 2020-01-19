@@ -34,7 +34,7 @@
             border:1px solid #333;
             border-collapse:collapse;
             margin:0 auto;
-            width:auto;
+            width:100%;
         }
         td, tr, th{
             padding:12px;
