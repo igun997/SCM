@@ -16,9 +16,6 @@
     </span>
   </a>
   <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-    <a class="dropdown-item" href="#">
-      <i class="dropdown-icon fe fe-settings"></i> Settings
-    </a>
     <a class="dropdown-item" href="{{route("public.normal.logout")}}">
       <i class="dropdown-icon fe fe-log-out"></i> Sign out
     </a>
