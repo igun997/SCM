@@ -70,7 +70,7 @@
                    @elseif($v->status_order == 2)
                    <a href="{{route("gerai.layanan_cuci",$v->id)}}" class="btn btn-success m-2 selesaikan">Cuci Sekarang</a>
                    @elseif($v->status_order == 3)
-                   @if(strtotime("+3 days",strtotime($v->dibuat)) >= strtotime(date("Y-m-d")))
+                   @if(strtotime(date("Y-m-d")) >= strtotime("+3 days",strtotime($v->dibuat)))
                    <a href="{{route("gerai.layanan_cuciselesai",$v->id)}}" class="btn btn-success m-2 selesaikan">Pencucian Selesai</a>
                    @endif
                    @elseif($v->status_order == 5)
