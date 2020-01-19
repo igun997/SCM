@@ -22,7 +22,7 @@ class ApiControl extends Controller
       $cek = Pengguna::where($data);
       if ($cek->count() > 0) {
         $row = $cek->first();
-        session(["level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna,"ttd"=>$row->ttd]);
+        session(["level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna,"ttd"=>$row->ttd,"email"=>$row->email]);
         return response()->json(["status"=>1,"path"=>url("$row->level")]);
       }else {
         return response()->json(["status"=>0]);
