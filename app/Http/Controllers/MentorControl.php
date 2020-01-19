@@ -130,6 +130,9 @@ class MentorControl extends Controller
         $pusat = $persentase*0.4;
         $now = date("d-m-Y",strtotime($tglSekrng));
         $dec1 = date("d-m-Y",strtotime($setTgl));
+        if (date("d") != 14) {
+          return ["status"=>false];
+        }
         $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];
         return $tempData;
       }else {
@@ -146,7 +149,7 @@ class MentorControl extends Controller
       $pusat = $persentase*0.4;
       $now = date("d-m-Y");
       $dec1 = date("d-m-Y",strtotime("-1 month",strtotime($now)));
-      if (date("d") == 14) {
+      if (date("d") != 14) {
         return ["status"=>false];
       }
       $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];

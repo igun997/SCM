@@ -47,6 +47,7 @@
 </head>
 <body>
     <div class="container">
+      @include("invoice.head")
         <table>
             <caption>
                 {{$title}}

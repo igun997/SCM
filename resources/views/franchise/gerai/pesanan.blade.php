@@ -38,7 +38,17 @@
                  <td>
                    {{$v->gerai_pelanggan->nama}}
                  </td>
-                 <td>{{$v->status_format($v->status_order)}}</td>
+                 <td>
+                   @if($v->status_order == 6)
+                   <span class="badge badge-success">
+                     {{$v->status_format($v->status_order)}}
+                   </span>
+                   @else
+                   <span class="badge badge-warning">
+                     {{$v->status_format($v->status_order)}}
+                   </span>
+                   @endif
+                 </td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
                  <td>{{$v->catatan}}</td>
                  <td>Rp. {{number_format(($v->totalharga))}}</td>

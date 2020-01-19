@@ -72,6 +72,10 @@
                     </div>
                   </div>
                 </div>
+                @else
+                <div class="alert alert-danger">
+                  <p align="center">Bagi Hasil Hanya Dilakukan Setiap Tanggal 14</p>
+                </div>
                 @endif
               </form>
             </div>
