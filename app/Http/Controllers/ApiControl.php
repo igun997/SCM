@@ -2291,25 +2291,25 @@ class ApiControl extends Controller
         $up = $set->update($data);
         if ($up) {
           if ($req->status_pengiriman == 2) {
-            foreach ($row->pengiriman__details as $key => $value) {
-              Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->update(["status_pesanan"=>3]);
-              $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
-              foreach ($d as $k => $v) {
-                $mp = MasterProduk::where(["id_produk"=>$v->id_produk]);
-                $stok = ($mp->first()->stok + $v->jumlah);
-                $mp->update(["stok"=>$stok]);
-              }
-            }
+            // foreach ($row->pengiriman__details as $key => $value) {
+            //   Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->update(["status_pesanan"=>3]);
+            //   $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
+            //   foreach ($d as $k => $v) {
+            //     $mp = MasterProduk::where(["id_produk"=>$v->id_produk]);
+            //     $stok = ($mp->first()->stok + $v->jumlah);
+            //     $mp->update(["stok"=>$stok]);
+            //   }
+            // }
             MasterTransportasi::where(["id_transportasi"=>$row->id_transportasi])->update(["status_kendaraan"=>0]);
           }elseif ($req->status_pengiriman == 1) {
-            foreach ($row->pengiriman__details as $key => $value) {
-            $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
-              foreach ($d as $key => $value) {
-                $mp = MasterProduk::where(["id_produk"=>$value->id_produk]);
-                $stok = ($mp->first()->stok - $value->jumlah);
-                $mp->update(["stok"=>$stok]);
-              }
-            }
+            // foreach ($row->pengiriman__details as $key => $value) {
+            // $d = Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->first()->pemesanan__details;
+            //   foreach ($d as $key => $value) {
+            //     $mp = MasterProduk::where(["id_produk"=>$value->id_produk]);
+            //     $stok = ($mp->first()->stok - $value->jumlah);
+            //     $mp->update(["stok"=>$stok]);
+            //   }
+            // }
           }elseif ($req->status_pengiriman == 3) {
             foreach ($row->pengiriman__details as $key => $value) {
               Pemesanan::where(["id_pemesanan"=>$value->id_pemesanan])->update(["status_pesanan"=>4]);

@@ -11,13 +11,13 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class PemesananDetail
- * 
+ *
  * @property int $id_pd
  * @property string $id_pemesanan
  * @property string $id_produk
  * @property float $jumlah
  * @property float $harga
- * 
+ *
  * @property \App\Models\Pemesanan $pemesanan
  * @property \App\Models\MasterProduk $master_produk
  *

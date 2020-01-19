@@ -45,8 +45,7 @@ class ProduksiDetail extends Eloquent
 		'id_produk',
 		'jumlah',
 		'bahan_tersedia',
-		'tgl_bahan_tersedia',
-		'catatan_untuk_pengadaan'
+		'catatan',
 	];
 
 	public function produksi()

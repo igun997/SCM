@@ -11,13 +11,13 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class PengadaanBbDetail
- * 
+ *
  * @property int $id_pbb_detail
  * @property string $id_bb
  * @property float $jumlah
  * @property float $harga
  * @property string $id_pengadaan_bb
- * 
+ *
  * @property \App\Models\MasterBb $master_bb
  * @property \App\Models\PengadaanBb $pengadaan_bb
  *
@@ -37,6 +37,7 @@ class PengadaanBbDetail extends Eloquent
 	protected $fillable = [
 		'id_bb',
 		'jumlah',
+		'catatan',
 		'harga',
 		'id_pengadaan_bb'
 	];

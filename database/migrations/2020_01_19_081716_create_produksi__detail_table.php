@@ -19,8 +19,7 @@ class CreateProduksiDetailTable extends Migration {
 			$table->string('id_produk', 60)->index('id_produk');
 			$table->float('jumlah', 10, 0);
 			$table->integer('bahan_tersedia')->nullable()->default(1);
-			$table->date('tgl_bahan_tersedia')->nullable();
-			$table->text('catatan_untuk_pengadaan', 65535)->nullable();
+			$table->text('catatan', 65535)->nullable();
 		});
 	}
 
