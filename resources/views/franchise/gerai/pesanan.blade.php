@@ -43,6 +43,10 @@
                    <span class="badge badge-success">
                      {{$v->status_format($v->status_order)}}
                    </span>
+                   @elseif( $v->status_order == 7)
+                   <span class="badge badge-danger">
+                     {{$v->status_format($v->status_order)}}
+                   </span>
                    @else
                    <span class="badge badge-warning">
                      {{$v->status_format($v->status_order)}}
