@@ -62,7 +62,7 @@ class MentorControl extends Controller
       $invoice = GeraiBagihasil::where(["id"=>$id])->first();
       $pemilik = Pengguna::where(["id_pengguna"=>$invoice->pemilik_id])->first();
       // return response()->json(["d"=>$pemilik]);
-      $pdf = PDF::loadView('invoice.bagi', ["invoice"=>$invoice,"pemilik"=>$pemilik,"title"=>"KWITANSI BAGI HASIL"])->setPaper('a4', 'landscape');
+      $pdf = PDF::loadView('invoice.bagi', ["invoice"=>$invoice,"pemilik"=>$pemilik,"title"=>"KWITANSI BAGI HASIL"])->setPaper('a3', 'landscape');
       return $pdf->stream();
   }
   public function franchise_setlokasiaksi(Request $req,$id)
@@ -146,7 +146,10 @@ class MentorControl extends Controller
       $pusat = $persentase*0.4;
       $now = date("d-m-Y");
       $dec1 = date("d-m-Y",strtotime("-1 month",strtotime($now)));
-    $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];
+      if (date("d") == 14) {
+        return ["status"=>false];
+      }
+      $tempData = ["status"=>true,"data"=>["totalkotor"=>$persentase,"totalpesanan"=>count($a),"pemilik"=>$pemilik,"pusat"=>$pusat,"periode"=>date("m/Y",strtotime($dec1))." - ".date("m/Y",strtotime($now)),"mentor_id"=>session()->get("id_pengguna"),"pemilik_id"=>$id]];
       return $tempData;
     }
   }

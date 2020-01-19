@@ -41,7 +41,7 @@
                  <td>{{$v->status_format($v->status_order)}}</td>
                  <td>{!!$v->booleanQuestion($v->dijemput)!!}</td>
                  <td>{{$v->catatan}}</td>
-                 <td>Rp. {{number_format(($v->totalharga)+($v->jarak*5000))}}</td>
+                 <td>Rp. {{number_format(($v->totalharga))}}</td>
                  <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
                  <td>
                    <button type="button" class="btn btn-primary m-2 detail" data-id="{{$v->id}}">Detail Pesanan</button>
@@ -52,7 +52,9 @@
                    @elseif($v->status_order == 2)
                    <a href="{{route("gerai.layanan_cuci",$v->id)}}" class="btn btn-success m-2 selesaikan">Cuci Sekarang</a>
                    @elseif($v->status_order == 3)
+                   @if(strtotime("+3 days",strtotime($v->dibuat)) >= strtotime(date("Y-m-d")))
                    <a href="{{route("gerai.layanan_cuciselesai",$v->id)}}" class="btn btn-success m-2 selesaikan">Pencucian Selesai</a>
+                   @endif
                    @elseif($v->status_order == 5)
                    <a href="{{route("gerai.layanan_selesaikanorder",$v->id)}}" class="btn btn-success m-2 selesaikan">Selesaikan Order</a>
                    @elseif($v->status_order == 4 && $v->dijemput == 0 )

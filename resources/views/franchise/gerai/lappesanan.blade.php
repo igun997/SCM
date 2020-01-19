@@ -124,8 +124,8 @@
     $.fn.dataTableExt.afnFiltering.push(
       function(oSettings, aData, iDataIndex) {
         if (typeof aData._date == 'undefined') {
-          console.log(aData[9]);
-          aData._date = new Date(aData[9]).getTime();
+          console.log(aData[8]);
+          aData._date = new Date(aData[8]).getTime();
         }
 
         if (minDateFilter && !isNaN(minDateFilter)) {

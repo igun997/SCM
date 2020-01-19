@@ -52,7 +52,7 @@
                         {{$qty = ($vs->qty*-1)}}
                         @endif
                       </td>
-                      <td>{{$vs->dibuat}}</td>
+                      <td>{{date("Y-m-d",strtotime($vs->dibuat))}}</td>
                     </tr>
                     @endforeach
                 @endforeach
@@ -113,7 +113,7 @@
     $.fn.dataTableExt.afnFiltering.push(
       function(oSettings, aData, iDataIndex) {
         if (typeof aData._date == 'undefined') {
-          aData._date = new Date(aData[5]).getTime();
+          aData._date = new Date(aData[4]).getTime();
         }
 
         if (minDateFilter && !isNaN(minDateFilter)) {

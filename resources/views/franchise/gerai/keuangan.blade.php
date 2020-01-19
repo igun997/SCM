@@ -50,7 +50,7 @@
                    @endforeach
                  </td>
                  <td>Rp. {{number_format($v->totalharga)}}</td>
-                 <td>{{date("d-m-Y",strtotime($v->dibuat))}}</td>
+                 <td>{{date("Y-m-d",strtotime($v->dibuat))}}</td>
                </tr>
                @endforeach
              </tbody>

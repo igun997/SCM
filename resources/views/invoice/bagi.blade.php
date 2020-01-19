@@ -53,8 +53,12 @@
             </caption>
             <thead>
                 <tr>
-                    <th colspan="3">Invoice <strong>#{{ $invoice->id }}</strong></th>
+                  <th colspan="3">Invoice <strong>#{{ $invoice->id }}</strong></th>
                     <th>{{ $invoice->dibuat->format('D, d M Y') }}</th>
+                </tr>
+                <tr>
+                  <th colspan="3">Periode</th>
+                    <th>{{ $invoice->periode }}</th>
                 </tr>
                 <tr>
                     <td colspan="2">
