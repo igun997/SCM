@@ -47,6 +47,10 @@
                    <span class="badge badge-danger">
                      {{$v->status_format($v->status_order)}}
                    </span>
+                   @elseif( $v->status_order == 4)
+                   <span class="badge badge-primary">
+                     {{$v->status_format($v->status_order)}}
+                   </span>
                    @else
                    <span class="badge badge-warning">
                      {{$v->status_format($v->status_order)}}
