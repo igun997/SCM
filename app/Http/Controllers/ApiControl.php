@@ -2648,6 +2648,60 @@ class ApiControl extends Controller
         $array[] = $tgl;
         $array[] = $bersih;
         return $array;
+      }elseif ($req->has("produksi")) {
+        $now = date("Y-m-d");
+        $day7 = date("Y-m-d",strtotime("-14 days",strtotime($now)));
+        $date = $loopDate($now,$day7);
+        $array = [];
+        $tgl = [];
+        $s0[] = "Menyiapkan Bahan Baku";
+        $s1[] = "Sedang Diproses";
+        $s2[] = "Produksi Gagal";
+        $s3[] = "Produksi Selesai";
+        $s4[] = "Produksi Ditolak Direktur";
+        $s5[] = "Produksi Diterima Bag. Gudang";
+        $s6[] = "Produksi Disetujui Direktur";
+        $s7[] = "Menunggu Konfirmasi Gudang";
+        $s8[] = "Tidak Diketahui";
+        $s9[] = "Tahap Perencanaan";
+        $tgl[] = "x";
+        foreach ($date as $key => $value) {
+          $tgl[] = $value;
+          $temp = [];
+          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"perencanaan"])->whereDate("tgl_register",$value);
+          $s9[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s0[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>1,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s1[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>2,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s2[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>3,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s3[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>4,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s4[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>5,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s5[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>6,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s6[] = $order->count();
+          $order = Produksi::where(["status_produksi"=>7,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $s7[] = $order->count();
+          $order = Produksi::whereNotIn("status_produksi",[0,1,2,3,4,5,6,7])->whereDate("tgl_register",$value);
+          $s8[] = $order->count();
+
+        }
+        $array[] = $tgl;
+        $array[] = $s0;
+        $array[] = $s1;
+        $array[] = $s2;
+        $array[] = $s3;
+        $array[] = $s4;
+        $array[] = $s5;
+        $array[] = $s5;
+        $array[] = $s7;
+        $array[] = $s8;
+        $array[] = $s9;
+        return $array;
       }
     }
 }

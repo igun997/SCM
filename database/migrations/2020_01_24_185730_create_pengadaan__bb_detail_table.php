@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePengadaanProdukDetailTable extends Migration {
+class CreatePengadaanBbDetailTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,14 +12,13 @@ class CreatePengadaanProdukDetailTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('pengadaan__produk_detail', function(Blueprint $table)
+		Schema::create('pengadaan__bb_detail', function(Blueprint $table)
 		{
 			$table->integer('id_pbb_detail', true);
-			$table->string('id_produk', 25)->index('id_produk');
+			$table->string('id_bb', 25)->index('id_bb');
 			$table->float('jumlah', 10, 0);
 			$table->float('harga', 10, 0);
-			$table->text('catatan', 65535)->nullable();
-			$table->string('id_pengadaan_produk', 25)->index('id_p_produk');
+			$table->string('id_pengadaan_bb', 25)->index('id_p_bb');
 		});
 	}
 
@@ -31,7 +30,7 @@ class CreatePengadaanProdukDetailTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('pengadaan__produk_detail');
+		Schema::drop('pengadaan__bb_detail');
 	}
 
 }

@@ -22,7 +22,6 @@ class CreatePenggunaTable extends Migration {
 			$table->integer('status')->default(1);
 			$table->string('email', 60);
 			$table->string('password', 100);
-			$table->text('ttd')->nullable();
 			$table->timestamp('tgl_register')->default(DB::raw('CURRENT_TIMESTAMP'));
 		});
 	}
