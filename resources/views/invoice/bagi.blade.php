@@ -39,7 +39,7 @@
         td, tr, th{
             padding:12px;
             border:1px solid #333;
-            width:185px;
+            width:100%;
         }
         th{
             background-color: #f0f0f0;
