@@ -59,6 +59,7 @@ class Pengguna extends Eloquent
 		'no_kontak',
 		'lat',
 		'lng',
+		'nama_pemilik',
 		'alamat',
 		'level',
 		'status',

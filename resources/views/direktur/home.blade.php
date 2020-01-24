@@ -2050,14 +2050,18 @@
                         frm = [
                           [
                             {
-                              label:"Nama Pengguna SCM",
+                              label:"Nama Pengguna SCM / Nama Gerai",
                               type:"text",
                               name:"nama_pengguna"
                             },{
                               label:"Alamat",
                               type:"textarea",
                               name:"alamat"
-                            },{
+		      	    },{
+			      label:"Nama Pemilik Gerai",
+			      type:"text",
+	  		      name:"nama_pemilik"		      
+		            }{
                               label:"No Kontak",
                               type:"text",
                               name:"no_kontak"
@@ -2301,7 +2305,7 @@
               frm = [
                 [
                   {
-                    label:"Nama Pengguna SCM",
+                    label:"Nama Pengguna SCM / Nama Gerai",
                     type:"text",
                     name:"nama_pengguna",
                     value:rs.nama_pengguna
@@ -2310,7 +2314,7 @@
                     type:"textarea",
                     name:"alamat",
                     value:rs.alamat
-                  },{
+                  },{label:"Nama Pemilik",type:"text",name:"text",value:rs.nama_pemilik},{
                     label:"No Kontak",
                     type:"text",
                     name:"no_kontak",

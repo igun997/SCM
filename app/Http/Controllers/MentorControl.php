@@ -63,6 +63,7 @@ class MentorControl extends Controller
       $pemilik = Pengguna::where(["id_pengguna"=>$invoice->pemilik_id])->first();
       // return response()->json(["d"=>$pemilik]);
       $pdf = PDF::loadView('invoice.bagi', ["invoice"=>$invoice,"pemilik"=>$pemilik,"title"=>"KWITANSI BAGI HASIL"])->setPaper('a3', 'landscape');
+      // return view("invoice.bagi",["invoice"=>$invoice,"pemilik"=>$pemilik,"title"=>"KWITANSI BAGI HASIL"]);
       return $pdf->stream();
   }
   public function franchise_setlokasiaksi(Request $req,$id)

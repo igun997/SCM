@@ -76,7 +76,7 @@
                     </td>
                     <td colspan="2">
                         <h4>Gerai : </h4>
-                        <p>{{$pemilik->nama_pengguna}}.<br>
+                        <p>{{$pemilik->nama_pengguna}} ({{$pemilik->nama_pemilik}}).<br>
                             {{$pemilik->alamat}}<br>
                             {{$pemilik->no_kontak}}<br>
                             {{$pemilik->email}}
