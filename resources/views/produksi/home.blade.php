@@ -7,18 +7,18 @@
   </h1>
 </div>
 <div class="row row-cards">
-  <div class="col-lg-8">
+  <div class="col-lg-10">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Aktivitas Produksi</h3>
       </div>
       <div class="card-body">
-        <div id="chart-development-activity" style="height: 10rem;width:100%" style="padding:10px 10px 10px"></div>
+        <div id="chart-development-activity" style="height: 20rem;width:100%" style="padding:10px 10px 10px"></div>
       </div>
     </div>
 
   </div>
-  <div class="col-md-4">
+  <div class="col-md-2">
     <div class="row">
         <div class="card p-3">
           <div class="d-flex align-items-center">
@@ -95,7 +95,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       });
     }
     console.log("Home Excute . . . .");
-    chart();
+
     async function stat() {
       res = await $.post("{{route("chart")}}",{stat:true}).then();
       $("#st_pengadaan").html(res.pengadaan[0]);
@@ -105,7 +105,12 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
       $("#st_penjualan").html(res.pemasaran[0]);
       $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
     }
+    chart();
     stat();
+    setInterval(function () {
+      chart();
+      stat();
+    }, 6000);
     $("#lapproduksi").on('click',  function(event) {
       event.preventDefault();
       console.log("lapproduksi");

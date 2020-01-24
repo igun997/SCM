@@ -2649,9 +2649,9 @@ class ApiControl extends Controller
         $array[] = $bersih;
         return $array;
       }elseif ($req->has("produksi")) {
-        $now = date("Y-m-d");
-        $day7 = date("Y-m-d",strtotime("-14 days",strtotime($now)));
-        $date = $loopDate($now,$day7);
+        $now = date("Y-m-d",strtotime("+1 month",strtotime(date("Y-m-d"))));
+        $day7 = date("Y-m-d",strtotime("-12 month",strtotime($now)));
+        $date = array_unique($loopDateM($now,$day7));
         $array = [];
         $tgl = [];
         $s0[] = "Menyiapkan Bahan Baku";
@@ -2668,25 +2668,25 @@ class ApiControl extends Controller
         foreach ($date as $key => $value) {
           $tgl[] = $value;
           $temp = [];
-          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"perencanaan"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"perencanaan"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s9[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>0,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s0[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>1,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>1,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s1[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>2,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>2,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s2[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>3,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>3,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s3[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>4,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>4,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s4[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>5,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>5,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s5[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>6,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>6,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s6[] = $order->count();
-          $order = Produksi::where(["status_produksi"=>7,"jenis"=>"implementasi"])->whereDate("tgl_register",$value);
+          $order = Produksi::where(["status_produksi"=>7,"jenis"=>"implementasi"])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s7[] = $order->count();
-          $order = Produksi::whereNotIn("status_produksi",[0,1,2,3,4,5,6,7])->whereDate("tgl_register",$value);
+          $order = Produksi::whereNotIn("status_produksi",[0,1,2,3,4,5,6,7])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
           $s8[] = $order->count();
 
         }
