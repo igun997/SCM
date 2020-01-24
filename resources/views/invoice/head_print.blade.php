@@ -1,8 +1,8 @@
-<table style="width:100%; border:0px !important;" >
+<table style="width:100%; border:0px !important;" id="no_style" >
   <tr style="border:0px !important;">
     <td rowspan="3" style="border:0px !important;width:40px;padding:0px 0px 0px;">
       <center>
-        <img src="{{public_path("assets/images/logo.png")}}" style="width:150px; height:auto; margin-left:280px;" alt="">
+        <img src="{{url("assets/images/logo.png")}}" style="width:150px; height:auto; margin-left:280px;" alt="">
       </center>
     </td>
     <td align="center" rowspan="3" style="border:0px !important;">
