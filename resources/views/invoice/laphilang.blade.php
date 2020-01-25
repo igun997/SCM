@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Produk</title>
+    <title>Laporan Bahan Baku</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-    @page {
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
+        @page {
+          margin-top: 0px;
+          margin-bottom: 0px;
+        }
         body{
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             color:#333;
@@ -52,7 +52,7 @@
 <body>
     <div class="container">
       @include("invoice.head")
-        <h1 align="center">Laporan Produk</h1>
+        <h1 align="center">Laporan Kehilangan Produk dan Bahan Baku</h1>
         <h3  align="center">
           Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
         </h3>
@@ -61,15 +61,11 @@
             <thead>
               <tr>
                 <th>No</th>
-                <th>Kode Produk</th>
-                <th>Nama Produk</th>
-                <th>Stok</th>
-                <th>Stok Minimum</th>
-                <th>Harga Produksi</th>
-                <th>Harga Distribusi</th>
-                <th>Total Masuk</th>
-                <th>Total Keluar</th>
-                <th>Total Keluar (Hilang)</th>
+                <th>Kode Kehilangan</th>
+                <th>Nama Produk / Bahan Baku</th>
+                <th>Jumlah Hilang</th>
+                <th>Estimasi Kerugian</th>
+                <th>Keterangan</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
@@ -77,42 +73,37 @@
               @foreach($data as $key => $value)
               <tr>
                 <td>{{($key+1)}}</td>
-                <td>{{$value->id_produk}}</td>
-                <td>{{$value->nama_produk}}</td>
-                <td>{{number_format($value->stok)}} {{$value->master_satuan->nama_satuan}}</td>
-                <td>{{number_format($value->stok_minimum)}} {{$value->master_satuan->nama_satuan}}</td>
-                <td>Rp. {{number_format($value->harga_produksi)}}</td>
-                <td>Rp. {{number_format($value->harga_distribusi)}}</td>
-                <td>{{number_format($value->total_masuk($value->id_produk,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
-                <td>{{number_format($value->total_keluar($value->id_produk,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
-                <td>{{number_format($value->total_keluar_hilang($value->id_produk,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
-                <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
+                <td>{{$value->kode_penyusutan}}</td>
+                <td>{{(($value->id_bb == null)?$value->master_produk->nama_produk:$value->master_bb->nama)}}</td>
+                <td>{{$value->total_barang}} {{(($value->id_bb == null)?$value->master_produk->master_satuan->nama_satuan:$value->master_bb->master_satuan->nama_satuan)}}</td>
+                <td>Rp. {{number_format($value->estimasi_kerugian)}}</td>
+                <td>{{($value->ket)}}</td>
+                <td>{{($value->tgl_register->format("d/m/Y"))}}</td>
               </tr>
               @endforeach
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="4" align="center">Ketua Divisi WENOW</th>
-                <td colspan="3"></td>
-                <th colspan="4" align="center">Bag. Gudang</th>
+                <th colspan="3" align="center">Ketua Divisi WENOW</th>
+                <td colspan="1" rowspan="3"></td>
+                <th colspan="3" align="center">Bag. Gudang</th>
               </tr>
               <tr>
-                <td colspan="4" style="height:100px">
+                <td colspan="3" style="height:100px">
                   <center>
                     <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
                   </center>
                 </td>
-                <td colspan="3"></td>
-                <td colspan="4"  style="height:100px">
+
+                <td colspan="3"  style="height:100px">
                   <center>
                     <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
                   </center>
                 </td>
               </tr>
               <tr>
-                <th colspan="4" align="center">Jatra Novianto</th>
-                <td colspan="3"></td>
-                <th colspan="4" align="center">{{session()->get("nama")}}</th>
+                <th colspan="3" align="center">Jatra Novianto</th>
+                <th colspan="3" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>
         </table>

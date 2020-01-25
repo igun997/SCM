@@ -83,6 +83,21 @@ class MasterBb extends Eloquent
 			return 0;
 		}
 	}
+	public function total_keluar_hilang($id,$from,$to)
+	{
+		$obj = \App\Models\Penyusutan::whereBetween("tgl_register",[$from,$to])->get();
+		if ($obj->count() > 0) {
+			$total = 0;
+			foreach ($obj as $key => $value) {
+				if ($value->id_bb == $id) {
+					$total = $total + $value->total_barang;
+				}
+			}
+			return $total;
+		}else {
+			return 0;
+		}
+	}
 	public function total_keluar($id,$from,$to)
 	{
 		$obj = \App\Models\MasterKomposisi::where(["id_bb"=>$id]);

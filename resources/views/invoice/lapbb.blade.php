@@ -68,6 +68,7 @@
                 <th>Harga</th>
                 <th>Total Masuk</th>
                 <th>Total Keluar</th>
+                <th>Total Keluar (Hilang)</th>
                 <th>Tanggal Dibuat</th>
               </tr>
             </thead>
@@ -82,32 +83,33 @@
                 <td>Rp. {{number_format($value->harga)}}</td>
                 <td>{{number_format($value->total_masuk($value->id_bb,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
                 <td>{{number_format($value->total_keluar($value->id_bb,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
+                <td>{{number_format($value->total_keluar_hilang($value->id_bb,date("d-m-Y",strtotime($req["dari"])),date("Y-m-d",strtotime($req["sampai"]))))}}</td>
                 <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
               </tr>
               @endforeach
             </tbody>
             <tfoot>
               <tr>
-                <th colspan="3" align="center">Ketua Divisi WENOW</th>
-                <td colspan="3" rowspan="3"></td>
-                <th colspan="3" align="center">Bag. Gudang</th>
+                <th colspan="4" align="center">Ketua Divisi WENOW</th>
+                <td colspan="2" rowspan="3"></td>
+                <th colspan="4" align="center">Bag. Gudang</th>
               </tr>
               <tr>
-                <td colspan="3" style="height:100px">
+                <td colspan="4" style="height:100px">
                   <center>
                     <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
                   </center>
                 </td>
 
-                <td colspan="3"  style="height:100px">
+                <td colspan="4"  style="height:100px">
                   <center>
                     <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
                   </center>
                 </td>
               </tr>
               <tr>
-                <th colspan="3" align="center">Jatra Novianto</th>
-                <th colspan="3" align="center">{{session()->get("nama")}}</th>
+                <th colspan="4" align="center">Jatra Novianto</th>
+                <th colspan="4" align="center">{{session()->get("nama")}}</th>
               </tr>
             </tfoot>
         </table>

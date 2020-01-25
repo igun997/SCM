@@ -38,6 +38,8 @@ Route::get('/gen/laporanpengiriman',"ApiControl@laporanpengiriman")->name("lapor
 Route::get('/gen/laporanpemasaran',"ApiControl@laporanpemasaran")->name("laporan.pemasaran.pemasaran");
 Route::get('/gen/laporanpbbs',"ApiControl@laporanpbbs")->name("laporan.gudang.bb");
 Route::get('/gen/laporanp',"ApiControl@laporanpp")->name("laporan.gudang.produk");
+Route::get('/gen/laporanhilang',"ApiControl@laporanhilang")->name("laporan.gudang.laporanhilang");
+
 Route::get('/gen/listproduk',"ApiControl@listproduk")->name("listproduk");
 Route::get('/gen/peramalan/{jenis?}',"ApiControl@peramalan")->name("peramalan");
 Route::post('/gen/saveperalaman',"ApiControl@prakira_insert")->name("prakira_insert");
@@ -243,6 +245,9 @@ Route::group(['middleware' => ['gudang']], function () {
   Route::get('/api/gudang/master_komposisi_read/{id?}',"ApiControl@master_komposisi_read")->name("gudang.api.master_komposisi_read");
   Route::post('/api/gudang/master_komposisi_insert',"ApiControl@master_komposisi_insert")->name("gudang.api.master_komposisi_insert");
   Route::get('/api/gudang/master_komposisi_hapus/{id?}',"ApiControl@master_komposisi_hapus")->name("gudang.api.master_komposisi_hapus");
+  //Penyusutan
+  Route::get('/api/gudang/penyusutan/{id?}/{jenis?}',"ApiControl@penyusutan_read")->name("gudang.api.penyusutan_read");
+  Route::post('/api/gudang/penyusutan',"ApiControl@penyusutan_insert")->name("gudang.api.penyusutan_insert");
 
   //gudang Bahan Baku
   Route::get('/api/gudang/pbahanabaku_read/{id?}',"ApiControl@pbahanabakugudang_read")->name("gudang.api.pbahanabaku_read");

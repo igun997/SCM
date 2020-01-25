@@ -7,55 +7,7 @@
   </h1>
 </div>
 <div class="row row-cards">
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterBb::count()}}</div>
-        <div class="text-muted mb-4">Bahan Baku</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterProduk::count()}}</div>
-        <div class="text-muted mb-4">Produk</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterTransportasi::count()}}</div>
-        <div class="text-muted mb-4">Transportasi</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterSuplier::count()}}</div>
-        <div class="text-muted mb-4">Suplier</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterPelanggan::count()}}</div>
-        <div class="text-muted mb-4">Pelanggan</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\Pengguna::count()}}</div>
-        <div class="text-muted mb-4">Akun SCM</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-lg-6">
+  <div class="col-lg-8">
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Aktivitas Pengadaan</h3>
@@ -65,7 +17,7 @@
     </div>
 
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4">
     <div class="row">
         <div class="card p-3">
           <div class="d-flex align-items-center">
@@ -244,6 +196,65 @@
                         console.log(dform);
                         window.open(
                           '{{route("laporan.gudang.bb")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
+                          '_blank'
+                        );
+                      });
+                    }
+              });
+          modal.open();
+
+      });
+      $("#laphilang").on('click', function(event) {
+        event.preventDefault();
+        var form = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=form-group>",
+          "<label>Tanggal Dari</label>",
+          "<input class='form-control date' id='dari' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Tanggal Sampai</label>",
+          "<input class='form-control date' id='sampai' type='text' />",
+          "</div>",
+          "<div class=form-group>",
+          "<button type='button' class='btn btn-large btn-primary btn-block' id='get'>Download Laporan</button>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        modal = new jBox('Modal', {
+                    title: 'Laporan Kehilangan Produk / Bahan Baku',
+                    overlay: false,
+                    width: '400px',
+                    responsiveWidth:true,
+                    height: '300px',
+                    createOnInit: true,
+                    content: form.join(""),
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Destruct Table");
+
+                    },
+                    onCreated:function(x){
+                      g = this.content;
+                      g.find(".date").datepicker({
+
+                      });
+                      g.find("#get").on('click', function(event) {
+                        event.preventDefault();
+                        dform = {dari:g.find("#dari").val(),sampai:g.find("#sampai").val()};
+                        console.log(dform);
+                        window.open(
+                          '{{route("laporan.gudang.laporanhilang")}}/?dari='+dform.dari+'&sampai='+dform.sampai,
                           '_blank'
                         );
                       });
@@ -787,6 +798,96 @@
         instance = master_satuan.open();
 
       });
+      function penyusutan(id,jenis,obj) {
+        if (jenis == "bb") {
+          form = [
+            "<div class=row>",
+            "<div class=col-md-12>",
+            "<form action='' method='post' id=frm onsubmit='return false'>",
+            "<div class=form-group>",
+            "<label>Kode Bahan Baku</label>",
+            "<input class=form-control value='"+id+"' readonly name='id_bb'><input hidden value='' name='id_produk'>",
+            "</div>",
+            "<div class=form-group>",
+            "<label>Total Barang Berkurang</label>",
+            "<input class=form-control type='number' min=1 name='total_barang' required>",
+            "</div>",
+            "<div class=form-group>",
+            "<label>Alasan Berkurang</label>",
+            "<textarea class='form-control' name='ket' required></textarea>",
+            "</div>",
+            "<div class=form-group>",
+            "<button class='btn btn-block btn-success' type='submit'>Simpan</button>",
+            "</div>",
+            "</form>",
+            "</div>",
+            "</div>",
+          ]
+        }else {
+          form = [
+            "<div class=row>",
+            "<div class=col-md-12>",
+            "<form action='' method='post' id=frm onsubmit='return false'>",
+            "<div class=form-group>",
+            "<label>Kode Produk</label>",
+            "<input class=form-control value='"+id+"' readonly name='id_produk'><input hidden value='' name='id_bb'>",
+            "</div>",
+            "<div class=form-group>",
+            "<label>Total Barang Berkurang</label>",
+            "<input class=form-control type='number' min=1 name='total_barang' required>",
+            "</div>",
+            "<div class=form-group>",
+            "<label>Alasan Berkurang</label>",
+            "<textarea class='form-control' name='ket' required></textarea>",
+            "</div>",
+            "<div class=form-group>",
+            "<button class='btn btn-block btn-success' type='submit'>Simpan</button>",
+            "</div>",
+            "</form>",
+            "</div>",
+            "</div>",
+          ]
+        }
+          modal = new jBox('Modal', {
+            title: 'Berita Acara Kehilangan Stok',
+            overlay: false,
+            width: '500px',
+            responsiveWidth:true,
+            height: '500px',
+            createOnInit: true,
+            content: form.join(""),
+            draggable: false,
+            adjustPosition: true,
+            adjustTracker: true,
+            repositionOnOpen: false,
+            offset: {
+              x: 0,
+              y: 0
+            },
+            repositionOnContent: false,
+            onCloseComplete:function(){
+              console.log("Destruct Table");
+              obj.ajax.reload();
+            },
+            onCreated:function(x){
+              konten = this.content;
+              konten.find("#frm").on('submit', async function(event) {
+                event.preventDefault();
+                dform = $(this).serializeArray();
+                console.log(dform);
+                res = await $.post("{{route("gudang.api.penyusutan_insert")}}",dform).then();
+                console.log(res);
+                if (res.status == 1) {
+                    new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
+                    modal.close();
+                }else {
+                    new jBox('Notice', {content: 'Data Gagal Tersimpan',showCountdown:true, color: 'red'});
+                }
+              });
+            }
+          });
+        modal.open();
+      }
       $("#masterbb").on('click',function(event) {
         event.preventDefault();
         tabel_bahanbaku = table(["Kode","Nama","Stok","Stok Minimum","Harga","Tanggal Register",""],[],"masterbb_table");
@@ -1074,6 +1175,11 @@
                 });
                 set.open();
               });
+            });
+            content.find("#masterbb_table").on('click','.kehilangan',function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              penyusutan(id,"bb",masterbb_table);
             });
           }
         });
@@ -1434,6 +1540,11 @@
               // $.get("{{route("gudang.api.master_komposisi_read")}}/"+id,function(rs){
               //
               // });
+            });
+            content.find("#masterproduk_table").on('click','.kehilangan',function(event) {
+              id = $(this).data("id");
+              console.log(id);
+              penyusutan(id,"produk",masterproduk_table);
             });
           }
         });

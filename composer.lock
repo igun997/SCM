@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "97c1fe1b270c34e8f06b627a4e5644b7",
+    "content-hash": "b6084748005b560459d59c0b1e69d0c2",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -3873,6 +3873,58 @@
             "description": "CssToInlineStyles is a class that enables you to convert HTML-pages/files into HTML-pages/files with inline styles. This is very useful when you're sending emails.",
             "homepage": "https://github.com/tijsverkoyen/CssToInlineStyles",
             "time": "2019-10-24T08:53:34+00:00"
+        },
+        {
+            "name": "vkovic/laravel-custom-casts",
+            "version": "v1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vkovic/laravel-custom-casts.git",
+                "reference": "3eaf93706b4d3d8940f385cef8e7a858167104e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vkovic/laravel-custom-casts/zipball/3eaf93706b4d3d8940f385cef8e7a858167104e2",
+                "reference": "3eaf93706b4d3d8940f385cef8e7a858167104e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "require-dev": {
+                "illuminate/database": "^5.5|^6.0",
+                "orchestra/database": "^3.5|^4.0",
+                "orchestra/testbench": "^3.5|^4.0",
+                "phpunit/phpunit": "^6.3|^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Vkovic\\LaravelCustomCasts\\": "src"
+                },
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladimir Ković",
+                    "email": "vlada.kovic@gmail.com"
+                }
+            ],
+            "description": "Make your own custom cast type for Laravel model attributes",
+            "keywords": [
+                "cast",
+                "casts",
+                "datatype",
+                "laravel",
+                "model"
+            ],
+            "time": "2019-10-15T17:48:54+00:00"
         },
         {
             "name": "vlucas/phpdotenv",

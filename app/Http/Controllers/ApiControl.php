@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan};
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
@@ -153,6 +153,14 @@ class ApiControl extends Controller
       $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'landscape');
       return $pdf->stream();
     }
+    public function laporanhilang(Request $req)
+    {
+      $a = Penyusutan::all();
+      $data = [];
+      $pdf = PDF::loadView('invoice.laphilang', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'portait');
+      // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
+      return $pdf->stream();
+    }
     public function laporanproduksi(Request $req)
     {
       $a = Produksi::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
@@ -251,6 +259,9 @@ class ApiControl extends Controller
         <div class="dropdown-menu dropdown-menu-right">
         <button class="dropdown-item edit" data-id="'.$id.'" type="button">
           Ubah
+        </button>
+        <button class="dropdown-item kehilangan" data-id="'.$id.'" type="button">
+          Kehilangan
         </button>
         </div>';
       };
@@ -665,6 +676,9 @@ class ApiControl extends Controller
         </button>
         <button class="dropdown-item komposisi" data-id="'.$id.'"  type="button">
           Komposisi
+        </button>
+        <button class="dropdown-item kehilangan" data-id="'.$id.'" type="button">
+          Kehilangan
         </button>
         </div>';
       };
@@ -2702,6 +2716,128 @@ class ApiControl extends Controller
         $array[] = $s8;
         $array[] = $s9;
         return $array;
+      }elseif ($req->has("pengadaan")) {
+        $now = date("Y-m-d",strtotime("+1 month",strtotime(date("Y-m-d"))));
+        $day7 = date("Y-m-d",strtotime("-12 month",strtotime($now)));
+        $date = array_unique($loopDateM($now,$day7));
+        $array = [];
+        $tgl = [];
+        $s0[] = "Menunggu Verifikasi Direktur";
+        $s1[] = "Ditolak Oleh Direktur";
+        $s2[] = "Pengajuan Diterima Direktur";
+        $s3[] = "Pengajuan Sedang Diproses";
+        $s4[] = "Menunggu Penerimaan oleh Gudang";
+        $s5[] = "Belum Di Terima Oleh Gudang";
+        $s6[] = "Sudah Diterima Oleh Gudang";
+        $s7[] = "Pengajuan Selesai";
+        $s8[] = "Pengajuan Dibatalkan Oleh Bag. Produksi";
+        $s9[] = "Tidak Diketahui";
+        $tgl[] = "x";
+        foreach ($date as $key => $value) {
+          $tgl[] = $value;
+          $temp = [];
+          $order = PengadaanBb::where(["status_pengadaan"=>0])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>0])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s0[] = ($order->count() + $order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>1])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>1])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s1[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>2])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>2])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s2[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>3])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>3])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s3[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>4])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>4])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s4[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>5])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>5])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s5[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>6])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>6])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s6[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>7])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>7])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s7[] = ($order->count() + $order1->count());
+          $order = PengadaanBb::where(["status_pengadaan"=>8])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::where(["status_pengadaan"=>8])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s8[] = ($order->count()+$order1->count());
+          $order = PengadaanBb::whereNotIn("status_pengadaan",[0,1,2,3,4,5,6,7,8])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $order1 = PengadaanProduk::whereNotIn("status_pengadaan",[0,1,2,3,4,5,6,7,8])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          $s9[] = ($order->count()+$order1->count());
+
+        }
+        $array[] = $tgl;
+        $array[] = $s0;
+        $array[] = $s1;
+        $array[] = $s2;
+        $array[] = $s3;
+        $array[] = $s4;
+        $array[] = $s5;
+        $array[] = $s5;
+        $array[] = $s7;
+        $array[] = $s8;
+        $array[] = $s9;
+        return $array;
       }
+    }
+    public function penyusutan_read($id,$jenis)
+    {
+      if ($jenis == "bb") {
+        $obj = Penyusutan::where(["id_bb"=>$id]);
+      }else {
+        $obj = Penyusutan::where(["id_produk"=>$id]);
+      }
+      $data = [];
+      $data["data"] = [];
+      foreach ($obj->get() as $key => $value) {
+        $data["data"][] = [($key+1),$value->total_barang,$value->estimasi_kerugian,(($value->id_bb == null)?$value->master_produk->nama_produk:$value->master_bb->nama),$value->tgl_register->format("d/m/Y")];
+      }
+      return $data;
+    }
+    public function penyusutan_insert(Request $req)
+    {
+        $data = $req->all();
+        if ($data["id_bb"] == "") {
+          $data["id_bb"] = null;
+        }
+        if ($data["id_produk"] == "") {
+          $data["id_produk"] = null;
+        }
+        if ($req->id_bb != null) {
+          $state = (MasterBb::where(["id_bb"=>$req->id_bb])->first()->stok - $req->total_barang);
+          if ($state < 0) {
+            return ["status"=>0];
+          }
+          $state = MasterBb::where(["id_bb"=>$req->id_bb])->first()->harga;
+          $data["estimasi_kerugian"] = ($req->total_barang * $state);
+        }
+        if ($req->id_produk != null) {
+          $state = (MasterProduk::where(["id_produk"=>$req->id_produk])->first()->stok - $req->total_barang);
+          if ($state < 0) {
+            return ["status"=>0];
+          }
+          $state = MasterProduk::where(["id_produk"=>$req->id_produk])->first()->harga_produksi;
+          $data["estimasi_kerugian"] = ($req->total_barang * $state);
+        }
+        $data["kode_penyusutan"] = "BAK".date("dmy")."-".str_pad((Penyusutan::count()+1),3,0,STR_PAD_LEFT);
+        $ins = Penyusutan::create($data);
+        if ($ins) {
+          if ($req->id_bb != null) {
+            $state = MasterBb::where(["id_bb"=>$req->id_bb]);
+            $rawStok = ($state->first()->stok - $req->total_barang);
+            $state->update(["stok"=>$rawStok]);
+          }
+          if ($req->id_produk != null) {
+            $state = MasterProduk::where(["id_produk"=>$req->id_produk]);
+            $rawStok = ($state->first()->stok - $req->total_barang);
+            $state->update(["stok"=>$rawStok]);
+          }
+
+          return ["status"=>1];
+        }else {
+          return ["status"=>0];
+        }
     }
 }

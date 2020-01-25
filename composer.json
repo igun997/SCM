@@ -18,7 +18,8 @@
         "minchao/shopee-php": "^0.0.8",
         "orangehill/iseed": "^2.6",
         "pusher/pusher-php-server": "^4.1",
-        "thomaswelton/laravel-gravatar": "^1.2"
+        "thomaswelton/laravel-gravatar": "^1.2",
+        "vkovic/laravel-custom-casts": "^1.2"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

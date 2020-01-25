@@ -93,6 +93,8 @@
             <div class="dropdown-menu dropdown-menu-arrow">
               <a href="" id="lapbb" class="dropdown-item ">Bahan Baku</a>
               <a href="" id="lapproduk" class="dropdown-item ">Produk</a>
+              <a href="" id="laphilang" class="dropdown-item ">Kehilangan Produk / Bahan Baku</a>
+
             </div>
           </li>
 
