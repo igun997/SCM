@@ -2579,7 +2579,7 @@ class ApiControl extends Controller
           $data = [];
           $tgl = [];
           $bersih = [];
-          $data[] = "Kotor";
+          $data[] = "Pendapatan";
           $bersih[] = "Bersih";
           $tgl[] = "x";
           foreach ($date as $key => $value) {
@@ -2608,7 +2608,6 @@ class ApiControl extends Controller
           }
           $array[] = $data;
           $array[] = $tgl;
-          $array[] = $bersih;
           return $array;
       }elseif ($req->has("stat")) {
         $pb = PengadaanBb::count();
@@ -2621,7 +2620,40 @@ class ApiControl extends Controller
 
         $pe = Pemesanan::count();
         $pe_s = Pemesanan::where(["status_pesanan"=>4])->count();
+        $now = date("Y-m-d");
+        $time = strtotime($now);
+        $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",$now);
+        $row = $order->first();
+        $hariIni = 0;
+        if ($order->count() > 0) {
+          $ThariIni = 0;
+          foreach ($row->pemesanan__details as $k => $v) {
+            $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+          }
+          $hariIni = ($hariIni + ($ThariIni+($ThariIni*$row->pajak)));
+        }
+        $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",date("Y-m-d",strtotime("-1 day",$time)));
+        $row = $order->first();
+        $kemarin = 0;
+        if ($order->count() > 0) {
+          $ThariIni = 0;
+          foreach ($row->pemesanan__details as $k => $v) {
+            $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+          }
+          $kemarin = ($kemarin + ($ThariIni+($ThariIni*$row->pajak)));
+        }
+        $icon = "flat";
+        $percent = "0";
+        if ($kemarin > $hariIni) {
+          $icon = "down";
+          $percent = (100 - (($kemarin*100)/$hariIni));
+        }elseif($kemarin < $hariIni) {
+          $icon = "up";
+          $percent = (100 - (($hariIni*100)/$kemarin));
+        }
+
         $data = [];
+        $data["stat_penjualan"] = ["icon"=>$icon,"pendapatan"=>"Rp. ".number_format($hariIni).",-","percent"=>$percent];
         $data["pengadaan"] = [($pb+$pp),($pb_s+$pp_s)];
         $data["produksi"] = [($prod),($prod_s)];
         $data["pemasaran"] = [($pe),($pe_s)];
@@ -2779,6 +2811,56 @@ class ApiControl extends Controller
         $array[] = $s7;
         $array[] = $s8;
         $array[] = $s9;
+        return $array;
+      }elseif ($req->has("gudang")) {
+        $now = date("Y-m-d",strtotime("+1 month",strtotime(date("Y-m-d"))));
+        $day7 = date("Y-m-d",strtotime("-12 month",strtotime($now)));
+        $date = array_unique($loopDateM($now,$day7));
+        $tgl = [];
+        $array = [];
+        $masuk = [];
+        $keluar = [];
+        $hilang = [];
+        $masuk[] = "Barang Masuk";
+        $tgl[] = "x";
+        $keluar[] = "Barang Keluar";
+        $hilang[] = "Barang Hilang";
+        foreach ($date as $key => $value) {
+          $tgl[] = $value;
+          $tempMasuk = 0;
+          $order = PengadaanBb::whereRaw(\DB::raw("status_pengadaan >= 6"))->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          foreach ($order->get() as $k => $v) {
+            foreach ($v->pengadaan__bb_details as $y => $e) {
+              $tempMasuk = ($tempMasuk + $e->jumlah);
+            }
+          }
+          $order1 = PengadaanProduk::whereRaw(\DB::raw("status_pengadaan >= 6"))->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          foreach ($order1->get() as $k => $v) {
+            foreach ($v->pengadaan__produk_details as $y => $e) {
+              $tempMasuk = ($tempMasuk + $e->jumlah);
+            }
+          }
+          $tempKeluar = 0;
+          $jual = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          foreach ($jual->get() as $k => $v) {
+            foreach ($v->pemesanan__details as $y => $e) {
+
+              $tempKeluar =  ($tempKeluar + $e->jumlah);
+            }
+          }
+          $s = 0;
+          $hilangs = Penyusutan::whereMonth("tgl_register",date("m",strtotime($value)))->whereYear("tgl_register",date("Y",strtotime($value)));
+          foreach ($hilangs->get() as $k => $v) {
+            $s = ($s + $v->total_barang);
+          }
+          $keluar[] = $tempKeluar;
+          $masuk[] = $tempMasuk;
+          $hilang[] = $s;
+        }
+        $array[] = $hilang;
+        $array[] = $keluar;
+        $array[] = $masuk;
+        $array[] = $tgl;
         return $array;
       }
     }

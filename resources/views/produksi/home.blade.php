@@ -81,7 +81,7 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                 x: {
                     type: 'timeseries',
                     tick: {
-                        format: '%d-%m-%Y'
+                        format: '%m-%Y'
                     }
                 }
             },

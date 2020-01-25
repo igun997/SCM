@@ -7,6 +7,7 @@
   </h1>
 </div>
 <div class="row row-cards">
+  
   <div class="col-lg-8">
     <div class="card">
       <div class="card-header">
@@ -68,69 +69,39 @@
               return $('input', td).prop('checked') ? '1' : '0';
           } );
       }
-      var chart = c3.generate({
-        bindto: '#chart-development-activity', // id of chart wrapper
-        data: {
-          columns: [
-              // each columns data
-            ['data1', 0, 5, 1, 2, 7, 5, 6, 8, 24, 7, 12, 5, 6, 3, 2, 2, 6, 30, 10, 10, 15, 14, 47, 65, 55]
-          ],
-          type: 'area', // default type of chart
-          groups: [
-            [ 'data1', 'data2', 'data3']
-          ],
-          colors: {
-            'data1': tabler.colors["blue"]
+      async function chart() {
+        obj1 = "#chart-development-activity";
+        res = await $.post("{{route("chart")}}",{gudang:true}).then();
+        var chart2 = c3.generate({
+          bindto: obj1,
+          data: {
+              x:"x",
+              columns:res,
+              type: 'line'
           },
-          names: {
-              // name of each serie
-            'data1': 'Pengadaan'
-          }
-        },
-        axis: {
-          y: {
-            padding: {
-              bottom: 0,
-            },
-            show: false,
-              tick: {
-              outer: false
-            }
+          pie: {
+              width: {
+                  ratio: 0.5
+              }
           },
-          x: {
-            padding: {
-              left: 0,
-              right: 0
-            },
-            show: false
-          }
-        },
-        legend: {
-          position: 'inset',
-          padding: 0,
-          inset: {
-                      anchor: 'top-left',
-            x: 20,
-            y: 8,
-            step: 10
-          }
-        },
-        tooltip: {
-          format: {
-            title: function (x) {
-              return '';
-            }
-          }
-        },
-        padding: {
-          bottom: 0,
-          left: -1,
-          right: -1
-        },
-        point: {
-          show: false
-        }
-      });
+          axis: {
+                  x: {
+                      type: 'timeseries',
+                      tick: {
+                          format: '%m-%Y'
+                      }
+                  }
+              },
+          tooltip: {
+                  format: {
+                      value: function(value) {
+                          return d3.format(",.0f")(value)
+                      }
+                  }
+              }
+        });
+      }
+
       async function stat() {
         res = await $.post("{{route("chart")}}",{stat:true}).then();
         $("#st_pengadaan").html(res.pengadaan[0]);
@@ -141,7 +112,11 @@
         $("#st_penjualan_s").html(res.pemasaran[1]+" Selesai");
       }
       stat();
-
+      chart();
+      setInterval(function () {
+        stat();
+        chart();
+      }, 10000);
       $("#lapbb").on('click', function(event) {
         event.preventDefault();
         console.log("Exec");
