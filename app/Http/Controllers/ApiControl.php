@@ -2070,7 +2070,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0]);
         }
       }else {
-        $getData = Pemesanan::all();
+        $getData = Pemesanan::orderBy("tgl_register","desc")->get();
         $data = [];
         $data["data"] = [];
         foreach ($getData as $key => $value) {
@@ -2158,7 +2158,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0]);
         }
       }else {
-        $getData = Pemesanan::all();
+        $getData = Pemesanan::orderBy("tgl_register","desc")->get();
         $data = [];
         $data["data"] = [];
         foreach ($getData as $key => $value) {
@@ -2483,16 +2483,38 @@ class ApiControl extends Controller
 
         if ($c == 1) {
           $min = [];
+          $list = [];
           foreach ($row->produksi__details as $key => $value) {
+            $tempBarang  = [];
             foreach ($value->master_produk->master__komposisis as $k => $v) {
               $set = MasterBb::where(["id_bb"=>$v->id_bb]);
               $row2 = $set->first();
-              $min[] = ($row2->stok-$value->jumlah*($v->jumlah*$v->rasio));
+              $list[$v->id_bb][] = ($value->jumlah*($v->jumlah*$v->rasio));
             }
+
           }
-          $min = min($min);
-          if ($min < 0) {
-            return response()->json(["status"=>0,"msg"=>"Bahan Untuk Produksi Kurang"]);
+          $used = [];
+          $calc = [];
+          foreach ($list as $key => &$value) {
+            $value = array_sum($value);
+          }
+          $min = [];
+          $index = [];
+          foreach ($list as $key => $value) {
+            $set = MasterBb::where(["id_bb"=>$key]);
+            $row2 = $set->first();
+            $min[] = ($row2->stok - $value);
+            $index[] = $key;
+          }
+          // return ["status"=>0,"msg"=>"Debug","Debug"=>$min];
+          $minS = min($min);
+          if ($minS < 0) {
+            foreach ($min as $key => $value) {
+              if ($minS == $value) {
+                $msg = $index[$key];
+              }
+            }
+            return response()->json(["status"=>0,"msg"=>"Stok Bahan Dengan Kode ".$msg." Kurang"]);
           }
           foreach ($row->produksi__details as $key => $value) {
             foreach ($value->master_produk->master__komposisis as $k => $v) {
@@ -2586,24 +2608,18 @@ class ApiControl extends Controller
             $tgl[] = $value;
             $temp = [];
             $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",$value);
-            $row = $order->first();
             if ($order->count() > 0) {
-              $total = 0;
-              foreach ($row->pemesanan__details as $k => $v) {
-                $total = $total + ($v->jumlah*$v->harga);
+              $hariIni = 0;
+              $ThariIni = 0;
+              foreach ($order->get() as $key => $value) {
+                foreach ($value->pemesanan__details as $k => $v) {
+                  $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+                }
+                $hariIni = ($hariIni + ($ThariIni+($ThariIni*$value->pajak)));
               }
-              $data[] = ($total+($total*$row->pajak));
+              $data[] = $hariIni;
             }else {
               $data[] = 0;
-            }
-            if ($order->count() > 0) {
-              $total = 0;
-              foreach ($row->pemesanan__details as $k => $v) {
-                $total = $total + (($v->jumlah*($v->harga-$v->master_produk->harga_produksi)));
-              }
-              $bersih[] = ($total+($total*$row->pajak));;
-            }else {
-              $bersih[] = 0;
             }
           }
           $array[] = $data;
@@ -2623,24 +2639,26 @@ class ApiControl extends Controller
         $now = date("Y-m-d");
         $time = strtotime($now);
         $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",$now);
-        $row = $order->first();
         $hariIni = 0;
         if ($order->count() > 0) {
           $ThariIni = 0;
-          foreach ($row->pemesanan__details as $k => $v) {
-            $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+          foreach ($order->get() as $key => $value) {
+            foreach ($value->pemesanan__details as $k => $v) {
+              $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+            }
+            $hariIni = ($hariIni + ($ThariIni+($ThariIni*$value->pajak)));
           }
-          $hariIni = ($hariIni + ($ThariIni+($ThariIni*$row->pajak)));
         }
         $order = Pemesanan::where(["status_pembayaran"=>3,"status_pesanan"=>4])->whereDate("tgl_register",date("Y-m-d",strtotime("-1 day",$time)));
-        $row = $order->first();
         $kemarin = 0;
         if ($order->count() > 0) {
           $ThariIni = 0;
-          foreach ($row->pemesanan__details as $k => $v) {
-            $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+          foreach ($order->get() as $key => $value) {
+            foreach ($value->pemesanan__details as $k => $v) {
+              $ThariIni = $ThariIni + ($v->jumlah*$v->harga);
+            }
+            $kemarin = ($kemarin + ($ThariIni+($ThariIni*$value->pajak)));
           }
-          $kemarin = ($kemarin + ($ThariIni+($ThariIni*$row->pajak)));
         }
         $icon = "flat";
         $percent = "0";
@@ -2649,11 +2667,15 @@ class ApiControl extends Controller
           $percent = (100 - (($kemarin*100)/$hariIni));
         }elseif($kemarin < $hariIni) {
           $icon = "up";
-          $percent = (100 - (($hariIni*100)/$kemarin));
+          if ($kemarin == 0) {
+            $percent = 100;
+          }else {
+            $percent = ((($hariIni*100)/$kemarin) - 100);
+          }
         }
 
         $data = [];
-        $data["stat_penjualan"] = ["icon"=>$icon,"pendapatan"=>"Rp. ".number_format($hariIni).",-","percent"=>$percent];
+        $data["stat_penjualan"] = ["icon"=>$icon,"pendapatan"=>"Rp. ".number_format($hariIni).",-","percent"=>number_format($percent,2)];
         $data["pengadaan"] = [($pb+$pp),($pb_s+$pp_s)];
         $data["produksi"] = [($prod),($prod_s)];
         $data["pemasaran"] = [($pe),($pe_s)];

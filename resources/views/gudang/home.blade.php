@@ -7,11 +7,11 @@
   </h1>
 </div>
 <div class="row row-cards">
-  
+
   <div class="col-lg-8">
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Aktivitas Pengadaan</h3>
+        <h3 class="card-title">Aktivitas Keluar Masuk Barang</h3>
       </div>
       <div id="chart-development-activity" style="height: 10rem"></div>
 

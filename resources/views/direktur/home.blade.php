@@ -133,7 +133,7 @@
         }else if (res.stat_penjualan.icon == "up") {
           color = 'text-right text-green';
           icon = res.stat_penjualan.percent+"%<li class='fa fa-chevron-up'></li>";
-        }else if (res.stat_penjualan.icon == "up") {
+        }else if (res.stat_penjualan.icon == "down") {
           color = 'text-right text-red';
           icon = res.stat_penjualan.percent+"%<li class='fa fa-chevron-down'></li>";
         }
@@ -210,6 +210,12 @@
       pemasaran();
       produksi();
       pengadaan();
+      setInterval(function () {
+        stat();
+        pemasaran();
+        produksi();
+        pengadaan();
+      }, 10000);
       console.log("Home Excute . . . .");
       $("#produksimonitoring").on("click", function(event) {
         produksi_html = table(["No","Kode","Jenis","Konf. Perencanaan","Biaya Produksi","Total Produk","Status Produksi","Tanggal Produksi",""],[],"produksi_table");

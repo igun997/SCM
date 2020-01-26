@@ -1081,6 +1081,9 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                     if (data.length > 0) {
                       $.each(data,function(index, el) {
                         if (el.id == d[5]) {
+                          if (parseFloat(d[4]) < 0) {
+                            d[4] = 0;
+                          }
                           var btn = '<div class="custom-controls-stacked"><label class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input listcheck"  data-id="'+d[5]+'" ><span class="custom-control-label">'+d[5]+'</span></label></div>';
                           var inputjumlah = "<input class='form-control' name='jumlah_produksi["+d[0]+"]' max='"+d[4]+"' min=1 value='"+el.jumlah+"' required type='number' disabled/><p>Maksimal Produksi : <span class='badge badge-danger'>"+d[4]+"</span></p>";
                           if (parseFloat(d[2]) <= parseFloat(d[3])) {
@@ -1094,6 +1097,9 @@ require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.
                         }
                       });
                     }else {
+                      if (parseFloat(d[4]) < 0) {
+                        d[4] = 0;
+                      }
                       var btn = '<div class="custom-controls-stacked"><label class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input listcheck"  data-id="'+d[5]+'" ><span class="custom-control-label">'+d[5]+'</span></label></div>';
                       var inputjumlah = "<input class='form-control' name='jumlah_produksi["+d[0]+"]' max='"+d[4]+"' min=1 required type='number' disabled/><p>Maksimal Produksi : <span class='badge badge-danger'>"+d[4]+"</span></p>";
                       if (parseFloat(d[2]) <= parseFloat(d[3])) {
