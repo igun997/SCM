@@ -2664,7 +2664,7 @@ class ApiControl extends Controller
         $percent = "0";
         if ($kemarin > $hariIni) {
           $icon = "down";
-          $percent = (100 - (($kemarin*100)/$hariIni));
+          $percent = (100 - (($hariIni*100)/$kemarin));
         }elseif($kemarin < $hariIni) {
           $icon = "up";
           if ($kemarin == 0) {
