@@ -25,6 +25,14 @@ class MasterTransportasiTableSeeder extends Seeder
                 'status_kendaraan' => 0,
                 'tgl_register' => '2020-01-13 16:02:43',
             ),
+            1 => 
+            array (
+                'id_transportasi' => 'KN250120-002',
+                'jenis_transportasi' => 'mobil',
+                'no_polisi' => 'Z 6754 BH',
+                'status_kendaraan' => 0,
+                'tgl_register' => '2020-01-25 22:31:36',
+            ),
         ));
         
         

@@ -32,7 +32,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-002',
                 'nama' => 'Vanish',
-                'stok' => 55.0,
+                'stok' => 86.0,
                 'stok_minimum' => 10.0,
                 'harga' => 6500.0,
                 'kadaluarsa' => NULL,
@@ -54,7 +54,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-004',
             'nama' => 'Sikat standart (nylon)',
-                'stok' => 95.0,
+                'stok' => 0.0,
                 'stok_minimum' => 10.0,
                 'harga' => 25000.0,
                 'kadaluarsa' => NULL,
@@ -76,7 +76,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-006',
                 'nama' => 'Lap microfiber',
-                'stok' => 55.0,
+                'stok' => 26.0,
                 'stok_minimum' => 10.0,
                 'harga' => 50000.0,
                 'kadaluarsa' => NULL,
@@ -87,7 +87,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-007',
                 'nama' => 'Shoes cleaner',
-                'stok' => 75.0,
+                'stok' => 27.5,
                 'stok_minimum' => 10.0,
                 'harga' => 120000.0,
                 'kadaluarsa' => NULL,
@@ -120,7 +120,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-010',
                 'nama' => 'Wadah',
-                'stok' => 55.0,
+                'stok' => 59.0,
                 'stok_minimum' => 8.0,
                 'harga' => 15000.0,
                 'kadaluarsa' => NULL,
@@ -131,7 +131,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-011',
                 'nama' => 'Sikat suede',
-                'stok' => 50.0,
+                'stok' => 15.0,
                 'stok_minimum' => 8.0,
                 'harga' => 11000.0,
                 'kadaluarsa' => NULL,
@@ -142,7 +142,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-012',
                 'nama' => 'H202',
-                'stok' => 85.0,
+                'stok' => 56.5,
                 'stok_minimum' => 4.0,
                 'harga' => 30000.0,
                 'kadaluarsa' => NULL,
@@ -152,19 +152,19 @@ class MasterBbTableSeeder extends Seeder
             12 => 
             array (
                 'id_bb' => 'BB130120-013',
-                'nama' => 'Tepung maizena',
+                'nama' => 'Bibit Parfum',
                 'stok' => 77.5,
                 'stok_minimum' => 8.0,
                 'harga' => 15000.0,
                 'kadaluarsa' => NULL,
-                'id_satuan' => 2,
+                'id_satuan' => 5,
                 'tgl_register' => '2020-01-13 15:57:05',
             ),
             13 => 
             array (
                 'id_bb' => 'BB130120-014',
                 'nama' => 'Rinso bubuk',
-                'stok' => 100.0,
+                'stok' => 48.5,
                 'stok_minimum' => 8.0,
                 'harga' => 20000.0,
                 'kadaluarsa' => NULL,
@@ -186,7 +186,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-016',
                 'nama' => 'kuas',
-                'stok' => 100.0,
+                'stok' => 60.0,
                 'stok_minimum' => 8.0,
                 'harga' => 27000.0,
                 'kadaluarsa' => NULL,
@@ -197,7 +197,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-017',
                 'nama' => 'sikat dalam sepatu',
-                'stok' => 50.0,
+                'stok' => 55.0,
                 'stok_minimum' => 8.0,
                 'harga' => 9000.0,
                 'kadaluarsa' => NULL,
@@ -208,7 +208,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-018',
                 'nama' => 'soda api',
-                'stok' => 100.0,
+                'stok' => 83.0,
                 'stok_minimum' => 7.0,
                 'harga' => 50000.0,
                 'kadaluarsa' => NULL,
@@ -219,7 +219,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-019',
                 'nama' => 'sikat semir',
-                'stok' => 100.0,
+                'stok' => 44.0,
                 'stok_minimum' => 6.0,
                 'harga' => 4000.0,
                 'kadaluarsa' => NULL,
@@ -230,7 +230,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-020',
                 'nama' => 'semir hitam',
-                'stok' => 50.0,
+                'stok' => 0.0,
                 'stok_minimum' => 9.0,
                 'harga' => 10000.0,
                 'kadaluarsa' => NULL,
@@ -241,7 +241,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-021',
                 'nama' => 'semir coklat',
-                'stok' => 100.0,
+                'stok' => 5.0,
                 'stok_minimum' => 6.0,
                 'harga' => 10000.0,
                 'kadaluarsa' => NULL,
@@ -274,7 +274,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-024',
                 'nama' => 'sarung tangan karet',
-                'stok' => 100.0,
+                'stok' => 66.0,
                 'stok_minimum' => 9.0,
                 'harga' => 14000.0,
                 'kadaluarsa' => NULL,
@@ -285,7 +285,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-025',
                 'nama' => 'plastik klip',
-                'stok' => 100.0,
+                'stok' => 180.0,
                 'stok_minimum' => 100.0,
                 'harga' => 1200.0,
                 'kadaluarsa' => NULL,
@@ -362,7 +362,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-032',
                 'nama' => 'botol spray',
-                'stok' => 100.0,
+                'stok' => 140.0,
                 'stok_minimum' => 100.0,
                 'harga' => 4500.0,
                 'kadaluarsa' => NULL,
@@ -384,7 +384,7 @@ class MasterBbTableSeeder extends Seeder
             array (
                 'id_bb' => 'BB130120-034',
                 'nama' => 'botol sabun',
-                'stok' => 100.0,
+                'stok' => 150.0,
                 'stok_minimum' => 100.0,
                 'harga' => 3500.0,
                 'kadaluarsa' => NULL,

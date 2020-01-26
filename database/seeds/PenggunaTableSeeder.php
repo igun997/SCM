@@ -20,9 +20,9 @@ class PenggunaTableSeeder extends Seeder
             0 => 
             array (
                 'id_pengguna' => 'PG041119-004',
-                'nama_pengguna' => 'Pemasaran',
-                'no_kontak' => '6765667766544',
-                'alamat' => 'asasas',
+                'nama_pengguna' => 'Egie Sugiyanto',
+                'no_kontak' => '081000000000',
+                'alamat' => 'Kota Cimahi',
                 'level' => 'pemasaran',
                 'status' => 1,
                 'email' => 'pemasaran@wenow.id',
@@ -32,8 +32,8 @@ class PenggunaTableSeeder extends Seeder
             1 => 
             array (
                 'id_pengguna' => 'PG090919-002',
-                'nama_pengguna' => 'Pengadaan',
-                'no_kontak' => '081214267696',
+                'nama_pengguna' => 'Supardi',
+                'no_kontak' => '0810000000000',
                 'alamat' => 'Bandung',
                 'level' => 'pengadaan',
                 'status' => 1,
@@ -44,9 +44,9 @@ class PenggunaTableSeeder extends Seeder
             2 => 
             array (
                 'id_pengguna' => 'PG130120-005',
-                'nama_pengguna' => 'Produksi',
-                'no_kontak' => '87687876543',
-                'alamat' => 'produksi@wenow.id',
+                'nama_pengguna' => 'Suparno',
+                'no_kontak' => '0810000000000',
+                'alamat' => 'Kota Bandung',
                 'level' => 'produksi',
                 'status' => 1,
                 'email' => 'produksi@wenow.id',
@@ -56,9 +56,9 @@ class PenggunaTableSeeder extends Seeder
             3 => 
             array (
                 'id_pengguna' => 'PG240919-003',
-                'nama_pengguna' => 'Gudang',
-                'no_kontak' => '081214267697',
-                'alamat' => 'gudang@wenow.id',
+                'nama_pengguna' => 'Rizky Aziz',
+                'no_kontak' => '0810000000000',
+                'alamat' => 'Kota Bandung',
                 'level' => 'gudang',
                 'status' => 1,
                 'email' => 'gudang@wenow.id',
@@ -68,9 +68,9 @@ class PenggunaTableSeeder extends Seeder
             4 => 
             array (
                 'id_pengguna' => 'PG271019-001',
-                'nama_pengguna' => 'Direktur',
-                'no_kontak' => '081214257575',
-                'alamat' => 'Direktur',
+                'nama_pengguna' => 'Jatra Novianto',
+                'no_kontak' => '0810000000000',
+                'alamat' => 'Ciparay',
                 'level' => 'direktur',
                 'status' => 1,
                 'email' => 'direktur@wenow.id',

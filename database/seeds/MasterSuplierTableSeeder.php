@@ -37,6 +37,26 @@ class MasterSuplierTableSeeder extends Seeder
                 'ket' => 'Suplier Bahan Baku',
                 'tgl_register' => '2020-01-13 16:16:03',
             ),
+            2 => 
+            array (
+                'id_suplier' => 'SP250120-003',
+                'nama_suplier' => 'Jaya Plaza  Lt 1',
+                'no_kontak' => '0226785467',
+                'email' => 'iikhermansyah@gmail.com',
+                'alamat' => 'Jalan Kosambi , Mal Jaya Plaza',
+                'ket' => 'Suplier Peralatan Cuci',
+                'tgl_register' => '2020-01-25 22:17:25',
+            ),
+            3 => 
+            array (
+                'id_suplier' => 'SP250120-004',
+                'nama_suplier' => 'Toko Parfume Cijerah',
+                'no_kontak' => '081167567898',
+                'email' => '081167567898@gmail.com',
+                'alamat' => 'Pertigaan Cijerah dekat Cimindi',
+                'ket' => 'Suplier Parfum',
+                'tgl_register' => '2020-01-25 22:19:23',
+            ),
         ));
         
         

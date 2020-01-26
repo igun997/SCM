@@ -21,5 +21,25 @@ class DatabaseSeeder extends Seeder
         $this->call(MasterTransportasiTableSeeder::class);
         $this->call(PenggunaTableSeeder::class);
         $this->call(PengaturanTableSeeder::class);
+        $this->call(PemesananTableSeeder::class);
+        $this->call(PemesananDetailTableSeeder::class);
+        $this->call(PengadaanBbTableSeeder::class);
+        $this->call(PengadaanBbDetailTableSeeder::class);
+        $this->call(PengadaanBbReturTableSeeder::class);
+        $this->call(PengadaanBbReturDetailTableSeeder::class);
+        $this->call(PengadaanProdukTableSeeder::class);
+        $this->call(PengadaanProdukDetailTableSeeder::class);
+        $this->call(PengadaanProdukReturTableSeeder::class);
+        $this->call(PengadaanProdukReturDetailTableSeeder::class);
+        $this->call(PengirimanTableSeeder::class);
+        $this->call(PengirimanDetailTableSeeder::class);
+        $this->call(PenyusutanTableSeeder::class);
+        $this->call(PeramalanProduksiTableSeeder::class);
+        $this->call(PosTableSeeder::class);
+        $this->call(PosBarangTableSeeder::class);
+        $this->call(PosPemesananTableSeeder::class);
+        $this->call(PosPemesananDetailTableSeeder::class);
+        $this->call(ProduksiTableSeeder::class);
+        $this->call(ProduksiDetailTableSeeder::class);
     }
 }
