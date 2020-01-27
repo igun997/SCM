@@ -115,9 +115,12 @@ class MasterProduk extends Eloquent
 		}
 		return ($total+$total_prod);
 	}
-	public function total_keluar($id,$from,$to)
+	public function total_keluar($id,$from=null,$to=null)
 	{
 		$obj = \App\Models\Pemesanan::whereBetween("tgl_register",[$from,$to])->get();
+		if ($from == null) {
+			$obj = \App\Models\Pemesanan::all();
+		}
 		if ($obj->count() > 0) {
 			$total = 0;
 			foreach ($obj as $key => $value) {

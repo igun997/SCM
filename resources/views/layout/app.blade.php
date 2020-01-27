@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" integrity="sha256-FdatTf20PQr/rWg+cAKfl6j4/IY3oohFAJ7gVC3M34E=" crossorigin="anonymous" />
     <link rel="stylesheet" href="{{url("assets/plugins/jbox/jBox.all.css")}}">
     <link rel="stylesheet" href="{{url("assets/plugins/cartjs/dist/css/smart_cart.min.css")}}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style media="screen">
       .table thead th, .text-wrap table thead th {

@@ -29,6 +29,8 @@ Route::get('/gen/invoice/pemesanan/{id?}',"ApiControl@invoicePemesanan")->name("
 Route::get('/gen/invoice/pengadaan/{id?}',"ApiControl@invoicePengadaaan")->name("gen.invoice.pengadaan");
 Route::get('/gen/invoice/pengadaanbb/{id?}',"ApiControl@invoicePengadaaanbb")->name("gen.invoice.pengadaanbb");
 Route::post('/stat',"ApiControl@stat")->name("chart");
+Route::get('/trend/{id?}',"ApiControl@trend")->name("trend");
+Route::get('/trend_produk/{id?}',"ApiControl@trend_produk")->name("trend_produk");
 //Private API
 //All Access
 Route::get('/gen/laporanbb',"ApiControl@laporanbb")->name("laporan.pengadaan.bb");

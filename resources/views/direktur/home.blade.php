@@ -56,6 +56,26 @@
         </div>
     </div>
   </div>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Data Penyerapan Bahan Baku</h3>
+      </div>
+      <div class="card-body">
+          <canvas id="canvas" style="height: 20rem"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Data Penyerapan Produk</h3>
+      </div>
+      <div class="card-body">
+          <canvas id="canvas_produk" style="height: 20rem"></canvas>
+      </div>
+    </div>
+  </div>
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header">
@@ -85,8 +105,51 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button'], function (datatables,Swal,c3, $,jbox,select2,dt) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','chartjs'], function (datatables,Swal,c3, $,jbox,select2,dt,Chart) {
     $(document).ready(function(){
+      console.log(Chart);
+      async function persebaran() {
+        var ctx = document.getElementById('canvas').getContext('2d');
+  			window.myScatter = Chart.Scatter(ctx, {
+  				data: await $.get("{{route("trend")}}").then(),
+  				options: {
+  					title: {
+  						display: false,
+  						text: 'Trend Penjualan Produk'
+  					},
+            tooltips: {
+               callbacks: {
+                  label: function(tooltipItem, data) {
+                     var label = data.labels[tooltipItem.index];
+                     return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+                  }
+               }
+            }
+  				}
+  			});
+      }
+      async function persebaran_produk() {
+        var ctx = document.getElementById('canvas_produk').getContext('2d');
+  			window.myScatter = Chart.Scatter(ctx, {
+  				data: await $.get("{{route("trend_produk")}}").then(),
+  				options: {
+  					title: {
+  						display: false,
+  						text: 'Trend Penjualan Produk'
+  					},
+            tooltips: {
+               callbacks: {
+                  label: function(tooltipItem, data) {
+                     var label = data.labels[tooltipItem.index];
+                     return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+                  }
+               }
+            }
+  				}
+  			});
+      }
+      persebaran();
+      persebaran_produk();
       async function pemasaran() {
         obj1 = "#pemasaran";
         res = await $.post("{{route("chart")}}",{pemasaran_harian:true}).then();
@@ -213,7 +276,9 @@
       setInterval(function () {
         stat();
         pemasaran();
+        persebaran();
         produksi();
+        persebaran_produk();
         pengadaan();
       }, 10000);
       console.log("Home Excute . . . .");

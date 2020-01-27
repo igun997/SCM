@@ -17,6 +17,7 @@
         "laravel/tinker": "^1.0",
         "minchao/shopee-php": "^0.0.8",
         "orangehill/iseed": "^2.6",
+        "php-ai/php-ml": "^0.8.0",
         "pusher/pusher-php-server": "^4.1",
         "thomaswelton/laravel-gravatar": "^1.2",
         "vkovic/laravel-custom-casts": "^1.2"

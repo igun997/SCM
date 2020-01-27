@@ -98,7 +98,7 @@ class MasterBb extends Eloquent
 			return 0;
 		}
 	}
-	public function total_keluar($id,$from,$to)
+	public function total_keluar($id,$from=null,$to=null)
 	{
 		$obj = \App\Models\MasterKomposisi::where(["id_bb"=>$id]);
 		$listBarang = [];
@@ -108,10 +108,18 @@ class MasterBb extends Eloquent
 		}
 		$listBarang = array_unique($listBarang);
 		$obj1 = \App\Models\Produksi::whereBetween("tgl_register",[$from,$to]);
+		if ($from == null) {
+			$obj1 = \App\Models\Produksi::all();
+		}
 		if ($obj->count() > 0) {
 			if ($obj1->count() > 0) {
 				$total = 0;
-				foreach ($obj1->get() as $key => $value) {
+				if ($from == null) {
+					$ds = $obj1;
+				}else {
+					$ds = $obj1->get();
+				}
+				foreach ($ds as $key => $value) {
 					foreach ($value->produksi__details as $k => $v) {
 						if (in_array($v->id_produk,$listBarang)) {
 							$s = \App\Models\MasterKomposisi::where(["id_produk"=>$v->id_produk,"id_bb"=>$id])->get();

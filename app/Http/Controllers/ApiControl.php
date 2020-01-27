@@ -7,6 +7,7 @@ use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSat
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
+use Phpml\Clustering\KMeans;
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
@@ -28,6 +29,83 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function trend($dss=null)
+    {
+      $data = [];
+      $a = MasterBb::all();
+      foreach ($a as $key => $value) {
+        $data[$value->nama] = [$value->total_keluar($value->id_bb),$value->stok];
+      }
+      // $kmeans = new KMeans((count($a)-1));
+      $kmeans = new KMeans(2);
+      $res = $kmeans->cluster($data);
+      $new["datasets"] = [];
+      $color = function(){
+         return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+      };
+      $labels = [];
+      foreach ($res as $key => $value) {
+        $xy = [];
+        $d = [];
+        foreach ($value as $k => $v) {
+          $d[] = $k;
+          $labels[] = $k;
+          $xy[] = ["x"=>$v[0],"y"=>$v[1]];
+        }
+        $w = $color();
+        $set = [
+          "label"=>"C".($key+1),
+          "borderColor"=>"#".$w,
+          "backgroundColor"=>"#".$w,
+          "data"=>$xy,
+        ];
+        $new["datasets"][] = $set;
+      }
+      if ($dss != null) {
+        return $labels;
+      }
+      $new["labels"] = $labels;
+      return $new;
+    }
+    public function trend_produk($dss=null)
+    {
+      $data = [];
+      $a = MasterProduk::all();
+      foreach ($a as $key => $value) {
+        $data[$value->nama_produk] = [$value->total_keluar($value->id_produk),$value->stok];
+      }
+      // $kmeans = new KMeans((count($a)-1));
+      $kmeans = new KMeans(2);
+      $res = $kmeans->cluster($data);
+      $new["datasets"] = [];
+      $color = function(){
+         return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+      };
+      $labels = [];
+      foreach ($res as $key => $value) {
+        $xy = [];
+        $d = [];
+        foreach ($value as $k => $v) {
+          $d[] = $k;
+          $labels[] = $k;
+          $xy[] = ["x"=>$v[0],"y"=>$v[1]];
+        }
+        $w = $color();
+        $set = [
+          "label"=>"C".($key+1),
+          "borderColor"=>"#".$w,
+          "backgroundColor"=>"#".$w,
+          "data"=>$xy,
+        ];
+        $new["datasets"][] = $set;
+      }
+      if ($dss != null) {
+        return $labels;
+      }
+      $new["labels"] = $labels;
+      return $new;
+    }
+
     public function detailbiayaproduksi($id)
     {
       $a = ProduksiDetail::where(["id_pd"=>$id]);

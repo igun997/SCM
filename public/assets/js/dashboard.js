@@ -21,7 +21,8 @@ paths: {
 'datepicker':'//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min',
 'jqform':'assets/plugins/jqueryform/jq.form',
 'Pusher':'//js.pusher.com/5.0/pusher.min',
-"sign":"//cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min"
+"sign":"//cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min",
+"chartjs":"//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min",
 },
 shim: {
 'bootstrap': ['jquery'],
