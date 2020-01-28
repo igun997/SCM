@@ -62,7 +62,7 @@
         <h3 class="card-title">Data Penyerapan Bahan Baku</h3>
       </div>
       <div class="card-body">
-          <canvas id="canvas" style="height: 20rem"></canvas>
+          <div id="cs1" style="height: 20rem"></div>
       </div>
     </div>
   </div>
@@ -72,7 +72,7 @@
         <h3 class="card-title">Data Penyerapan Produk</h3>
       </div>
       <div class="card-body">
-          <canvas id="canvas_produk" style="height: 20rem"></canvas>
+          <div id="cs2" style="height: 20rem"></div>
       </div>
     </div>
   </div>
@@ -108,45 +108,66 @@
   require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','chartjs'], function (datatables,Swal,c3, $,jbox,select2,dt,Chart) {
     $(document).ready(function(){
       console.log(Chart);
+      var cs1 = c3.generate({
+        bindto: '#cs1', // specify the DOM element to which the chart will be bound
+        data: {
+          xs: {
+                setosa: 'setosa_x',
+                versicolor: 'versicolor_x',
+              },
+              columns: [
+                ['setosa_x', 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
+                ['versicolor_x', 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
+                ['setosa', 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+                ['versicolor', 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+              ],
+          type: 'scatter'
+        },
+        axis: { // specify the x and y axis labels
+          x: {
+            label: 'Stok',
+          },
+          y: {
+            label: 'Total Transaksi'
+          }
+        }
+      });
+      var cs2 = c3.generate({
+        bindto: '#cs2', // specify the DOM element to which the chart will be bound
+        data: {
+          xs: {
+            setosa: 'setosa_x',
+            versicolor: 'versicolor_x',
+          },
+          columns: [
+            ['setosa_x', 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
+            ['versicolor_x', 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
+            ['setosa', 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+            ['versicolor', 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+          ],
+          type: 'scatter'
+        },
+        axis: { // specify the x and y axis labels
+          x: {
+            label: 'Stok',
+          },
+          y: {
+            label: 'Total Transaksi'
+          }
+        }
+      });
+      cs1.unload({ ids: 'setosa' });
+      cs1.unload({ ids: 'versicolor' });
+      cs2.unload({ ids: 'setosa' });
+      cs2.unload({ ids: 'versicolor' });
       async function persebaran() {
-        var ctx = document.getElementById('canvas').getContext('2d');
-  			window.myScatter = Chart.Scatter(ctx, {
-  				data: await $.get("{{route("trend")}}").then(),
-  				options: {
-  					title: {
-  						display: false,
-  						text: 'Trend Penjualan Produk'
-  					},
-            tooltips: {
-               callbacks: {
-                  label: function(tooltipItem, data) {
-                     var label = data.labels[tooltipItem.index];
-                     return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-                  }
-               }
-            }
-  				}
-  			});
+        res = await $.get("{{route("trend")}}").then();
+        cs1.load(res);
       }
       async function persebaran_produk() {
-        var ctx = document.getElementById('canvas_produk').getContext('2d');
-  			window.myScatter = Chart.Scatter(ctx, {
-  				data: await $.get("{{route("trend_produk")}}").then(),
-  				options: {
-  					title: {
-  						display: false,
-  						text: 'Trend Penjualan Produk'
-  					},
-            tooltips: {
-               callbacks: {
-                  label: function(tooltipItem, data) {
-                     var label = data.labels[tooltipItem.index];
-                     return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
-                  }
-               }
-            }
-  				}
-  			});
+        res = await $.get("{{route("trend_produk")}}").then();
+        cs2.load(res);
+
       }
       persebaran();
       persebaran_produk();
@@ -277,8 +298,8 @@
         stat();
         pemasaran();
         persebaran();
-        produksi();
         persebaran_produk();
+        produksi();
         pengadaan();
       }, 10000);
       console.log("Home Excute . . . .");

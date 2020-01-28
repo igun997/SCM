@@ -43,29 +43,24 @@ class ApiControl extends Controller
       $color = function(){
          return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
       };
-      $labels = [];
+      $xs = [];
+      $columns = [];
       foreach ($res as $key => $value) {
-        $xy = [];
-        $d = [];
+        $xs[("C".($key+1))] = "C".($key+1)."_x";
+        $temp = [];
+        $temp[] = "C".($key+1);
         foreach ($value as $k => $v) {
-          $d[] = $k;
-          $labels[] = $k;
-          $xy[] = ["x"=>$v[0],"y"=>$v[1]];
+          $temp[] = $v[0];
         }
-        $w = $color();
-        $set = [
-          "label"=>"C".($key+1),
-          "borderColor"=>"#".$w,
-          "backgroundColor"=>"#".$w,
-          "data"=>$xy,
-        ];
-        $new["datasets"][] = $set;
+        $tempx = [];
+        $tempx[] = "C".($key+1)."_x";
+        foreach ($value as $k => $v) {
+          $tempx[] = $v[1];
+        }
+        $columns[] = $tempx;
+        $columns[] = $temp;
       }
-      if ($dss != null) {
-        return $labels;
-      }
-      $new["labels"] = $labels;
-      return $new;
+      return ["xs"=>$xs,"columns"=>$columns,"type"=>"scatter"];
     }
     public function trend_produk($dss=null)
     {
@@ -81,29 +76,24 @@ class ApiControl extends Controller
       $color = function(){
          return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
       };
-      $labels = [];
+      $xs = [];
+      $columns = [];
       foreach ($res as $key => $value) {
-        $xy = [];
-        $d = [];
+        $xs[("C".($key+1))] = "C".($key+1)."_x";
+        $temp = [];
+        $temp[] = "C".($key+1);
         foreach ($value as $k => $v) {
-          $d[] = $k;
-          $labels[] = $k;
-          $xy[] = ["x"=>$v[0],"y"=>$v[1]];
+          $temp[] = $v[0];
         }
-        $w = $color();
-        $set = [
-          "label"=>"C".($key+1),
-          "borderColor"=>"#".$w,
-          "backgroundColor"=>"#".$w,
-          "data"=>$xy,
-        ];
-        $new["datasets"][] = $set;
+        $tempx = [];
+        $tempx[] = "C".($key+1)."_x";
+        foreach ($value as $k => $v) {
+          $tempx[] = $v[1];
+        }
+        $columns[] = $tempx;
+        $columns[] = $temp;
       }
-      if ($dss != null) {
-        return $labels;
-      }
-      $new["labels"] = $labels;
-      return $new;
+      return ["xs"=>$xs,"columns"=>$columns,"type"=>"scatter"];
     }
 
     public function detailbiayaproduksi($id)
