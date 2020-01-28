@@ -27,7 +27,7 @@ class MentorControl extends Controller
     }
     $a = array_unique($pengguna);
     foreach ($a as $key => $value) {
-      $select = GeraiOrder::where(["status_order"=>6,"pemilik_id"=>$value])->whereBetween("dibuat",[$year."-01-01",$year."-12-31"]);
+
       $trx = 0;
       $kotor = 0;
 
@@ -39,12 +39,12 @@ class MentorControl extends Controller
           $stack[$dt->format("Y-m")] = 0;
       }
       foreach ($periode as $k => $v) {
+        $select = GeraiOrder::where(["status_order"=>6,"pemilik_id"=>$value])->whereMonth("dibuat",date("m",strtotime($v)))->whereYear("dibuat",date("Y",strtotime($v)));
+        $total = 0;
         foreach ($select->get() as $y => $e) {
-          if (date("Y-m",strtotime($e->dibuat)) == $v) {
-            $stack[$v] = $stack[$v] + $e->totalharga;
-
-          }
+          $total = $total + $e->totalharga;
         }
+        $stack[$v] = $total;
       }
       $color = random_color();
       $nornalis = [];

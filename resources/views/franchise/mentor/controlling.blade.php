@@ -71,6 +71,21 @@
     $("#dtable").DataTable({
 
     });
+    function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+      try {
+        decimalCount = Math.abs(decimalCount);
+        decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+        const negativeSign = amount < 0 ? "-" : "";
+
+        let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+        let j = (i.length > 3) ? i.length % 3 : 0;
+
+        return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+      } catch (e) {
+        console.log(e)
+      }
+    };
     $.get("{{route("mentor.chart",date("Y"))}}",function(s){
       console.log(s);
       var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -93,7 +108,24 @@
             title: {
               display: true,
 
-            }
+            },
+            scales: {
+                 yAxes: [{
+                     ticks: {
+                         // Include a dollar sign in the ticks
+                         callback: function(value, index, values) {
+                             return 'Rp. ' + formatMoney(value,0);
+                         }
+                     }
+                 }]
+             },
+             tooltips: {
+                 callbacks: {
+                     label: function(tooltipItem, chart)  {
+                       return "Rp."+formatMoney(tooltipItem.value,0);
+                     },
+                 }
+             }
           }
         });
 
