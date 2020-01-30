@@ -1260,14 +1260,14 @@
                     console.log("Initialize");
                     html = this.content;
                     $.get("{{route("private.api.master_satuan_read")}}/all",function(rsa){
-                      itsMe = {};
+                      var namanya = "Tidak Diketahui";
                       for (var i = 0; i < rsa.length; i++) {
-                        if (rs.id_satuan == rsa[i].value) {
-                          itsMe = {value:rs.id_satuan,text:rsa[i].value};
+                        if(rsa[i].value == rs.id_satuan){
+                          var namanya = rsa[i].text;
                           break;
                         }
                       }
-                      selectbuilder(rsa,html.find("#id_satuan"),itsMe);
+                      selectbuilder(rsa,html.find("#id_satuan"),[{value:rs.id_satuan,text:namanya}])
                     });
                     html.find("#update").on('submit',function(event) {
                       event.preventDefault();
