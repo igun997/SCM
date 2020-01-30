@@ -406,9 +406,11 @@
       ];
       return cookingform.join("");
     }
-  require(['jquery','Pusher','sign'], function ($,Pusher,SignaturePad) {
+  require(['jquery','Pusher','sign','momentjs'], function ($,Pusher,SignaturePad,moment) {
 
-
+      console.log("start");
+    var momentNow = moment.unix("{{time()}}");
+    $('#time_clock').html(momentNow.format('DD MMMM YYYY hh:mm:ss').toUpperCase());
     $("#sign").on('click', function(event) {
       event.preventDefault();
       var s = [

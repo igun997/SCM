@@ -171,6 +171,9 @@
             <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
           </li>
           @endif
+          <li class="nav-item">
+            <a href="#"  class="nav-link"><i class="fa fa-clock-o"></i> <b id="time_clock">00:00:00</b></a>
+          </li>
         </ul>
       </div>
     </div>

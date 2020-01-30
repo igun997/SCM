@@ -23,6 +23,7 @@ paths: {
 'Pusher':'//js.pusher.com/5.0/pusher.min',
 "sign":"//cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min",
 "chartjs":"//cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min",
+"momentjs":"//cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min",
 },
 shim: {
 'bootstrap': ['jquery'],
