@@ -346,7 +346,7 @@
                 $("td",r).eq(8).html(btn(d[8],d[3],d[6]));
               }
             });
-            $("#produksi_table").on("click", ".detail", async function(event) {
+            content.find("#produksi_table").on("click", ".detail", async function(event) {
               id = $(this).data("id");
               res = await $.get("{{route("private.api.produksi_read")}}/"+id).then();
               var produksi_detail = [
@@ -451,7 +451,7 @@
                 }});
                 m.open();
             });
-            $("#produksi_table").on("click", ".tidak", function(event) {
+            content.find("#produksi_table").on("click", ".tidak", function(event) {
               id = $(this).data("id");
               // private.api.produksi_update
               Swal.fire({
@@ -475,7 +475,7 @@
                 }
               });
             });
-            $("#produksi_table").on("click", ".setujui", function(event) {
+            content.find("#produksi_table").on("click", ".setujui", function(event) {
               id = $(this).data("id");
               // private.api.produksi_update
               Swal.fire({
