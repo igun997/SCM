@@ -2278,7 +2278,7 @@ class ApiControl extends Controller
     public function pengiriman_read($id = null)
     {
       if ($id != null) {
-        $getData = Pengiriman::where(["id_pengiriman"=>$id]);
+        $getData = Pengiriman::where(["id_pengiriman"=>$id])->orderBy("tgl_register","desc");
         if ($getData->count() > 0) {
           $d = $getData->first();
           $d->status_pengiriman_text = status_pengiriman($d->status_pengiriman);
