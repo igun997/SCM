@@ -2300,7 +2300,7 @@ class ApiControl extends Controller
           return response()->json(["status"=>0]);
         }
       }else {
-        $getData = Pengiriman::all();
+        $getData = Pengiriman::orderBy("tgl_register","desc")->get();
         $data = [];
         $data["data"] = [];
         foreach ($getData as $key => $value) {
