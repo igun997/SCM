@@ -41,7 +41,7 @@
         <td>{{$value->id_pemesanan}}</td>
         <td>{{ucfirst($value->master_pelanggan->nama_pelanggan)}}</td>
         <td>{{status_pesanan($value->status_pesanan)}}</td>
-        <td>{{konfirmasi($value->status_pembayaran)}}</td>
+        <td>{{status_pembayaran($value->status_pembayaran)}}</td>
         <td>Rp. {{number_format(($value->pajak*($value->totalharga($value->id_pemesanan))))}}</td>
         <td>{{number_format($value->pemesanan__details->count())}}</td>
         <td>Rp. {{number_format((($value->totalharga($value->id_pemesanan))))}}</td>
