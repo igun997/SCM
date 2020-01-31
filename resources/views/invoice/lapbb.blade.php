@@ -1,21 +1,20 @@
-<!DOCTYPE html>
 <html>
   <head>
     <title>Laporan Bahan Baku</title>
     <style>
-    td {
-      padding:3px 3px 3px;
-    }
-    .table_po {
-      padding:3px 3px 3px;
-      border-collapse: collapse;
-      border:1px solid;
-      width:100%
-    }
-    .table_po tr td{
-      border:1px solid;
-      text-align:center;
-    }
+      td {
+        padding:3px 3px 3px;
+      }
+      .table_po {
+        padding:3px 3px 3px;
+        border-collapse: collapse;
+        border:1px solid;
+        width:100%
+      }
+      .table_po tr td{
+        border:1px solid;
+        text-align:center;
+      }
     </style>
   </head>
   <body>
