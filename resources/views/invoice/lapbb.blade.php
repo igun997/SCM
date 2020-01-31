@@ -16,7 +16,7 @@
         border:1px solid;
         text-align:center;
       }
-      .table_po tr th{
+      .table_po th{
         border:1px solid;
         text-align:center;
       }
