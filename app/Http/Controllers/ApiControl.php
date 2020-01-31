@@ -210,7 +210,7 @@ class ApiControl extends Controller
     {
       $a = MasterBb::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'portait');
+      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'portait');
       // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
       return $pdf->stream();
     }
@@ -218,14 +218,14 @@ class ApiControl extends Controller
     {
       $a = MasterProduk::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lappp', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     public function laporanhilang(Request $req)
     {
       $a = Penyusutan::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.laphilang', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'portait');
+      $pdf = PDF::loadView('invoice.laphilang', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'portait');
       // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
       return $pdf->stream();
     }
