@@ -28,16 +28,16 @@
     <h5 align="center">PERIODE : {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}</h5>
     <table class='table_po'>
       <tr style="font-weight:bold">
-        <th>No</th>
-        <th>Kode Bahan Baku</th>
-        <th>Nama Bahan Baku</th>
-        <th>Stok</th>
-        <th>Stok Minimum</th>
-        <th>Harga</th>
-        <th>Total Masuk</th>
-        <th>Total Keluar</th>
-        <th>Total Keluar (Hilang)</th>
-        <th>Tanggal Dibuat</th>
+        <td>No</td>
+        <td>Kode Bahan Baku</td>
+        <td>Nama Bahan Baku</td>
+        <td>Stok</td>
+        <td>Stok Minimum</td>
+        <td>Harga</td>
+        <td>Total Masuk</td>
+        <td>Total Keluar</td>
+        <td>Total Keluar (Hilang)</td>
+        <td>Tanggal Dibuat</td>
       </tr>
       @foreach($data as $key => $value)
       <tr>
