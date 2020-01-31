@@ -25,6 +25,7 @@
       <tr style="font-weight:bold">
         <td>No</td>
         <td>Kode Produk</td>
+        <td>Nama</td>
         <td>Stok</td>
         <td>Stok Minimum</td>
         <td>Harga Produksi</td>
