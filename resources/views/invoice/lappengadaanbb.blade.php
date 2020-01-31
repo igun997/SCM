@@ -16,6 +16,12 @@
         border:1px solid;
         text-align:center;
       }
+      .centralize {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        width: 40%;
+      }
     </style>
   </head>
   <body>
@@ -86,6 +92,23 @@
         <td align="center">{{session()->get("nama")}}</td>
       </tr>
     </table>
-
+    <table width="200px" class="centralize">
+      <tr>
+        <td align="center"></td>
+      </tr>
+       <tr>
+        <td align="center">Bag. Gudang</td>
+      </tr>
+       <tr>
+        <td align="center" height="100px">
+          <center>
+            <img src="{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+          </center>
+        </td>
+      </tr>
+       <tr>
+        <td align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</td>
+      </tr>
+    </table>
   </body>
 </html>
