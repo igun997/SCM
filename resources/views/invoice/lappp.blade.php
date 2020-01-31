@@ -20,7 +20,7 @@
   <body>
     @include("invoice.head")
     <h2 align="center">LAPORAN DATA PRODUK</h2>
-    <h5 align="center">PERIODE : -</h5>
+    <h5 align="center">PERIODE : {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}</h5>
     <table class='table_po'>
       <tr style="font-weight:bold">
         <td>No</td>
