@@ -210,7 +210,7 @@ class ApiControl extends Controller
     {
       $a = MasterBb::all();
       $data = [];
-      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'portait');
+      $pdf = PDF::loadView('invoice.lapbb', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
       // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
       return $pdf->stream();
     }
