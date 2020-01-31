@@ -73,7 +73,7 @@
     </table>
     <table width="200px" style="float:right">
       <tr>
-        <td align="center">Bandung, 29 September 2020</td>
+        <td align="center">Bandung, {{date("d-m-Y")}}</td>
       </tr>
        <tr>
         <td align="center">Bag. Gudang</td>

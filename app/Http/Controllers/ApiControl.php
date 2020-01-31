@@ -233,7 +233,7 @@ class ApiControl extends Controller
     {
       $a = Produksi::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       $data = [];
-      $pdf = PDF::loadView('invoice.lapproduksi', ["data"=>$a,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lapproduksi', ["data"=>$a,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     public function laporanproduk(Request $req)
@@ -241,7 +241,7 @@ class ApiControl extends Controller
       $pengadaan = PengadaanProduk::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengadaanproduk', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengadaanproduk', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     public function laporanbb(Request $req)
@@ -249,7 +249,7 @@ class ApiControl extends Controller
       $pengadaan = PengadaanBb::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengadaanbb', ["data"=>$pengadaan,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     public function laporanpengiriman(Request $req)
@@ -257,7 +257,7 @@ class ApiControl extends Controller
       $pemasaran = Pengiriman::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappengiriman', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lappengiriman', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     public function laporanpemasaran(Request $req)
@@ -265,7 +265,7 @@ class ApiControl extends Controller
       $pemasaran = Pemesanan::whereBetween("tgl_register",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
       // return $pengadaan->get();
       $data = [];
-      $pdf = PDF::loadView('invoice.lappemasaran', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a3', 'landscape');
+      $pdf = PDF::loadView('invoice.lappemasaran', ["data"=>$pemasaran,"req"=>$req->all()])->setPaper('a4', 'landscape');
       return $pdf->stream();
     }
     //Direktur
