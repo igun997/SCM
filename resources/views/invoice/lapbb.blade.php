@@ -12,7 +12,7 @@
         border:1px solid;
         width:100%
       }
-      .table_po tr td{
+      .table_po tr td th{
         border:1px solid;
         text-align:center;
       }
