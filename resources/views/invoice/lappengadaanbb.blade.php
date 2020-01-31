@@ -1,118 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Laporan Pengadaan Bahan Baku</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<html>
+  <head>
+    <title>Laporan Pengadaan</title>
     <style>
-    @page {
-      margin-top: 0px;
-      margin-bottom: 0px;
-    }
-        body{
-            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            color:#333;
-            text-align:left;
-            font-size:13px;
-            margin:0;
-        }
-        .container{
-            margin:0 auto;
-            margin-top:35px;
-            padding:40px;
-            width:auto;
-            height:auto;
-            background-color:#fff;
-        }
-        caption{
-            font-size:28px;
-            margin-bottom:15px;
-        }
-        table{
-            border:1px solid #333;
-            border-collapse:collapse;
-            margin:0 auto;
-            width:auto;
-        }
-        td, tr, th{
-            padding:12px;
-            border:1px solid #333;
-            width:auto;
-        }
-        th{
-            background-color: #f0f0f0;
-        }
-        h4, p{
-            margin:0px;
-        }
+      td {
+        padding:3px 3px 3px;
+      }
+      .table_po {
+        padding:3px 3px 3px;
+        border-collapse: collapse;
+        border:1px solid;
+        width:100%
+      }
+      .table_po tr td{
+        border:1px solid;
+        text-align:center;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-      @include("invoice.head")
-      <h1 align="center">Laporan Pengadaan Bahan Baku</h1>
-      <h3  align="center">
-        Periode {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}
-      </h3>
-      <br>
-        <table>
+  </head>
+  <body>
+    @include("invoice.head")
+    <h2 align="center">LAPORAN DATA PENGADAAN BAHAN BAKU</h2>
+    <h5 align="center">PERIODE : {{date("d-m-Y",strtotime($req["dari"]))}} - {{date("d-m-Y",strtotime($req["sampai"]))}}</h5>
+    <table class='table_po'>
+      <tr style="font-weight:bold">
+        <td>No</td>
+        <td>Kode Pengadaan</td>
+        <td>Suplier</td>
+        <td>Status</td>
+        <td>Konf. Direktur</td>
+        <td>Konf. Gudang</td>
+        <td>Biaya Pengadaan</td>
+        <td>Tanggal Diterima</td>
+        <td>Tanggal Dibuat</td>
+      </tr>
+      @foreach($data->get() as $key => $value)
+      <tr>
+        <td>{{($key+1)}}</td>
+        <td>{{$value->id_pengadaan_bb}}</td>
+        <td>{{$value->master_suplier->nama_suplier}}</td>
+        <td>{{status_pengadaan($value->status_pengadaan)}}</td>
+        <td>{{konfirmasi($value->konfirmasi_direktur)}}</td>
+        <td>{{konfirmasi($value->konfirmasi_gudang)}}</td>
+        <td>Rp. {{number_format(\App\Models\PengadaanBbDetail::where(["id_pengadaan_bb"=>$value->id_pengadaan_bb])->select(\DB::raw("SUM(jumlah*harga) as total"))->first()->total)}}</td>
+        <td>{{(($value->tgl_diterima == null)?"-":date("d-m-Y",strtotime($value->tgl_diterima)))}}</td>
+        <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
+      </tr>
+      @endforeach
+    </table>
+    <br>
+    <br>
+    <table width="200px" style="float:left;">
+      <tr>
+        <td align="center"></td>
+      </tr>
+       <tr>
+        <td align="center">Direktur</td>
+      </tr>
+       <tr>
+        <td align="center" height="100px">
+          <center>
+            <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+          </center>
+        </td>
+      </tr>
+       <tr>
+        <td align="center">Jatra Novianto</td>
+      </tr>
+    </table>
+    <table width="200px" style="float:right">
+      <tr>
+        <td align="center">Bandung, {{date("d-m-Y")}}</td>
+      </tr>
+       <tr>
+        <td align="center">Bag. Pengadaan</td>
+      </tr>
+       <tr>
+        <td align="center" height="100px">
+          <center>
+            <img src="{{(\App\Models\Pengguna::where(['level'=>"pengadaan"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
+          </center>
+        </td>
+      </tr>
+       <tr>
+        <td align="center">{{session()->get("nama")}}</td>
+      </tr>
+    </table>
 
-            <thead>
-              <tr>
-                <th>No</th>
-                <th>Kode Pengadaan</th>
-                <th>Suplier</th>
-                <th>Status</th>
-                <th>Konf. Direktur</th>
-                <th>Konf. Gudang</th>
-                <th>Biaya Pengadaan</th>
-                <th>Tanggal Diterima</th>
-                <th>Tanggal Dibuat</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach($data->get() as $key => $value)
-              <tr>
-                <td>{{($key+1)}}</td>
-                <td>{{$value->id_pengadaan_bb}}</td>
-                <td>{{$value->master_suplier->nama_suplier}}</td>
-                <td>{{status_pengadaan($value->status_pengadaan)}}</td>
-                <td>{{konfirmasi($value->konfirmasi_direktur)}}</td>
-                <td>{{konfirmasi($value->konfirmasi_gudang)}}</td>
-                <td>Rp. {{number_format(\App\Models\PengadaanBbDetail::where(["id_pengadaan_bb"=>$value->id_pengadaan_bb])->select(\DB::raw("SUM(jumlah*harga) as total"))->first()->total)}}</td>
-                <td>{{(($value->tgl_diterima == null)?"-":date("d-m-Y",strtotime($value->tgl_diterima)))}}</td>
-                <td>{{(($value->tgl_register == null)?"-":date("d-m-Y",strtotime($value->tgl_register)))}}</td>
-              </tr>
-              @endforeach
-            </tbody>
-            <tfoot>
-              <tr>
-                <th colspan="3" align="center">Ketua Divisi WENOW</th>
-                <td colspan="3"></td>
-                <th colspan="3" align="center">Bag. Pengadaan</th>
-              </tr>
-              <tr>
-                <td colspan="3" style="height:100px">
-                  <center>
-                    <img src="{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
-                  </center>
-                </td>
-                <td colspan="3"></td>
-                <td colspan="3"  style="height:100px">
-                  <center>
-                    <img src="{{(\App\Models\Pengguna::where(['level'=>"pengadaan"])->first()->ttd)}}" style="width:200px;height: auto;" alt="">
-                  </center>
-                </td>
-              </tr>
-              <tr>
-                <th colspan="3" align="center">Jatra Novianto</th>
-                <td colspan="3"></td>
-                <th colspan="3" align="center">{{session()->get("nama")}}</th>
-              </tr>
-            </tfoot>
-        </table>
-    </div>
-</body>
+  </body>
 </html>
