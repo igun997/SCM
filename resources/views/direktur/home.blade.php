@@ -1865,6 +1865,10 @@
                               type:"text",
                               name:"harga_distribusi",
                             },{
+                              label:"Foto (Optional)",
+                              type:"file",
+                              name:"foto",
+                            },{
                               label:"Deskripsi",
                               type:"textarea",
                               name:"deskripsi",
@@ -1876,7 +1880,6 @@
                             }
                           ]
                         ];
-
                         btn = {name:"Simpan",class:"success",type:"submit"};
                         formSatuan = builder(frm,btn,"create",true,12);
                         set = new jBox('Modal', {
@@ -1903,6 +1906,7 @@
                           onCreated:function(){
                             console.log("Initialize");
                             html = this.content;
+                            html.find("#create").attr("enctype","multipart/form-data");
                             // html.find("#id_satuan").select2({
                             // });
 
@@ -1911,13 +1915,15 @@
                             });
                             html.find("#create").on('submit',function(event) {
                               event.preventDefault();
-                              dform = $(this).serializeArray();
+                              dform = new FormData(this);
                               console.log(dform);
                               on();
                               $.ajax({
                                 url: '{{route("private.api.master_produk_insert")}}',
                                 type: 'POST',
                                 dataType: 'json',
+                                contentType: false,
+  	                            processData:false,
                                 data: dform
                               })
                               .done(function(rs) {
@@ -1984,6 +1990,10 @@
                       name:"harga_produksi",
                       value:rs.harga_produksi
                     },{
+                      label:"Foto (Optional)",
+                      type:"file",
+                      name:"foto",
+                    },{
                       label:"Harga Distribusi / Jual",
                       type:"text",
                       name:"harga_distribusi",
@@ -2033,14 +2043,21 @@
                       }
                       selectbuilder(rsa,html.find("#id_satuan"),[{value:rs.id_satuan,text:namanya}])
                     });
+                    if (rs.foto == null) {
+                      html.find("#update").before('<center><img class="img img-fluid m-4" style="max-height:300px" src="{{url("assets/images/strip-logo.png")}}"></center>')
+                    }else {
+                      html.find("#update").before('<center><img class="img img-fluid m-4" style="max-height:300px" src="{{url("upload/")}}/'+rs.foto+'"></center>')
+                    }
                     html.find("#update").on('submit',function(event) {
                       event.preventDefault();
-                      dform = $(this).serializeArray();
+                      dform = new FormData(this);
                       console.log(dform);
                       on();
                       $.ajax({
                         url: '{{route("private.api.master_produk_update")}}/'+id,
                         type: 'POST',
+                        contentType: false,
+                        processData:false,
                         dataType: 'json',
                         data: dform
                       })
