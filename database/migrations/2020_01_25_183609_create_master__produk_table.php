@@ -20,6 +20,7 @@ class CreateMasterProdukTable extends Migration {
 			$table->float('stok', 10, 0)->default(0);
 			$table->text('deskripsi', 65535)->nullable();
 			$table->date('kadaluarsa')->nullable();
+			$table->string('foto',100)->nullable();
 			$table->integer('id_satuan')->index('id_satuan');
 			$table->float('harga_produksi', 10, 0)->nullable();
 			$table->float('harga_distribusi', 10, 0)->nullable();

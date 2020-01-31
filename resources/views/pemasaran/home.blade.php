@@ -934,12 +934,16 @@
           template = [];
           console.log(arr);
           for (var i = 0; i < arr.length; i++) {
+            img =  '<img data-name="product_image" style="max-height:250px" src="http://placehold.it/250x250/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">';
+            if (arr[i].foto != null ) {
+              img =  '<img data-name="product_image" style="max-height:250px" src="{{url("upload")}}/'+arr[i].foto+'" alt="...">';
+            }
             var k = [
               '<div class="col-'+col+'">',
               '<div class="card">',
                  '<div class="card-body">',
                   '<div class="sc-product-item thumbnail">',
-                  '<img data-name="product_image" src="http://placehold.it/250x150/2aabd2/ffffff?text='+arr[i].product_name+'" alt="...">',
+                  img,
                   '<div class="caption m-2">',
                   '<h4 data-name="product_name">'+arr[i].product_name+'</h4>',
                   '<p>'+arr[i].product_desc+'</p>',
@@ -1028,13 +1032,14 @@
               r = await $.get(url).then();
               if (r.status == 1) {
                 $.each(r.data,function(index, el) {
-                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
+                  data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok,foto:el.foto}],3);
                   k.find("#list").append(data);
                 });
               }else{
                 new jBox('Notice', {content: r.msg,showCountdown:true, color: 'red'});
               }
               k.find("#cart").smartCart({
+                addCartSelector:k.find("#list").find(".sc-add-to-cart"),
                 currencySettings:{
                   locales: 'id-ID',
                   currencyOptions:  {
@@ -1107,7 +1112,7 @@
                 k.find("#list").html("");
                 if (r.status == 1) {
                   $.each(r.data,function(index, el) {
-                    data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok}],3);
+                    data = createProduct([{product_name:el.nama_produk,product_desc:el.deskripsi,price:el.harga_distribusi,product_price:el.harga_distribusi,product_id:el.id_produk,stok:el.stok,foto:el.foto}],3);
                     k.find("#list").append(data);
                   });
                 }else{

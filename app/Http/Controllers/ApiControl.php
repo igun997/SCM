@@ -770,6 +770,19 @@ class ApiControl extends Controller
       $data = $req->all();
       $kodifikasi = "PR".date("dmy")."-".str_pad((MasterProduk::count()+1),3,0,STR_PAD_LEFT);
       $data["id_produk"] = $kodifikasi;
+      if ($req->has("foto")) {
+        $req->validate([
+          "foto"=>"mimes:png,jpg,gif,jpeg"
+        ]);
+        $obj = $req->file("foto");
+        $name = $obj->getClientOriginalName();
+        $destinationPath = 'upload';
+        $save = $obj->move($destinationPath,$obj->getClientOriginalName());
+        if (!$save) {
+          return ["status"=>0];
+        }
+        $data["foto"] = $name;
+      }
       $ins = MasterProduk::create($data);
       if ($ins) {
         return response()->json(["status"=>1],200);
@@ -787,6 +800,19 @@ class ApiControl extends Controller
       ]);
       $data = $req->all();
       $data["tgl_perubahan"] = date("Y-m-d H:i:s");
+      if ($req->has("foto")) {
+        $req->validate([
+          "foto"=>"mimes:png,jpg,gif,jpeg"
+        ]);
+        $obj = $req->file("foto");
+        $name = $obj->getClientOriginalName();
+        $destinationPath = 'upload';
+        $save = $obj->move($destinationPath,$obj->getClientOriginalName());
+        if (!$save) {
+          return ["status"=>0];
+        }
+        $data["foto"] = $name;
+      }
       $ins = MasterProduk::findOrFail($id)->update($data);
       if ($ins) {
         return response()->json(["status"=>1],200);

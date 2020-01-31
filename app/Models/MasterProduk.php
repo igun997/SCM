@@ -17,6 +17,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property float $stok_minimum
  * @property float $stok
  * @property string $deskripsi
+ * @property string $foto
  * @property \Carbon\Carbon $kadaluarsa
  * @property int $id_satuan
  * @property float $harga_produksi
@@ -58,6 +59,7 @@ class MasterProduk extends Eloquent
 		'nama_produk',
 		'stok_minimum',
 		'stok',
+		'foto',
 		'deskripsi',
 		'kadaluarsa',
 		'id_satuan',

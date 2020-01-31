@@ -146,7 +146,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <th colspan="4" align="center">{{(\App\Models\Pengguna::where(['level'=>"gudang"])->first()->nama_pengguna)}}</th>
+                  <th colspan="4" align="center">{{(\App\Models\Pengguna::where(['level'=>"direktur"])->first()->nama_pengguna)}}</th>
                 </tr>
 
             </tfoot>
