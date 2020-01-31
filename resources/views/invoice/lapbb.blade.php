@@ -24,8 +24,8 @@
     <table class='table_po'>
       <tr style="font-weight:bold">
         <td>No</td>
-        <td>Kode Bahan Baku</td>
-        <td>Nama Bahan Baku</td>
+        <td>Kode </td>
+        <td>Nama </td>
         <td>Stok</td>
         <td>Stok Minimum</td>
         <td>Harga</td>
