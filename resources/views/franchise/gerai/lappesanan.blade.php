@@ -17,16 +17,24 @@
         </div>
         <div class="card-body">
           <div class="col-12">
+            <form  action="{{route("lappesanan")}}" method="post">
             <div class="row">
+                @csrf
               <div class="form-group col-3">
                 <label>Dari</label>
-                <input class="form-control" id="dari" />
+                <input class="form-control date" name="dari" />
               </div>
               <div class="form-group col-3">
                 <label>Sampai</label>
-                <input class="form-control" id="sampai" />
+                <input class="form-control date" name="sampai" />
+              </div>
+              <div class="form-group col-3">
+                <button type="submit" style="margin-top:32px" class="btn btn-primary">
+                  <li class="fa fa-print"></li>
+                </button>
               </div>
             </div>
+          </form>
           </div>
           <div class="table-responsive">
             <table id="dtable" class="table table-bordered">
@@ -84,20 +92,8 @@
 
     console.log("Well Done");
     var oTable = $("#dtable").DataTable({
-      dom: 'Bfrtip',
-      buttons: [
-          {
-              extend: 'print',
-              customize: function ( win ) {
-                  $(win.document.body).find("h1").html("<h4 align='center'>Laporan Pesanan</h4>");
-                  $(win.document.body).find( 'table' )
-                      .addClass( 'compact' )
-                      .css( 'font-size', 'inherit' );
-              }
-          }
-      ]
     });
-    $("#dari").datetimepicker({
+    $(".date").datetimepicker({
         format:"YYYY-MM-DD"
     })
     $("#sampai").datetimepicker({

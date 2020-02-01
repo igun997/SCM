@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,GeraiPelanggan,GeraiOrder,GeraiLayanan,GeraiKontrol,GeraiDriver,GeraiBarangDetail,GeraiBarang,GeraiBagihasil};
 use Helpers\Pengaturan as PengaturanHelper;
+use PDF;
 class ApiControl extends Controller
 {
     //Public API
@@ -19,7 +20,7 @@ class ApiControl extends Controller
       $cek = Pengguna::where($data);
       if ($cek->count() > 0) {
         $row = $cek->first();
-        session(["url"=>url($row->level),"level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna]);
+        session(["url"=>url($row->level),"level"=>$row->level,"id_pengguna"=>$row->id_pengguna,"nama"=>$row->nama_pengguna,"alamat"=>$row->alamat,"no_kontak"=>$row->no_kontak,"email"=>$row->email]);
         return response()->json(["status"=>1,"path"=>url("$row->level")]);
       }else {
         $d = GeraiDriver::where(["username"=>$req->email,"password"=>$req->password]);
@@ -32,7 +33,27 @@ class ApiControl extends Controller
         }
       }
     }
-
+    public function lapkeuangan(Request $req)
+    {
+      $d = GeraiOrder::where(["pemilik_id"=>session()->get("id_pengguna"),"status_order"=>6])->whereBetween("dibuat",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      $pdf = PDF::loadView('invoice.flapkeuangan', ["data"=>$d,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
+      return $pdf->stream();
+    }
+    public function lapbarang(Request $req)
+    {
+      $d =  GeraiBarang::where(["pemilik_id"=>session()->get("id_pengguna")])->whereBetween("dibuat",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      $pdf = PDF::loadView('invoice.flapbarang', ["data"=>$d,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
+      return $pdf->stream();
+    }
+    public function lappesanan(Request $req)
+    {
+      $d =  GeraiOrder::where(["pemilik_id"=>session()->get("id_pengguna")])->whereBetween("dibuat",[date("Y-m-d",strtotime($req->dari)),date("Y-m-d",strtotime($req->sampai))]);
+      $pdf = PDF::loadView('invoice.flappesanan', ["data"=>$d,"req"=>$req->all()])->setPaper('a4', 'landscape');
+      // return view("invoice.lapbb",["data"=>$a,"req"=>$req->all()]);
+      return $pdf->stream();
+    }
     //Direktur
     public function pengaturan_read($id = "")
     {

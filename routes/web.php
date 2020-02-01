@@ -41,6 +41,10 @@ Route::get('/api/android/driver/selesai',"AndroidAPI@statusorder_driver");
 Route::get('/api/android/driver/driver_detailpesanan/{id?}',"AndroidAPI@driver_detailpesanan");
 Route::get('/api/test',"AndroidAPI@mailsend_test");
 Route::get('/activate/email/{key}/{id}',"AndroidAPI@activate")->name("activate.email");
+Route::post('/lap/keuangan',"ApiControl@lapkeuangan")->name("lapkeuangan");
+Route::post('/lap/barang',"ApiControl@lapbarang")->name("lapbarang");
+Route::post('/lap/pesanan',"ApiControl@lappesanan")->name("lappesanan");
+
 //Private API
 //All Access
 // -- Direktur ---

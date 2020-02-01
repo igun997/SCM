@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Providers;
-
+use \Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,6 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+      // $knownDate = Carbon::create(2001, 5, 21, 12);
+      // Carbon::setTestNow($knownDate);
       require_once app_path('Helpers/StatusHelper.php');
       require_once app_path('Helpers/KonversiUnit.php');
       require_once app_path('Helpers/AlgoritmaClass.php');
