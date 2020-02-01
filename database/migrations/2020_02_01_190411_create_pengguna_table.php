@@ -18,7 +18,7 @@ class CreatePenggunaTable extends Migration {
 			$table->string('nama_pengguna', 60);
 			$table->string('no_kontak', 20);
 			$table->text('alamat', 65535);
-			$table->text('ttd')->nullable();
+			$table->text('ttd', 65535)->nullable();
 			$table->enum('level', array('direktur','produksi','gudang','pengadaan','pemasaran'));
 			$table->integer('status')->default(1);
 			$table->string('email', 60);

@@ -16,11 +16,13 @@ class CreatePosTable extends Migration {
 		{
 			$table->integer('id_pos', true);
 			$table->string('nama_pengguna');
-			$table->string('cabang');
+			$table->string('cabang')->nullable();
 			$table->text('alamat', 65535)->nullable();
 			$table->string('username');
 			$table->string('password');
 			$table->boolean('status');
+			$table->enum('level', array('manajer','kasir'));
+			$table->integer('pos_id')->index('as');
 		});
 	}
 

@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreatePosPemesananDetailTable extends Migration {
+class CreatePosTransaksiDetailTable extends Migration {
 
 	/**
 	 * Run the migrations.
@@ -12,11 +12,11 @@ class CreatePosPemesananDetailTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('pos__pemesanan_detail', function(Blueprint $table)
+		Schema::create('pos_transaksi_detail', function(Blueprint $table)
 		{
-			$table->integer('id_ppd', true);
-			$table->integer('id_p_pemesanan')->index('iip');
-			$table->string('id_produk', 60)->index('id_produk');
+			$table->integer('id', true);
+			$table->integer('pos_transaksi_id')->index('pos_trx_id');
+			$table->integer('pos_barang_id')->index('pos_brg_id');
 			$table->float('jumlah', 10, 0);
 			$table->float('harga', 10, 0);
 		});
@@ -30,7 +30,7 @@ class CreatePosPemesananDetailTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('pos__pemesanan_detail');
+		Schema::drop('pos_transaksi_detail');
 	}
 
 }
