@@ -2914,6 +2914,327 @@
         instance = pengguna.open();
 
       });
+      $("#pengguna_pos").on('click',function(event) {
+        event.preventDefault();
+        tabel_pengguna = table(["Kode","Nama","Cabang","Alamat","Status","Level",""],[],"pengguna_table");
+        var pengguna_table = null;
+        var pengguna = new jBox('Modal', {
+          title: 'Data Pengguna POS',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: '500px',
+          createOnInit: true,
+          content: tabel_pengguna,
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+            pengguna_table.destroy();
+          },
+          onCreated:function(rs){
+            var btns = function(id,status){
+              var item = [];
+              if (status == "Aktif") {
+                status = true;
+              }else {
+                status = false;
+              }
+              item.push('<a class="dropdown-item edit" href="javascript:void(0)" data-id="'+id+'">Ubah</a>');
+              if (status) {
+                item.push('<a class="dropdown-item matikan" href="javascript:void(0)" data-id="'+id+'">Non Aktifkan</a>');
+              }else {
+                item.push('<a class="dropdown-item aktifkan" href="javascript:void(0)" data-id="'+id+'">Aktifkan</a>');
+              }
+              return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+            };
+
+            content = this.content;
+            console.log(content);
+            pengguna_table = content.find("#pengguna_table").DataTable({
+              ajax:"{{route("private.api.pos_read")}}",
+              dom: 'Bfrtip',
+              createdRow:function(r,d,i){
+                  $("td",r).eq(6).html(btns(d[6],d[4]));
+              },
+              buttons: [
+                  {
+                      className: "btn btn-success",
+                      text: 'Tambah Pengguna POS',
+                      action: function ( e, dt, node, config ) {
+                        frm = [
+                          [
+                            {
+                              label:"Nama Pengguna POS",
+                              type:"text",
+                              name:"nama_pengguna"
+                            },{
+                              label:"Cabang",
+                              type:"text",
+                              name:"cabang"
+                            },{
+                              label:"Alamat",
+                              type:"textarea",
+                              name:"alamat"
+                            },{
+                              label:"Username",
+                              type:"text",
+                              name:"username"
+                            },{
+                              label:"Password",
+                              type:"password",
+                              name:"password"
+                            }
+                          ]
+                        ];
+                        btn = {name:"Simpan",class:"success",type:"submit"};
+                        formSatuan = builder(frm,btn,"create",true,12);
+                        set = new jBox('Modal', {
+                          title: 'Tambah Pengguna POS',
+                          overlay: false,
+                          width: '500px',
+                          responsiveWidth:true,
+                          height: '500px',
+                          createOnInit: true,
+                          content: formSatuan,
+                          draggable: false,
+                          adjustPosition: true,
+                          adjustTracker: true,
+                          repositionOnOpen: false,
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          repositionOnContent: false,
+                          onCloseComplete:function(){
+                            console.log("Reloading Tabel");
+                            pengguna_table.ajax.reload();
+                          },
+                          onCreated:function(){
+                            console.log("Initialize");
+                            html = this.content;
+                            html.find("#create").on('submit',function(event) {
+                              event.preventDefault();
+                              dform = $(this).serializeArray();
+                              console.log(dform);
+                              on();
+                              $.ajax({
+                                url: '{{route("private.api.pos_insert")}}',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: dform
+                              })
+                              .done(function(rs) {
+
+                                if (rs.status == 1) {
+                                  new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
+                                }else {
+                                  new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
+                                }
+                              })
+                              .fail(function(rs) {
+                                var msg = "";
+                                $.each(rs.responseJSON.errors,function(index,item){
+                                  msg += item[0]+"<br>";
+                                });
+                                if (rs.responseJSON.errors == undefined) {
+                                  var msg = "Kehilangan Komunikasi Dengan Server"
+                                }
+                                Swal.fire({
+                                  type: 'error',
+                                  title: 'Oops...',
+                                  html: msg,
+                                  footer: '<a href>Laporkan Error</a>'
+                                })
+                              })
+                              .always(function() {
+                                off();
+                                set.close();
+                              });
+
+                            });
+
+                          }
+                        });
+                        set.open();
+                      }
+                  }
+              ]
+            });
+            content.find("#pengguna_table").on('click', '.aktifkan', function(event) {
+              event.preventDefault();
+              id_aktifkan = $(this).data("id");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Status Pengguna Akan di Aktifkan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("private.api.pos_update")}}/"+id_aktifkan+"?status=1",function(rs){
+                    if (rs.status == 1) {
+                      new jBox('Notice', {content: 'Data Sukses Di update',showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: 'Gagal Update Data',showCountdown:true, color: 'red'});
+                    }
+                    pengguna_table.ajax.reload();
+                  }).fail(function(){
+                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+            });
+            content.find("#pengguna_table").on('click', '.matikan', function(event) {
+              event.preventDefault();
+              id_matikan = $(this).data("id");
+              Swal.fire({
+                title: 'Apakah Anda Yakin ? ',
+                text: "Status Pengguna Akan di Aktifkan",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya'
+              }).then((result) => {
+                if (result.value) {
+                  $.post("{{route("private.api.pos_update")}}/"+id_matikan+"?status=0",function(rs){
+                    if (rs.status == 1) {
+                      new jBox('Notice', {content: 'Data Sukses Di update',showCountdown:true, color: 'green'});
+                    }else {
+                      new jBox('Notice', {content: 'Gagal Update Data',showCountdown:true, color: 'red'});
+                    }
+                    pengguna_table.ajax.reload();
+                  }).fail(function(){
+                    new jBox('Notice', {content: 'Hey, Server Meledak',showCountdown:true, color: 'red'});
+                  });
+                }
+              })
+
+            });
+            content.find("#pengguna_table").on('click','.edit',function(event) {
+              event.preventDefault();
+              id = $(this).data("id");
+              $.get("{{route("private.api.pos_read")}}/"+id,function(rs){
+                if (rs.status == 1) {
+                  frm = [
+                    [
+                      {
+                        label:"Nama Pengguna POS",
+                        type:"text",
+                        name:"nama_pengguna",
+                        value:rs.data.nama_pengguna
+                      },{
+                        label:"Cabang",
+                        type:"text",
+                        name:"cabang",
+                        value:rs.data.cabang
+                      },{
+                        label:"Alamat",
+                        type:"textarea",
+                        name:"alamat",
+                        value:rs.data.alamat
+                      },{
+                        label:"Username",
+                        type:"text",
+                        name:"username",
+                        value:rs.data.username
+                      },{
+                        label:"Password",
+                        type:"password",
+                        name:"password",
+                        value:rs.data.password
+                      }
+                    ]
+                  ];
+                  btn = {name:"Ubah",class:"warning",type:"submit"};
+                  formSatuan = builder(frm,btn,"update",true,12);
+                  set = new jBox('Modal', {
+                    title: 'Ubah Pengguna POS',
+                    overlay: false,
+                    width: '500px',
+                    responsiveWidth:true,
+                    height: '500px',
+                    createOnInit: true,
+                    content: formSatuan,
+                    draggable: false,
+                    adjustPosition: true,
+                    adjustTracker: true,
+                    repositionOnOpen: false,
+                    offset: {
+                      x: 0,
+                      y: 0
+                    },
+                    repositionOnContent: false,
+                    onCloseComplete:function(){
+                      console.log("Reloading Tabel");
+                      pengguna_table.ajax.reload();
+                    },
+                    onCreated:function(){
+                      console.log("Initialize");
+                      html = this.content;
+
+                      html.find("#update").on('submit',function(event) {
+                        event.preventDefault();
+                        dform = $(this).serializeArray();
+                        console.log(dform);
+                        on();
+                        $.ajax({
+                          url: '{{route("private.api.pos_update")}}/'+id,
+                          type: 'POST',
+                          dataType: 'json',
+                          data: dform
+                        })
+                        .done(function(rs) {
+                          if (rs.status == 1) {
+                            new jBox('Notice', {content: 'Data Sukses Tersimpan',showCountdown:true, color: 'green'});
+                          }else {
+                            new jBox('Notice', {content: 'Gagal Simpan Data',showCountdown:true, color: 'red'});
+                          }
+                        })
+                        .fail(function(rs) {
+                          var msg = "";
+                          $.each(rs.responseJSON.errors,function(index,item){
+                            msg += item[0]+"<br>";
+                          });
+                          if (rs.responseJSON.errors == undefined) {
+                            var msg = "Kehilangan Komunikasi Dengan Server"
+                          }
+                          Swal.fire({
+                            type: 'error',
+                            title: 'Oops...',
+                            html: msg,
+                            footer: '<a href>Laporkan Error</a>'
+                          })
+                        })
+                        .always(function() {
+                          off();
+                          set.close();
+                        });
+
+                      });
+                    }
+                  });
+                  set.open();
+                }else {
+                    new jBox('Notice', {content: 'Data Tidak Ditemukan',showCountdown:true, color: 'red'});
+                }
+              });
+            });
+          }
+        });
+        instance = pengguna.open();
+
+      });
       $("#mpengadaan").on('click',function(event) {
         event.preventDefault();
         console.log("mpengadaan");

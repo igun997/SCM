@@ -121,6 +121,10 @@ Route::group(['middleware' => ['direktur']], function () {
   Route::get('/api/direktur/pengguna_read/{id?}',"ApiControl@pengguna_read")->name("private.api.pengguna_read");
   Route::post('/api/direktur/pengguna_insert',"ApiControl@pengguna_insert")->name("private.api.pengguna_insert");
   Route::post('/api/direktur/pengguna_update/{id?}',"ApiControl@pengguna_update")->name("private.api.pengguna_update");
+  //Pengguna POS
+  Route::get('/api/direktur/penggunapos_read/{id?}',"ApiControl@pos_read")->name("private.api.pos_read");
+  Route::post('/api/direktur/penggunapos_insert',"ApiControl@pos_insert")->name("private.api.pos_insert");
+  Route::post('/api/direktur/penggunapos_update/{id?}',"ApiControl@pos_update")->name("private.api.pos_update");
 
   //Monitoring Pengadaan
   Route::get('/api/direktur/pbahanbaku_read_direktur/{id?}',"ApiControl@pbahanbaku_read_direktur")->name("private.api.pbahanbaku_read_direktur");

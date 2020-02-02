@@ -17,6 +17,7 @@
               <a href="" id="masterpelanggan" class="dropdown-item ">Pelanggan</a>
               <a href="" id="masterproduk" class="dropdown-item ">Produk dan Komposisi</a>
               <a href="" id="pengguna" class="dropdown-item ">Akun SCM</a>
+              <a href="" id="pengguna_pos" class="dropdown-item ">Akun POS</a>
             </div>
           </li>
           <li class="nav-item dropdown">

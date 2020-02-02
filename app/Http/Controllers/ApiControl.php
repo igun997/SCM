@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail};
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
@@ -3038,4 +3038,87 @@ class ApiControl extends Controller
           return ["status"=>0];
         }
     }
+    public function pos_read($id=null)
+    {
+      $data = Po::where(["level"=>"manajer"])->get();
+      if ($id != null) {
+        $data = Po::where(["id_pos"=>$id]);
+        if ($data->count() > 0) {
+          return ["status"=>1,"data"=>$data->first()];
+        }else {
+          return ["status"=>0];
+        }
+      }
+      $dt = [];
+      $dt["data"] = [];
+      foreach ($data as $key => $value) {
+        $dt["data"][] = [($key+1),$value->nama_pengguna,$value->cabang,$value->alamat,status_akun($value->status),ucfirst($value->level),$value->id_pos];
+      }
+      return $dt;
+    }
+    public function poschild_read($id)
+    {
+      $data = Po::where(["pos_id"=>$id])->get();
+      $dt = [];
+      $dt["data"] = [];
+      foreach ($data as $key => $value) {
+        $d["data"][] = [($key+1),$value->nama_pengguna,$value->po->cabang,$value->po->alamat,status_akun($value->status),ucfirst($value->level),$value->id];
+      }
+      return $dt;
+    }
+    public function pos_insert(Request $req)
+    {
+      $req->validate([
+        "nama_pengguna"=>"required",
+        "cabang"=>"required",
+        "alamat"=>"required",
+        "username"=>"required",
+        "password"=>"required",
+      ]);
+      $data = $req->all();
+      $data["level"] = "manajer";
+      $data["status"] = 1;
+      $ins = Po::create($data);
+      if ($ins) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function poschild_insert(Request $req,$id)
+    {
+      $req->validate([
+        "nama_pengguna"=>"required",
+        "username"=>"required",
+        "password"=>"required",
+      ]);
+      $data = $req->all();
+      $data["cabang"] = null;
+      $data["alamat"] = null;
+      $data["level"] = "kasir";
+      $data["pos_id"] = $id;
+      $ins = Po::create($data);
+      if ($ins) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+    public function pos_update(Request $req,$id)
+    {
+      $data = $req->all();
+      if ($req->has("password")) {
+        if ($req->password == "") {
+          unset($data["password"]);
+        }
+      }
+      unset($data["_token"]);
+      $ins = Po::where(["id_pos"=>$id])->update($data);
+      if ($ins) {
+        return response()->json(["status"=>1]);
+      }else {
+        return response()->json(["status"=>0]);
+      }
+    }
+
 }
