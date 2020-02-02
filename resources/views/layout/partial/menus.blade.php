@@ -98,7 +98,9 @@
 
             </div>
           </li>
-
+          <li class="nav-item">
+            <a href="" id="permintaan" class="nav-link"><i class="fa fa-paper-plane"></i> Permintaan Barang</a>
+          </li>
           <li class="nav-item">
             <a href="" id="sign" class="nav-link"><i class="fa fa-certificate"></i> E-Signature</a>
           </li>

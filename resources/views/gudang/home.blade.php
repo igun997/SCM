@@ -2672,6 +2672,177 @@
         });
         instance = master_satuan.open();
       });
+      $("#permintaan").on('click', function(event) {
+        event.preventDefault();
+        console.log("Permintaan");
+        ht = [
+          "<div class=row>",
+          "<div class=col-md-12>",
+          "<div class=table-responsive>",
+          table(["No","Pemohon","Status Permintaan","Konf. Gudang","Tgl Konfirmasi","Tgl Ambil","Dibuat",""],[],"tbl_permintaan"),
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        var btn_permintaan = function(id,status){
+          var item = [];
+          item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+          if (status == "Belum Diproses") {
+            item.push('<a class="dropdown-item terima" href="javascript:void(0)" data-id="'+id+'">Konfirmasi Permintaan Barang</a>');
+            item.push('<a class="dropdown-item tolak" href="javascript:void(0)" data-id="'+id+'">Tolak Permintaan Barang</a>');
+          }else if (status == "Sedang Diproses") {
+            item.push('<a class="dropdown-item proses" href="javascript:void(0)" data-id="'+id+'">Proses Permintaan Barang</a>');
+          }else if (status == "Menunggu Pengambilan") {
+            item.push('<a class="dropdown-item diambil" href="javascript:void(0)" data-id="'+id+'">Sudah Di Ambil</a>');
+          }
+          return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+        };
+        modal = new jBox('Modal', {
+                  title: 'Data Permintaan Barang',
+                  overlay: false,
+                  width: '100%',
+                  responsiveWidth:true,
+                  height: '500px',
+                  createOnInit: true,
+                  content: ht.join(""),
+                  draggable: false,
+                  adjustPosition: true,
+                  adjustTracker: true,
+                  repositionOnOpen: false,
+                  offset: {
+                    x: 0,
+                    y: 0
+                  },
+                  repositionOnContent: false,
+                  onCloseComplete:function(){
+                    console.log("Destruct Table");
+                  },
+                  onCreated:function(x){
+                    html = this.content;
+                    var dts = html.find("#tbl_permintaan").DataTable({
+                      ajax:"{{route("gudang.api.permintaan")}}",
+                      createdRow:function(r,d,i){
+                          $("td",r).eq(7).html(btn_permintaan(d[7],d[2]));
+                      }
+                    })
+                    html.find("#tbl_permintaan").on('click', '.detail', async function(event) {
+                      id = $(this).data("id");
+                      console.log(id);
+                      detail = await $.get("{{route("gudang.api.permintaan")}}/"+id).then();
+                      if (detail.status == 1) {
+                        dt_form = [
+                          "<div class=row>",
+                          "<div class=col-md-12>",
+                          table(["Kode Barang","Nama Barang","Jumlah Pesan"],[],"ds"),
+                          "</div>",
+                          "</div>",
+                        ]
+                        jmodal = new jBox('Modal', {
+                          title: 'Detail Permintaan Barang',
+                          overlay: false,
+                          width: '600px',
+                          responsiveWidth:true,
+                          height: '600px',
+                          createOnInit: true,
+                          content: dt_form.join(""),
+                          draggable: false,
+                          adjustPosition: true,
+                          adjustTracker: true,
+                          repositionOnOpen: false,
+                          offset: {
+                            x: 0,
+                            y: 0
+                          },
+                          repositionOnContent: false,
+                          onCloseComplete:function(){
+                            console.log("Destruct Table");
+
+                          },
+                          onCreated:function(x){
+                            hts = this.content;
+                            konten_tabel = [];
+                            $.each(detail.data.permintaan_details,function(index, el) {
+                              konten_tabel.push([el.id_produk,el.master_produk.nama_produk,el.jumlah]);
+                            });
+                            hts.find("#ds").css('width', '100%');
+                            hts.find("#ds").DataTable({
+                              data:konten_tabel
+                            })
+                          }
+                        });
+                        jmodal.open();
+                      }else {
+                        new jBox('Notice', {content: 'Data Tidak Ditemukan',showCountdown:true, color: 'red'});
+                      }
+                    });
+                    html.find("#tbl_permintaan").on('click', '.terima', async function(event) {
+                      event.preventDefault();
+                      c = confirm("Apakah Anda Yakin");
+                      if (c) {
+                        id = $(this).data("id");
+                        url = "{{route("gudang.api.permintaan_update")}}/"+id;
+                        console.log(url);
+                        res = await $.post(url,{status_permintaan:1,tgl_konfirmasi:"{{date("Y-m-d")}}",konf_gudang:1}).then();
+                        if (res.status == 1) {
+                          new jBox('Notice', {content: 'Update Berhasil',showCountdown:true, color: 'green'})
+                        }else {
+                          new jBox('Notice', {content: 'Update Gagal',showCountdown:true, color: 'red'})
+                        }
+                        dts.ajax.reload();
+                      }
+                    });
+                    html.find("#tbl_permintaan").on('click', '.tolak', async function(event) {
+                      event.preventDefault();
+                      c = confirm("Apakah Anda Yakin");
+                      if (c) {
+                        id = $(this).data("id");
+                        url = "{{route("gudang.api.permintaan_update")}}/"+id;
+                        console.log(url);
+                        res = await $.post(url,{status_permintaan:4,tgl_konfirmasi:"{{date("Y-m-d")}}",konf_gudang:1}).then();
+                        if (res.status == 1) {
+                          new jBox('Notice', {content: 'Update Berhasil',showCountdown:true, color: 'green'})
+                        }else {
+                          new jBox('Notice', {content: 'Update Gagal',showCountdown:true, color: 'red'})
+                        }
+                        dts.ajax.reload();
+                      }
+                    });
+                    html.find("#tbl_permintaan").on('click', '.proses', async function(event) {
+                      event.preventDefault();
+                      c = confirm("Apakah Anda Yakin");
+                      if (c) {
+                          id = $(this).data("id");
+                          url = "{{route("gudang.api.permintaan_update")}}/"+id;
+                          console.log(url);
+                          res = await $.post(url,{status_permintaan:2}).then();
+                          if (res.status == 1) {
+                            new jBox('Notice', {content: 'Update Berhasil',showCountdown:true, color: 'green'})
+                          }else {
+                            new jBox('Notice', {content: 'Update Gagal',showCountdown:true, color: 'red'})
+                          }
+                          dts.ajax.reload();
+                      }
+                    });
+                    html.find("#tbl_permintaan").on('click', '.diambil', async function(event) {
+                      event.preventDefault();
+                      c = confirm("Apakah Anda Yakin");
+                      if (c) {
+                          id = $(this).data("id");
+                          url = "{{route("gudang.api.permintaan_update")}}/"+id;
+                          console.log(url);
+                          res = await $.post(url,{status_permintaan:3,tgl_ambil:"{{date("Y-m-d")}}"}).then();
+                          if (res.status == 1) {
+                            new jBox('Notice', {content: 'Update Berhasil',showCountdown:true, color: 'green'})
+                          }else {
+                            new jBox('Notice', {content: 'Update Gagal',showCountdown:true, color: 'red'})
+                          }
+                          dts.ajax.reload();
+                      }
+                    });
+                  }
+                });
+        modal.open();
+      });
     });
   });
 </script>

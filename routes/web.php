@@ -286,7 +286,9 @@ Route::group(['middleware' => ['gudang']], function () {
   Route::get('/api/gudang/kode_pprodukgudangretur/{id?}',"ApiControl@kode_pprodukgudangretur")->name("gudang.api.kode_pprodukgudangretur");
   Route::post('/api/gudang/pprodukgudangretur_edit/{id?}',"ApiControl@pprodukgudangretur_edit")->name("gudang.api.pprodukgudangretur_edit");
   Route::post('/api/gudang/pprodukgudangretur_ajukan/{id?}',"ApiControl@pprodukgudangretur_ajukan")->name("gudang.api.pprodukgudangretur_ajukan");
-
+  //Permintaan
+  Route::get('/api/gudang/permintaan/{id?}',"ApiControl@permintaan_read")->name("gudang.api.permintaan");
+  Route::post('/api/gudang/permintaan_update/{id?}',"ApiControl@permintaan_update")->name("gudang.api.permintaan_update");
 
 });
 Route::group(['middleware'=>['pemasaran']],function(){

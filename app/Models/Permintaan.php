@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Permintaan
- * 
+ *
  * @property int $id
  * @property int $pos_id
  * @property \Carbon\Carbon $tgl_dibuat
@@ -19,7 +19,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property int $konf_gudang
  * @property \Carbon\Carbon $tgl_konfirmasi
  * @property \Carbon\Carbon $tgl_ambil
- * 
+ *
  * @property \App\Models\Po $po
  * @property \Illuminate\Database\Eloquent\Collection $permintaan_details
  *

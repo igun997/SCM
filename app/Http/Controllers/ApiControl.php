@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail,Permintaan,PermintaanDetail};
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
@@ -3120,5 +3120,99 @@ class ApiControl extends Controller
         return response()->json(["status"=>0]);
       }
     }
+    public function permintaan_read($id=null)
+    {
+      $a = Permintaan::orderBy("tgl_ambil","desc")->get();
+      if ($id != null) {
+        $a = Permintaan::where("id",$id);
+        if ($a->count() > 0) {
+          $data = $a->first();
+          $data->permintaan_details;
+          foreach ($data->permintaan_details as $key => $value) {
+            $value->master_produk;
+          }
+          return ["status"=>1,"data"=>$data];
+        }else {
+          return ["status"=>0,"data"=>null];
+        }
+      }
 
+      $data = [];
+      $data["data"] = [];
+      foreach ($a as $key => $value) {
+        if ($value->tgl_konfirmasi == null) {
+          $tk = "-";
+        }else {
+          $tk = $value->tgl_konfirmasi->format("d/m/Y");
+        }
+        if ($value->tgl_ambil == null) {
+          $ta = "-";
+        }else {
+          $ta = $value->tgl_ambil->format("d/m/Y");
+        }
+        if ($value->tgl_dibuat == null) {
+          $td = "-";
+        }else {
+          $td = $value->tgl_dibuat->format("d/m/Y");
+        }
+
+        $data["data"][] = [($key+1),$value->po->nama_pengguna,status_permintaan($value->status_permintaan),konfirmasi($value->konf_gudang),$tk,$ta,$td,$value->id];
+      }
+      return $data;
+    }
+    public function permintaan_update(Request $req,$id)
+    {
+      $row = Permintaan::where("id",$id);
+      if ($row->count() > 0) {
+        $data = $req->all();
+        unset($data["_token"]);
+        $a = $row->update($data);
+        if ($a) {
+          if ($req->status_permintaan == 3) {
+            $pos = $row->first();
+            $brg = $pos->permintaan_details;
+            $id = $pos->pos_id;
+            $ins = [];
+            foreach ($brg as $key => $value) {
+              $dss = ["pos_id"=>$id,"id_produk"=>$value->id_produk,"harga"=>$value->master_produk->harga_distribusi,"stok"=>$value->jumlah];
+                $cekBrg = PosBarang::where(["pos_id"=>$id,"id_produk"=>$value->id_produk]);
+                if ($cekBrg->count() > 0) {
+                  $stok = ($cekBrg->first()->stok + $value->jumlah);
+                  $dss = ["pos_id"=>$id,"id_produk"=>$value->id_produk,"harga"=>$value->master_produk->harga_distribusi,"stok"=>$stok];
+                }
+                $ins[] = $dss;
+            }
+            if (count($ins) == 0) {
+              return ["status"=>0,"msg"=>"Tidak Ada Item Yang Di Ajukan"];
+            }
+            foreach ($ins as $key => $value) {
+              $a = MasterProduk::where(["id_produk"=>$value["id_produk"]]);
+              if ($a->count() > 0) {
+                $r = $a->first();
+                $stok = ($r->stok - $value["stok"]);
+                if ($stok < 0) {
+                    return ["status"=>0,"msg"=>"Item ".$value["id_produk"]." Stok Tidak Mencukupi"];
+                }
+              }
+            }
+            $det = PosBarang::insert($ins);
+            if ($det) {
+              foreach ($ins as $key => $value) {
+                $a = MasterProduk::where(["id_produk"=>$value["id_produk"]]);
+                if ($a->count() > 0) {
+                  $r = $a->first();
+                  $stok = ($r->stok - $value["stok"]);
+                  $a->update(["stok"=>$stok]);
+                }
+              }
+            }else {
+              return ["status"=>0];
+            }
+          }
+        }
+        return ["status"=>1];
+      }else {
+        return ["status"=>0];
+      }
+    }
 }

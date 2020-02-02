@@ -14,6 +14,22 @@
      return "Tidak Diketahui";
    }
  }
+ function status_permintaan($id)
+ {
+   if ($id == 0) {
+     return "Belum Diproses";
+   }elseif ($id == 1) {
+     return "Sedang Diproses";
+   }elseif ($id == 2) {
+     return "Menunggu Pengambilan";
+   }elseif ($id == 3) {
+     return "Selesai";
+   }elseif ($id == 4) {
+     return "Permintaan Ditolak";
+   }else {
+     return "Tidak Diketahui";
+   }
+ }
   function status_pesanan($id)
  {
    if ($id == 0) {
