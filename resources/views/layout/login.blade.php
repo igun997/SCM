@@ -8,7 +8,7 @@
       </div>
       <form class="card" action="" method="post" onsubmit="return false" id="login">
         <div class="card-body p-6">
-          <div class="card-title">Selamat Datang di SCM Wenow</div>
+          <div class="card-title">Selamat Datang di SCM LOVA</div>
           @if(session()->has("msg"))
           <div class="alert alert-success">
             <center>{{session()->get("msg")}}</center>

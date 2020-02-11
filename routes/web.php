@@ -15,7 +15,7 @@ Route::get('/test',"ApiControl@test");
 
 //Normal Route
 Route::get('/', function(){
-  $data["title"] = "SCM Wenow";
+  $data["title"] = "SCM LOVA";
   return view("layout.login")->with($data);
 })->name('public.normal.login');
 Route::get("/logout",function(){
