@@ -352,4 +352,19 @@ class PosAPI extends Controller
         return response()->json(["status"=>0]);
       }
     }
+
+    public function barang()
+    {
+        $sess = Auth::guard()->user();
+        $id = $sess->id_pos;
+        if ($sess->pos_id != null) {
+          $id = $sess->pos_id;
+        }
+        $a = PosBarang::where(["pos_id"=>$id])->orderBy("stok","desc")->get();
+        foreach ($a as $key => &$value) {
+          $value->master_produk;
+        }
+        $data = $a;
+        return response()->json($data,200);
+    }
 }

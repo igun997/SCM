@@ -46,4 +46,6 @@ Route::group([
   Route::get("permintaan",'PosAPI@permintaan');
   Route::get("permintaanById/{id}",'PosAPI@permintaanById');
 
+  Route::get("barang",'PosAPI@barang');
+
 });
