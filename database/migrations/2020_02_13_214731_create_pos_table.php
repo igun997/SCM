@@ -22,7 +22,7 @@ class CreatePosTable extends Migration {
 			$table->string('password');
 			$table->boolean('status');
 			$table->enum('level', array('manajer','kasir'));
-			$table->integer('pos_id')->index('as');
+			$table->integer('pos_id')->nullable()->index('as');
 		});
 	}
 

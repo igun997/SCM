@@ -14,7 +14,7 @@ class AddForeignKeysToPosTable extends Migration {
 	{
 		Schema::table('pos', function(Blueprint $table)
 		{
-			$table->foreign('id_pos', 'pos_ibfk_1')->references('pos_id')->on('pos')->onUpdate('CASCADE')->onDelete('CASCADE');
+			$table->foreign('pos_id', 'pos_ibfk_1')->references('id_pos')->on('pos')->onUpdate('CASCADE')->onDelete('CASCADE');
 		});
 	}
 

@@ -16,7 +16,7 @@ class CreatePosTransaksiTable extends Migration {
 		{
 			$table->integer('id', true);
 			$table->string('nama_pelanggan', 200);
-			$table->integer('tgl_transaksi');
+			$table->date('tgl_transaksi');
 			$table->enum('status', array('tahan','tunggu','batal','selesai'));
 			$table->float('total_pembayaran', 10, 0);
 			$table->float('total_bayar', 10, 0)->default(0);
