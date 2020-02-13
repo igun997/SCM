@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail,Permintaan,PermintaanDetail};
 use PDF;
 use \App\Events\SCMNotif;
@@ -3078,6 +3079,7 @@ class ApiControl extends Controller
       $data = $req->all();
       $data["level"] = "manajer";
       $data["status"] = 1;
+      $data["password"] = Hash::make($data["password"]);
       $ins = Po::create($data);
       if ($ins) {
         return response()->json(["status"=>1]);
@@ -3110,6 +3112,8 @@ class ApiControl extends Controller
       if ($req->has("password")) {
         if ($req->password == "") {
           unset($data["password"]);
+        }else {
+          $data["password"] = Hash::make($data["password"]);
         }
       }
       unset($data["_token"]);

@@ -10,8 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-//Test Deply
-Route::get('/test',"ApiControl@test");
 
 //Normal Route
 Route::get('/', function(){
@@ -327,3 +325,7 @@ Route::group(['middleware'=>['pemasaran']],function(){
   Route::post("api/pemasaran/pengiriman_update/{id?}","ApiControl@pengiriman_update")->name("pemasaran.api.pengiriman_update");
   Route::post("api/pemasaran/pengiriman_insert/{id?}","ApiControl@pengiriman_insert")->name("pemasaran.api.pengiriman_insert");
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -7,11 +7,15 @@
 
 namespace App\Models;
 
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Po
- * 
+ *
  * @property int $id_pos
  * @property string $nama_pengguna
  * @property string $cabang
@@ -21,7 +25,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property bool $status
  * @property string $level
  * @property int $pos_id
- * 
+ *
  * @property \App\Models\Po $po
  * @property \Illuminate\Database\Eloquent\Collection $permintaans
  * @property \Illuminate\Database\Eloquent\Collection $pos_barangs
@@ -29,8 +33,9 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  *
  * @package App\Models
  */
-class Po extends Eloquent
+class Po extends Authenticatable implements JWTSubject
 {
+	use Notifiable;
 	protected $primaryKey = 'id_pos';
 	public $timestamps = false;
 
@@ -38,7 +43,14 @@ class Po extends Eloquent
 		'status' => 'bool',
 		'pos_id' => 'int'
 	];
-
+	public function getJWTIdentifier()
+  {
+      return $this->getKey();
+  }
+  public function getJWTCustomClaims()
+  {
+      return [];
+  }
 	protected $hidden = [
 		'password'
 	];

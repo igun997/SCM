@@ -65,6 +65,7 @@ class Kernel extends HttpKernel
         'produksi' => \App\Http\Middleware\Produksi::class,
         'pemasaran' => \App\Http\Middleware\Pemasaran::class,
         'pengadaan' => \App\Http\Middleware\Pengadaan::class,
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
     ];
 
     /**

@@ -20,6 +20,7 @@
         "php-ai/php-ml": "^0.8.0",
         "pusher/pusher-php-server": "^4.1",
         "thomaswelton/laravel-gravatar": "^1.2",
+        "tymon/jwt-auth": "dev-develop",
         "vkovic/laravel-custom-casts": "^1.2"
     },
     "require-dev": {

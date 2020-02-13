@@ -13,6 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('login', 'AuthPos@login');
+Route::group([
+    'middleware' => 'jwt.verify',
+    'namespace' => '\App\Http\Controllers',
+    'prefix' => 'v1'
+], function ($router) {
+  Route::post('testAkun', 'AuthPos@test');
+  Route::get('logout', 'AuthPos@logout');
+});
+Route::group([
+    'middleware' => 'jwt.verify',
+    'namespace' => '\App\Http\Controllers',
+    'prefix' => 'v1/pos'
+], function ($router) {
+  Route::get('check', 'PosAPI@checkValidity');
+  Route::get('me', 'PosAPI@me');
 });
