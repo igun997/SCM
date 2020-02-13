@@ -24,9 +24,13 @@ class AuthPos extends Controller
                 return response()->json(['error' => 'invalid_credentials'], 400);
             }
         } catch (JWTException $e) {
-            return response()->json(['error' => 'could_not_create_token'], 500);
+          return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        return $this->respondWithToken($token);
+        if (Auth::guard()->user()->status == 1) {
+          return $this->respondWithToken($token);
+        }else {
+          return response()->json(['error' => 'deactivate_user'], 500);
+        }
   }
 
   public function me()

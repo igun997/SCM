@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class PosTransaksi
- * 
+ *
  * @property int $id
  * @property string $nama_pelanggan
  * @property int $tgl_transaksi
@@ -20,7 +20,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property float $total_bayar
  * @property float $kembalian
  * @property int $pos_register_id
- * 
+ *
  * @property \App\Models\PosRegister $pos_register
  * @property \App\Models\PosTransaksiDetail $pos_transaksi_detail
  *
@@ -32,7 +32,7 @@ class PosTransaksi extends Eloquent
 	public $timestamps = false;
 
 	protected $casts = [
-		'tgl_transaksi' => 'int',
+		'tgl_transaksi' => 'date',
 		'total_pembayaran' => 'float',
 		'total_bayar' => 'float',
 		'kembalian' => 'float',
@@ -56,6 +56,6 @@ class PosTransaksi extends Eloquent
 
 	public function pos_transaksi_detail()
 	{
-		return $this->hasOne(\App\Models\PosTransaksiDetail::class);
+		return $this->hasMany(\App\Models\PosTransaksiDetail::class);
 	}
 }

@@ -12,14 +12,12 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 Route::post('login', 'AuthPos@login');
 Route::group([
     'middleware' => 'jwt.verify',
     'namespace' => '\App\Http\Controllers',
     'prefix' => 'v1'
 ], function ($router) {
-  Route::post('testAkun', 'AuthPos@test');
   Route::get('logout', 'AuthPos@logout');
 });
 Route::group([
@@ -29,4 +27,23 @@ Route::group([
 ], function ($router) {
   Route::get('check', 'PosAPI@checkValidity');
   Route::get('me', 'PosAPI@me');
+  Route::get("transaksi",'PosAPI@transaksi');
+  Route::get("transaksiById/{id}",'PosAPI@transaksiById');
+  Route::post("kasirinsert",'PosAPI@kasirinsert');
+  Route::post("kasirupdate/{id}",'PosAPI@kasirupdate');
+
+  Route::get("check_available_register","PosAPI@check_available_register");
+  Route::post("close_pos_register/{id}","PosAPI@close_pos_register");
+  Route::post("create_pos_register","PosAPI@create_pos_register");
+
+  Route::post("transaksiinsert",'PosAPI@transaksiinsert');
+  Route::get("transaksicancel/{id}",'PosAPI@transaksicancel');
+
+  Route::post("permintaaninsert",'PosAPI@permintaaninsert');
+  Route::get("permintaancancel/{id}",'PosAPI@permintaancancel');
+
+
+  Route::get("permintaan",'PosAPI@permintaan');
+  Route::get("permintaanById/{id}",'PosAPI@permintaanById');
+
 });

@@ -26,6 +26,8 @@
      return "Selesai";
    }elseif ($id == 4) {
      return "Permintaan Ditolak";
+   }elseif ($id == 5) {
+     return "Barang Di Kembalikan";
    }else {
      return "Tidak Diketahui";
    }
