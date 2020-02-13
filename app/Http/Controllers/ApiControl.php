@@ -3199,7 +3199,14 @@ class ApiControl extends Controller
                 }
               }
             }
-            $det = PosBarang::insert($ins);
+            foreach ($ins as $key => $value) {
+              $cek = PosBarang::where(["pos_id"=>$value["pos_id"],"id_produk"=>$value["id_produk"]]);
+              if ($cek->count() > 0) {
+                $det = $cek->update(["stok"=>$value["stok"]]);
+              }else {
+                $det = PosBarang::insert($ins);
+              }
+            }
             if ($det) {
               foreach ($ins as $key => $value) {
                 $a = MasterProduk::where(["id_produk"=>$value["id_produk"]]);
