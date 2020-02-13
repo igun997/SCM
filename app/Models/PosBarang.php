@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class PosBarang
- * 
+ *
  * @property int $id
  * @property int $pos_id
  * @property string $id_produk
@@ -19,7 +19,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
  * @property float $harga
  * @property \Carbon\Carbon $tgl_update
  * @property \Carbon\Carbon $tgl_register
- * 
+ *
  * @property \App\Models\Po $po
  * @property \App\Models\MasterProduk $master_produk
  * @property \App\Models\PosTransaksiDetail $pos_transaksi_detail
@@ -46,6 +46,7 @@ class PosBarang extends Eloquent
 		'pos_id',
 		'id_produk',
 		'stok',
+		'sale',
 		'harga',
 		'tgl_update',
 		'tgl_register'
