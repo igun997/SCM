@@ -88,9 +88,7 @@ class PosAPI extends Controller
     }
     public function kasirupdate(Request $req,$id)
     {
-        $req->validate([
-          "nama_pengguna"=>"required",
-        ]);
+      
         $sess = Auth::guard()->user();
         $data = $req->all();
         $data["level"] = "kasir";
