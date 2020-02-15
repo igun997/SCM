@@ -29,6 +29,7 @@ Route::group([
   Route::get('me', 'PosAPI@me');
   Route::get("transaksi",'PosAPI@transaksi');
   Route::get("transaksiById/{id}",'PosAPI@transaksiById');
+  Route::get("kasir",'PosAPI@kasir');
   Route::post("kasirinsert",'PosAPI@kasirinsert');
   Route::post("kasirupdate/{id}",'PosAPI@kasirupdate');
 
