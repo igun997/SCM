@@ -45,6 +45,7 @@ class PosAPI extends Controller
       $data = Po::where(["pos_id"=>$sess->id_pos])->get();
       return response()->json($data);
     }
+
     public function transaksiById($id)
     {
       $d = PosTransaksi::where("id",$id);
@@ -86,9 +87,19 @@ class PosAPI extends Controller
           return response()->json(["status"=>0],400);
         }
     }
+    public function user($id)
+    {
+      $cek = Po::where(["id_pos"=>$id]);
+      if ($cek->count() > 0) {
+        $d = $cek->first();
+        return response()->json(["status"=>1,"data"=>$d],400);
+      }else {
+        return response()->json(["status"=>0],400);
+      }
+    }
     public function kasirupdate(Request $req,$id)
     {
-      
+
         $sess = Auth::guard()->user();
         $data = $req->all();
         $data["level"] = "kasir";

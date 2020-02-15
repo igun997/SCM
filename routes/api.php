@@ -32,21 +32,16 @@ Route::group([
   Route::get("kasir",'PosAPI@kasir');
   Route::post("kasirinsert",'PosAPI@kasirinsert');
   Route::post("kasirupdate/{id}",'PosAPI@kasirupdate');
-
   Route::get("check_available_register","PosAPI@check_available_register");
   Route::post("close_pos_register/{id}","PosAPI@close_pos_register");
   Route::post("create_pos_register","PosAPI@create_pos_register");
-
   Route::post("transaksiinsert",'PosAPI@transaksiinsert');
   Route::get("transaksicancel/{id}",'PosAPI@transaksicancel');
-
   Route::post("permintaaninsert",'PosAPI@permintaaninsert');
   Route::get("permintaancancel/{id}",'PosAPI@permintaancancel');
-
-
   Route::get("permintaan",'PosAPI@permintaan');
   Route::get("permintaanById/{id}",'PosAPI@permintaanById');
-
   Route::get("barang",'PosAPI@barang');
+  Route::get("user/{id}","PosAPI@barang");
 
 });
