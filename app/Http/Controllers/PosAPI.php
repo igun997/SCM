@@ -92,7 +92,7 @@ class PosAPI extends Controller
       $cek = Po::where(["id_pos"=>$id]);
       if ($cek->count() > 0) {
         $d = $cek->first();
-        return response()->json(["status"=>1,"data"=>$d],400);
+        return response()->json(["status"=>1,"data"=>$d],200);
       }else {
         return response()->json(["status"=>0],400);
       }
