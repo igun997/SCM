@@ -42,7 +42,7 @@ class PosAPI extends Controller
     public function kasir()
     {
       $sess = Auth::guard()->user();
-      $data = Po::where(["pos_id"=>$sess->id_pos])->get()
+      $data = Po::where(["pos_id"=>$sess->id_pos])->get();
       return response()->json($data);
     }
     public function transaksiById($id)
