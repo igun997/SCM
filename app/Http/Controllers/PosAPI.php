@@ -384,7 +384,7 @@ class PosAPI extends Controller
     }
     public function baranggudang()
     {
-      $all = MasterProduk::whereRaw(\DB::raw("stok > stok_minimum"))->orderBy("stok","desc")->get();
+      $all = MasterProduk::orderBy("stok","desc")->get();
       return response()->json($all);
     }
 }
