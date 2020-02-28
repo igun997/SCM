@@ -144,7 +144,7 @@
               </div>
             </div>
             <div class="col-12 col-lg-auto mt-3 mt-lg-0 text-center">
-              Copyright © {{date("Y")}} <a href=".">Wenow</a>. Created by SystemFive All rights reserved.
+              Copyright © {{date("Y")}} <a href=".">LOVA</a>. Created by SystemFive All rights reserved.
             </div>
           </div>
         </div>
