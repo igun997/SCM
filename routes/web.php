@@ -76,6 +76,11 @@ Route::group(['middleware' => ['produksi']], function () {
 Route::group(['middleware' => ['direktur']], function () {
   //NormalRoute
   Route::get('/direktur',"DirekturControl@index")->name('private.direktur.home');
+  //Shopee
+  Route::get('/direktur/shopee_read/{id?}',"ApiControl@shopee_read")->name('private.api.shopee_read');
+  Route::get('/direktur/shopee_getOrder/{id?}',"ApiControl@shopee_getOrder")->name('private.api.shopee_getOrder');
+  Route::post('/direktur/shopee_insert',"ApiControl@shopee_insert")->name('private.api.shopee_insert');
+
   // API
   Route::get('/api/direktur/produksi_read/{id?}',"ApiControl@produksi_read")->name("private.api.produksi_read");
   Route::post('/api/direktur/produksi_insert',"ApiControl@produksi_insert")->name("private.api.produksi_insert");

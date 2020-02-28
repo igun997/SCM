@@ -503,7 +503,157 @@
         instance = produksi.open();
 
       })
+      $("#shopee_manager").on('click', function(event) {
+          event.preventDefault();
+          var btn = function(id,status){
+            var item = [];
+            item.push('<a class="dropdown-item detail" href="javascript:void(0)" data-id="'+id+'">Detail</a>');
+            if (status == "unknown" || status == "deauth") {
+                item.push('<a class="dropdown-item connect" href="javascript:void(0)" data-id="'+id+'">Koneksikan</a>');
+            }
+            return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+         };
+         var tempLate = [
+           "<div class=row>",
+           "<div class=col-md-12>",
+           "<div class=form-group>",
+           "<button class='btn btn-primary' id='tambah'>Tambah Toko</button>",
+           "</div>",
+           "<div class=table-responsive>",
+           "<table class='table table-stripped' id='dtable'>",
+           "<thead>",
+           "<th>No</th>",
+           "<th>Nama Toko</th>",
+           "<th>ID Toko</th>",
+           "<th>Status</th>",
+           "<th>Tgl. Buat</th>",
+           "<th>Aksi</th>",
+           "</thead>",
+           "<thead>",
+           "</tbody>",
+           "</table>",
+           "</div>",
+           "</div>",
+           "</div>"
+         ];
+         modal = new jBox('Modal', {
+           title: 'Shopee Manajer',
+           overlay: false,
+           width: '100%',
+           responsiveWidth:true,
+           height: '500px',
+           createOnInit: true,
+           content: tempLate.join(""),
+           draggable: false,
+           adjustPosition: true,
+           adjustTracker: true,
+           repositionOnOpen: false,
+           offset: {
+             x: 0,
+             y: 0
+           },
+           repositionOnContent: false,
+           onCloseComplete:function(){
+             console.log("Destruct Table");
 
+           },
+           onCreated:function(x){
+             k = this.content;
+             var dtable = k.find("#dtable").DataTable({
+               ajax:"{{route("private.api.shopee_read")}}",
+               createdRow:function(r,d,i){
+                 $("td",r).eq(5).html(btn(d[5],d[3]));
+               }
+             });
+             k.find("#tambah").on('click', function(event) {
+                 event.preventDefault();
+                 let addTemplate = [
+                     "<form id=save action='' method=post onsubmit='return false'>",
+                     "<div class=row>",
+                     "<div class=col-md-12>",
+                     "<div class=form-group>",
+                     "<label>Nama Toko</label>",
+                     "<input class='form-control' name='name' required>",
+                     "</div>",
+                     "<div class=form-group>",
+                     "<label>Shopee ID</label>",
+                     "<input class='form-control' name='shop_id' required>",
+                     "</div>",
+                     "<div class=form-group>",
+                     "<button class='btn btn-success'>Simpan Data</button>",
+                     "</div>",
+                     "</div>",
+                     "</div>",
+                     "</form>",
+                 ]
+                 modal1 = new jBox('Modal', {
+                       title: 'Tambah Shopee Manajer',
+                       overlay: false,
+                       width: '500px',
+                       responsiveWidth:true,
+                       height: '500px',
+                       createOnInit: true,
+                       content: addTemplate.join(""),
+                       draggable: false,
+                       adjustPosition: true,
+                       adjustTracker: true,
+                       repositionOnOpen: false,
+                       offset: {
+                         x: 0,
+                         y: 0
+                       },
+                       repositionOnContent: false,
+                       onCloseComplete:function(){
+                         console.log("Destruct Table");
+                         dtable.ajax.reload();
+                       },
+                       onCreated:function(x){
+                           ta = this.content;
+                           ta.find("#save").on('submit', function(event) {
+                               event.preventDefault();
+                               dform = $(this).serializeArray();
+                               console.log(dform);
+                               $.post('{{route("private.api.shopee_insert")}}', dform, function(data, textStatus, xhr) {
+                                   if (data.status == 1) {
+                                       new jBox('Notice', {content: "Data Sukses Di Simpan",showCountdown:true, color: 'green'});
+                                       modal1.clode();
+                                   }else {
+                                       new jBox('Notice', {content: "Data Gagal Di Simpan",showCountdown:true, color: 'red'});
+                                   }
+                               });
+                           });
+                       }
+                   });
+                   modal1.open();
+             });
+             k.find("#dtable").on('click', '.connect', function(event) {
+                 event.preventDefault();
+                 shopeeUrl = "{{env("SHOPEE_API_AUTH")}}";
+                 partnerID = "{{env("PARTNER_ID_SHOPEE")}}";
+                 token = "{{env("TOKEN_SHOPEE")}}";
+                 callback = "{{env("APP_URL")}}";
+                 location.href = shopeeUrl+"?id="+partnerID+"&token="+sha256(token+callback)+"&redirect="+callback;
+             });
+             k.find("#dtable").on("click", ".detail", function(event) {
+               id = $(this).data("id");
+               $.get("{{route("private.api.shopee_read")}}/"+id,function(data){
+                 console.log(data);
+                 if (data.status == 1) {
+                   var row = data.data;
+                   console.log(row);
+                 }else {
+                   new jBox('Notice', {content: "Data Tidak Ditemukan",showCountdown:true, color: 'warning'});
+                 }
+               }).fail(function(){
+                 new jBox('Notice', {content: "Server Error 500",showCountdown:true, color: 'danger'});
+                 console.log("Fail Sever Error");
+               });
+             })
+
+           }
+         });
+         modal.open();
+      });
       $("#shippingdirektur").on("click", function(event) {
         var btn = function(id,status_pengiriman,status_pembayaran){
           var item = [];

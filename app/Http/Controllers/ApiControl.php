@@ -4,14 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail,Permintaan,PermintaanDetail};
+use \App\Models\{MasterBb,MasterKomposisi,MasterPelanggan,MasterProduk,MasterSatuan,MasterSuplier,MasterTransportasi,Pemesanan,PemesananDetail,PengadaanBb,PengadaanBbDetail,Pengaturan,Pengguna,Pengiriman,PengirimanDetail,Produksi,ProduksiDetail,WncGerai,WncOrder,WncPelanggan,WncProduk,PengadaanBbRetur,PengadaanBbReturDetail,PengadaanProduk,PengadaanProdukDetail,PengadaanProdukRetur,PengadaanProdukReturDetail,PeramalanProduksi,Penyusutan,Po,PosBarang,PosRegister,PosTransaksi,PosTransaksiDetail,Permintaan,PermintaanDetail,Shopee};
 use PDF;
 use \App\Events\SCMNotif;
 use \Carbon\CarbonPeriod;
 use Phpml\Clustering\KMeans;
+use \Shopee\Client;
+use \Shopee\Nodes\ShopCategory\getShopCategories;
+use \Shopee\Nodes\Item\Parameters\GetItemDetail;
 use Helpers\Pengaturan as PengaturanHelper;
 class ApiControl extends Controller
 {
+    public function _shopee_connect($shopid)
+    {
+        $client = new \Shopee\Client([
+            'secret' => env("TOKEN_SHOPEE"),
+            'partner_id' => env("PARTNER_ID_SHOPEE"),
+            'shopid' => $shopid,
+        ]);
+        return $client;
+    }
     //Public API
     public function login(Request $req)
     {
@@ -3225,5 +3237,62 @@ class ApiControl extends Controller
       }else {
         return ["status"=>0];
       }
+    }
+    public function shopee_read(String $id = null)
+    {
+        if ($id != null) {
+            $data = Shopee::where("id",$id);
+            if ($data->count() > 0) {
+                return response()->json(["status"=>1,"data"=>$data->first()]);
+            }else {
+                return response()->json(["status"=>0]);
+            }
+        }else {
+            $data = Shopee::all();
+            $table["data"] = [];
+            foreach ($data as $key => $value) {
+                $table["data"][] = [($key+1),$value->name,$value->shop_id,$value->status,date("d/m/Y",$value->time_created),$value->id];
+            }
+            return response()->json($table);
+        }
+    }
+    public function shopee_insert(Request $req)
+    {
+        $req->validate([
+            "name"=>"required",
+            "shop_id"=>"required",
+        ]);
+        $data = $req->all();
+        $data["status"] = "unknown";
+        $data["time_created"] = time();
+        $ins = Shopee::create($data);
+        if ($ins) {
+            return response()->json(["status"=>1]);
+        }else {
+            return response()->json(["status"=>0]);
+        }
+    }
+    public function shopee_update(Request $req,$id)
+    {
+        $req->validate([
+            "name"=>"required",
+            "shopee_id"=>"required",
+        ]);
+        $data = $req->all();
+        $data["status"] = "unknown";
+        $data["time_created"] = time();
+        $ins = Shopee::where("id",$id)->update($data);
+        if ($ins) {
+            return response()->json(["status"=>1]);
+        }else {
+            return response()->json(["status"=>0]);
+        }
+    }
+    public function shopee_getOrder(String $shop_id)
+    {
+        $a = $this->_shopee_connect($shop_id);
+        $params = ["shopid"=>((int) $shop_id),"partner_id"=>((int) env("PARTNER_ID_SHOPEE")),"timestamps"=>time()];
+        $order = $a->order->GetOrdersList($params)->getData();
+        return ["data"=>$order];
     }
 }

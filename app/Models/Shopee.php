@@ -11,7 +11,7 @@ use Reliese\Database\Eloquent\Model as Eloquent;
 
 /**
  * Class Shopee
- * 
+ *
  * @property int $id
  * @property string $name
  * @property int $shop_id
