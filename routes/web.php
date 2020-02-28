@@ -11,8 +11,14 @@
 |
 */
 
+use Illuminate\Http\Request;
 //Normal Route
-Route::get('/', function(){
+Route::get('/', function(Request $req){
+  $model = \App\Models\Shopee::where('shop_id',$req->id);
+  if ($model->count() > 0) {
+      $model->update(["status"=>"auth"]);
+      redirect(url(session()->get("level")));
+  }
   $data["title"] = "SCM LOVA";
   return view("layout.login")->with($data);
 })->name('public.normal.login');
