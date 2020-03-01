@@ -19,7 +19,9 @@
         "minchao/shopee-php": "^0.0.8",
         "orangehill/iseed": "^2.6",
         "php-ai/php-ml": "^0.8.0",
+        "predis/predis": "^1.1",
         "pusher/pusher-php-server": "^4.1",
+        "symfony/translation-contracts": "^1.1.6",
         "thomaswelton/laravel-gravatar": "^1.2",
         "tymon/jwt-auth": "dev-develop",
         "vkovic/laravel-custom-casts": "^1.2"

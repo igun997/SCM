@@ -3256,6 +3256,60 @@ class ApiControl extends Controller
             return response()->json($table);
         }
     }
+    public function shopee_readpemasaran(String $id = null)
+    {
+        if ($id != null) {
+            $data = Shopee::where("id",$id);
+            if ($data->count() > 0) {
+                return response()->json(["status"=>1,"data"=>$data->first()]);
+            }else {
+                return response()->json(["status"=>0]);
+            }
+        }else {
+            $data = Shopee::all();
+            $table["data"] = [];
+            foreach ($data as $key => $value) {
+                $table["data"][] = [($key+1),$value->name,$value->shop_id,$value->status,date("d/m/Y",$value->time_created),$value->shop_id];
+            }
+            return response()->json($table);
+        }
+    }
+    public function shopee_statistik(String $shopee_id)
+    {
+      $a = $this->_shopee_connect($shopee_id);
+      $params = ["shopid"=>((int) $shopee_id),"partner_id"=>((int) env("PARTNER_ID_SHOPEE")),"timestamps"=>time()];
+      $data = $a->shop->Performance($params)->getData();
+      return ["data"=>$data];
+    }
+    public function shopee_getitem(String $shopid,Request $req)
+    {
+      $req->validate([
+        "start"=>"required|numeric|gte:0",
+        "length"=>"required|numeric|gte:0",
+      ]);
+      $a = $this->_shopee_connect($shopid);
+      $params = ["shopid"=>((int) $shopid),"partner_id"=>((int) env("PARTNER_ID_SHOPEE")),"timestamps"=>time(),"pagination_offset"=>(int)$req->start,"pagination_entries_per_page"=>(int)$req->length];
+      $data = $a->item->getItemsList($params)->getData();
+      foreach ($data["items"] as $key => &$value) {
+        $detailParams = ["shopid"=>((int) $shopid),"partner_id"=>((int) env("PARTNER_ID_SHOPEE")),"timestamps"=>time(),"item_id"=>(int)$value["item_id"]];
+        $itemDetail = $a->item->getItemDetail($detailParams)->getData();
+        $value["detail"] = $itemDetail["item"];
+      }
+      $respDatatable = [];
+      foreach ($data["items"] as $key => $value) {
+        $respDatatable["data"][] = [($key+1),$value["item_id"],$value["detail"]["name"],$value["detail"]["stock"],$value["detail"]["original_price"],$value["detail"]["price"],$value["detail"]["condition"],$value["detail"]["rating_star"],$value["detail"]["discount_id"],json_encode($value["detail"]["variations"]),$value["detail"]["category_id"],$value["item_id"]];
+      }
+      
+      return response()->json($respDatatable);
+      // return response()->json($data);
+    }
+    public function shopee_getcatname(String $category_id)
+    {
+      $category_id = (int) $category_id;
+      $a = $this->_shopee_connect($shopid);
+      $params = ["shopid"=>((int) $shopid),"partner_id"=>((int) env("PARTNER_ID_SHOPEE")),"timestamps"=>time(),"pagination_offset"=>(int)$req->start,"pagination_entries_per_page"=>(int)$req->length];
+      $data = $a->item->getItemsList($params)->getData();
+    }
     public function shopee_insert(Request $req)
     {
         $req->validate([

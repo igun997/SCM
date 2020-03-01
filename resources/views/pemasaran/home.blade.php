@@ -7,51 +7,39 @@
   </h1>
 </div>
 <div class="row row-cards">
-  <div class="col-6 col-sm-4 col-lg-2">
+  <div class="col-6">
     <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterBb::count()}}</div>
-        <div class="text-muted mb-4">Bahan Baku</div>
+      <div class="card-header">
+        <h3 class="card-title">Shopee</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="shopee_list">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Nama Akun</th>
+                <th>Shopee ID</th>
+                <th>Status</th>
+                <th>Tgl. Buat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-  <div class="col-6 col-sm-4 col-lg-2">
+  <div class="col-6">
     <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterProduk::count()}}</div>
-        <div class="text-muted mb-4">Produk</div>
+      <div class="card-header">
+        <h3 class="card-title">Lazada</h3>
       </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterTransportasi::count()}}</div>
-        <div class="text-muted mb-4">Transportasi</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterSuplier::count()}}</div>
-        <div class="text-muted mb-4">Suplier</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\MasterPelanggan::count()}}</div>
-        <div class="text-muted mb-4">Pelanggan</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-6 col-sm-4 col-lg-2">
-    <div class="card">
-      <div class="card-body p-3 text-center">
-        <div class="h1 m-0">{{\App\Models\Pengguna::count()}}</div>
-        <div class="text-muted mb-4">Akun SCM</div>
+      <div class="card-body">
+
       </div>
     </div>
   </div>
@@ -116,8 +104,11 @@
 @endsection
 @push("script")
 <script type="text/javascript">
-  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart','jqform','datepicker'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart,ajaxForm,datepicker) {
+  require(['datatables','sweetalert2','c3', 'jquery','jbox','select2','datatables.button','datepicker','smartcart','jqform','datepicker','momentjs'], function (datatables,Swal,c3, $,jbox,select2,datepicker,smartcart,ajaxForm,datepicker,moment) {
     $(document).ready(function(){
+      //momentjs
+      console.log("Loading MomentJS");
+      console.log(moment);
       //Chart
       // Init NewPlugin
       $.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col )
@@ -126,6 +117,224 @@
               return $('input', td).prop('checked') ? '1' : '0';
           } );
       }
+      var btn = function(id){
+        var item = [];
+        item.push('<a class="dropdown-item data_barang" href="javascript:void(0)" data-id="'+id+'">Data Barang</a>');
+        item.push('<a class="dropdown-item data_order" href="javascript:void(0)" data-id="'+id+'">Data Order</a>');
+        item.push('<a class="dropdown-item statistik" href="javascript:void(0)" data-id="'+id+'">Data Statistik</a>');
+        return '<button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button><div class="dropdown-menu dropdown-menu-right">'+item.join("")+'</div>';
+      };
+      const shopee_list = $("#shopee_list").DataTable({
+        ajax:"{{route("pemasaran.api.shopee_readpemasaran")}}",
+        createdRow:function(r,d,i){
+          console.log(d);
+          $("td",r).eq(5).html(btn(d[5]));
+        }
+      });
+      $("#shopee_list").on('click', '.data_barang', function(event) {
+        event.preventDefault();
+        id = $(this).data("id");
+        params = $.param({
+          page:1,
+          page_count:100
+        });
+        statistik_template = [
+          "<div class=row>",
+          "<div class=col-12>",
+          table(["No","ID","Nama","Stok","Harga Asli","Harga Sale","Kondisi","Rating","G. Diskon","Variasi","Kategori","Aksi"],[],"shopee_brng_list"),
+          "</div>",
+          "</div>",
+        ]
+        shopee_modal =  new jBox('Modal', {
+          title: 'Data Barang',
+          overlay: false,
+          width: '100%',
+          responsiveWidth:true,
+          height: '600px',
+          createOnInit: true,
+          content: statistik_template.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+          },
+          onCreated:function(rs){
+            html = this.content;
+            dVariasi = [];
+            html.find("#shopee_brng_list").DataTable({
+              serverSide: true,
+              ajax: {
+                  url: "{{route("pemasaran.api.shopee_getitem")}}/"+id,
+              },
+              info:false,
+              createdRow:function(r,d,i){
+                  dVariasi.push({id:d[1],data:JSON.parse(d[9])});
+                  $("td",r).eq(9).html("<button class='btn btn-primary lihatVariasi' data-id='"+d[1]+"'>Lihat Variasi</button>");
+                  labelDiskon = "<span class='badge badge-info'>Tidak Diterapkan</span>"
+                  if (d[8] == 0) {
+                    labelDiskon = "<span class='badge badge-info'>Diterapkan</span>"
+                  }
+                  $("td",r).eq(8).html(labelDiskon);
+                  $("td",r).eq(7).html(parseFloat(d[7]).toFixed(2));
+
+              },
+            });
+            html.find("#shopee_brng_list").on('click', '.lihatVariasi', function(event) {
+              event.preventDefault();
+              id = $(this).data("id");
+              console.log(dVariasi);
+              data = [];
+              for (var i = 0; i < dVariasi.length; i++) {
+                if (dVariasi[i].id == id) {
+                  data = dVariasi[i].data;
+                  break;
+                }
+              }
+              console.log(data);
+              if (data.length > 0) {
+                variasi_template = [
+                  "<div class=row>",
+                  "<div class=col-12>",
+                  "<div class=table-responsive>",
+                  table(["No","Variasi","Diskon","Harga Asli","Harga Sale","Status","Stok","Created","Updated"],[],"variasi_tabel"),
+                  "</div>",
+                  "</div>",
+                  "</div>",
+                ]
+                variasi_modal =  new jBox('Modal', {
+                  title: 'Data Variasi',
+                  overlay: false,
+                  width: '100%',
+                  responsiveWidth:true,
+                  height: '600px',
+                  createOnInit: true,
+                  content: variasi_template.join(""),
+                  draggable: false,
+                  adjustPosition: true,
+                  adjustTracker: true,
+                  repositionOnOpen: false,
+                  offset: {
+                    x: 0,
+                    y: 0
+                  },
+                  repositionOnContent: false,
+                  onCloseComplete:function(){
+                    console.log("Destruct Table");
+                  },
+                  onCreated:function(rs){
+                    html = this.content;
+                    dataVariasi = [];
+                    $.each(data,function(index, el) {
+                      dataVariasi.push([(index+1),(el.name),el.discount_id,el.original_price,el.price,el.status,el.stock,fakemoment(el.create_time),fakemoment(el.update_time)]);
+                    });
+                    html.find("#variasi_tabel").css('width', '100%');
+                    html.find("#variasi_tabel").DataTable({
+                      data:dataVariasi
+                    });
+
+                  }
+                });
+                variasi_modal.open();
+              }else {
+                new jBox('Notice', {content: 'Barang ini tidak memiliki variasi',showCountdown:true, color: 'blue'});
+              }
+            });
+            html.find("#shopee_brng_list").on('processing.dt', function (e, settings, processing) {
+               on();
+               if (processing) {
+                 on();
+               } else {
+                 off();
+               }
+            })
+
+          }
+        });
+        shopee_modal.open();
+
+      });
+      $("#shopee_list").on('click', '.statistik', async function(event) {
+        event.preventDefault();
+        id = $(this).data("id");
+        data = await $.get("{{route("pemasaran.api.shopee_statistik")}}/"+id).then();
+        rtokoReal = (parseFloat(data.data.overall_review_rating.my));
+        rtotal = 5;
+        rtoko = Math.floor(rtokoReal);
+        rstarIcon = [];
+        for (var i = 0; i < rtotal; i++) {
+          if (i <= (rtoko - 1)) {
+            rstarIcon.push('<span class="fa fa-star checked"></span>');
+          }else {
+            rstarIcon.push('<span class="fa fa-star"></span>');
+          }
+        }
+        ptoko = (data.data.average_preparation_time.my/3600).toFixed(2)+" Jam";
+        ptokotarget = (data.data.average_preparation_time.target/3600).toFixed(2)+" Jam";
+        lstoko = data.data.late_shipment_rate.my+"%";
+        lstokotarget = data.data.late_shipment_rate.target+"%";
+        rftoko = data.data.return_refund_rate.my+"%";
+        rftokotarget = data.data.return_refund_rate.target+"%";
+        rsptoko = (data.data.response_time.my/3600).toFixed(2)+" Jam";
+        rsptokotarget = (data.data.response_time.target/3600).toFixed(2)+" Jam";
+        statistik_template = [
+          "<div class=row>",
+          "<div class=col-12>",
+          "<div class=form-group>",
+          "<label>Rating Toko ("+rtoko+"/"+rtotal+")</label>",
+          "<div class=form-control>"+rstarIcon.join("")+"</div>",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Waktu Proses (Lebih Kecil)</label>",
+          "<div class=form-control>"+ptoko+" / "+ptokotarget+"</div>",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Keterlambatan Pengiriman (Lebih Kecil)</label>",
+          "<div class=form-control>"+lstoko+" / "+lstokotarget+"</div>",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Refund (Lebih Kecil)</label>",
+          "<div class=form-control>"+rftoko+" / "+rftokotarget+"</div>",
+          "</div>",
+          "<div class=form-group>",
+          "<label>Waktu Respon (Lebih Kecil)</label>",
+          "<div class=form-control>"+rsptoko+" / "+rsptokotarget+"</div>",
+          "</div>",
+          "</div>",
+          "</div>",
+        ]
+        shopee_modal =  new jBox('Modal', {
+          title: 'Statistik Toko',
+          overlay: false,
+          width: '600px',
+          responsiveWidth:true,
+          height: '200px',
+          createOnInit: true,
+          content: statistik_template.join(""),
+          draggable: false,
+          adjustPosition: true,
+          adjustTracker: true,
+          repositionOnOpen: false,
+          offset: {
+            x: 0,
+            y: 0
+          },
+          repositionOnContent: false,
+          onCloseComplete:function(){
+            console.log("Destruct Table");
+          },
+          onCreated:function(rs){
+
+          }
+        });
+        shopee_modal.open();
+      });
       async function chart() {
         obj1 = "#chart-development-activity";
         res = await $.post("{{route("chart")}}",{pemasaran_harian:true}).then();

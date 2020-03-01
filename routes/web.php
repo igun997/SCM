@@ -14,12 +14,12 @@
 use Illuminate\Http\Request;
 //Normal Route
 Route::get('/', function(Request $req){
-  $model = \App\Models\Shopee::where('shop_id',$req->id);
+  $model = \App\Models\Shopee::where('shop_id',$req->shop_id);
   if ($model->count() > 0) {
       $model->update(["status"=>"auth"]);
-      redirect(url(session()->get("level")));
+      return redirect(url(session()->get("level")));
   }
-  $data["title"] = "SCM LOVA";
+  $data["title"] = "SCM LOVA ";
   return view("layout.login")->with($data);
 })->name('public.normal.login');
 Route::get("/logout",function(){
@@ -302,6 +302,10 @@ Route::group(['middleware' => ['gudang']], function () {
 });
 Route::group(['middleware'=>['pemasaran']],function(){
   Route::get('/pemasaran',"PemasaranControl@index")->name('private.pemasaran.home');
+  Route::get('/api/pemasaran/shopee_readpemasaran/{id?}',"ApiControl@shopee_readpemasaran")->name("pemasaran.api.shopee_readpemasaran");
+  Route::get('/api/pemasaran/shopee_statistik/{id?}',"ApiControl@shopee_statistik")->name("pemasaran.api.shopee_statistik");
+  Route::get('/api/pemasaran/shopee_getitem/{id?}',"ApiControl@shopee_getitem")->name("pemasaran.api.shopee_getitem");
+
   Route::get('/api/pemasaran/master_produk_read/{id?}',"ApiControl@master_produk_read")->name("pemasaran.api.master_produk_read");
   Route::post('/api/pemasaran/master_produk_insert',"ApiControl@master_produk_insert")->name("pemasaran.api.master_produk_insert");
   Route::post('/api/pemasaran/master_produk_update/{id?}',"ApiControl@master_produk_update")->name("pemasaran.api.master_produk_update");

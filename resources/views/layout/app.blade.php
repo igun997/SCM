@@ -33,6 +33,9 @@
         max-height: 500px !important;
         overflow-y: auto;
       }
+      .checked {
+        color: orange;
+      }
     </style>
     @stack("css")
     <script src="{{url("assets/js/require.min.js")}}"></script>
@@ -544,6 +547,14 @@
     img.onerror = "";
     img.src = "{{url("notfound.png")}}";
     return true;
+  }
+  function fakemoment(timestamp) {
+    let unix_timestamp = timestamp
+    var date = new Date(unix_timestamp * 1000);
+    var hours = date.getHours();
+    var minutes = "0" + date.getMinutes();
+    var seconds = "0" + date.getSeconds();
+    return  date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()+" "+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
   }
   function number_format(nStr)
   {
